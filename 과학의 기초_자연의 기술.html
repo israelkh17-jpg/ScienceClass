@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>과학의 기초_자연의 기술</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --primary: #2b6cb0;
+      --primary-soft: #dbeafe;
+      --text: #1f2937;
+      --sub: #4b5563;
+      --line: #d1d5db;
+      --accent: #0f766e;
+      --warn-bg: #fff7ed;
+      --warn-line: #f59e0b;
+      --good: #166534;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: linear-gradient(180deg, #eef5ff 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1d4ed8 0%, #0f766e 100%);
+      color: white;
+      padding: 28px 20px 34px;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 18px 48px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      font-size: 0.92rem;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+      line-height: 1.25;
+    }
+
+    header p {
+      margin: 0;
+      color: #e5eefc;
+      font-size: 1.02rem;
+    }
+
+    .section-card, .quiz-card, .footer-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-top: 22px;
+    }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.35rem;
+      color: var(--primary);
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.06rem;
+      color: #1e3a8a;
+    }
+
+    .lead-box {
+      background: var(--primary-soft);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .notice {
+      background: var(--warn-bg);
+      border-left: 5px solid var(--warn-line);
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-top: 14px;
+      color: #7c2d12;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .example, .activity-step, .mini-card, .concept-card {
+      border: 1px solid #dbe4f0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      background: #f8fafc;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.94rem;
+    }
+
+    .case-button {
+      width: 100%;
+      text-align: left;
+      background: #f8fafc;
+      color: var(--text);
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 400;
+      cursor: pointer;
+    }
+
+    .case-button:hover {
+      background: #eff6ff;
+    }
+
+    .case-button strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent);
+    }
+
+    .case-detail {
+      display: none;
+      margin-top: 10px;
+      border: 1px solid #dbe4f0;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 14px;
+    }
+
+    .case-detail.show { display: block; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 11px 12px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 0.97rem;
+    }
+
+    th {
+      background: #eff6ff;
+      color: #1e3a8a;
+    }
+
+    .blank {
+      display: inline-block;
+      min-width: 110px;
+      border-bottom: 2px solid #94a3b8;
+      margin: 0 4px;
+      transform: translateY(-2px);
+    }
+
+    .quiz-card .question {
+      border: 1px solid #dbe4f0;
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 14px;
+      background: #fcfdff;
+    }
+
+    .options label {
+      display: block;
+      margin: 8px 0;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .options label:hover {
+      background: #f3f4f6;
+    }
+
+    button.action {
+      border: none;
+      background: var(--primary);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.98rem;
+      font-weight: 700;
+    }
+
+    button.secondary { background: #475569; }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .result {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      display: none;
+      white-space: pre-line;
+    }
+
+    .result.show { display: block; }
+    .result.good { background: #ecfdf5; color: #14532d; border: 1px solid #86efac; }
+    .result.mid { background: #eff6ff; color: #1e3a8a; border: 1px solid #93c5fd; }
+
+    .footer-card {
+      color: var(--sub);
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 860px) {
+      .concept-grid, .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:0.88rem;margin-bottom:14px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,0.15);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">← 목록으로</a>
+      <div class="badge">통합과학 1 · 과학의 기초</div>
+      <h1>자연의 기술</h1>
+      <p>시간과 공간의 규모를 이해하고, 자연을 다양한 크기에서 바라보는 힘을 길러 봅시다.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="section-card">
+      <h2>1. 생각 열기</h2>
+      <p>우리는 보통 눈에 보이는 크기의 세계를 기준으로 자연을 이해한다. 하지만 과학은 그보다 훨씬 작은 세계와 훨씬 큰 세계까지 다룬다. 일상에서 만나는 사례를 통해 시간과 공간의 규모를 떠올려 보자.</p>
+      <div class="two-col">
+        <div class="example">
+          <button class="case-button" onclick="toggleCase('dailyCase1')">
+            <strong>일상 사례 1. 밤하늘의 별</strong>
+            점처럼 보이는 별의 실제 크기를 떠올려 보자.
+          </button>
+          <div id="dailyCase1" class="case-detail">
+            밤하늘의 별은 작은 점처럼 보이지만 실제로는 태양만큼 크거나 그보다 더 큰 천체일 수 있다. 아주 멀리 떨어져 있기 때문에 작게 보이는 것이다. 보이는 크기와 실제 크기는 다를 수 있다는 점을 보여 준다.
+          </div>
+        </div>
+        <div class="example">
+          <button class="case-button" onclick="toggleCase('dailyCase2')">
+            <strong>일상 사례 2. 손을 씻을 때의 세균</strong>
+            보이지 않아도 존재하는 작은 세계를 생각해 보자.
+          </button>
+          <div id="dailyCase2" class="case-detail">
+            손을 씻는 이유 중 하나는 눈에 보이지 않는 세균을 줄이기 위해서다. 세균은 너무 작아서 맨눈으로는 볼 수 없지만 분명히 존재한다. 이 사례는 우리가 직접 보지 못하는 미시세계도 과학의 중요한 대상이라는 점을 보여 준다.
+          </div>
+        </div>
+      </div>
+      <div class="lead-box">
+        <strong>생각 질문</strong><br />
+        너무 작아서 맨눈으로 볼 수 없는 것은 무엇이 있을까? 아주 멀리 있어서 실제보다 작게 보이는 것은 무엇이 있을까?
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>2. 핵심 개념 익히기</h2>
+      <div class="concept-grid">
+        <article class="concept-card">
+          <h3>(1) 자연은 시간과 공간에서 설명된다</h3>
+          <p>과학자들은 자연 현상을 이해할 때 <strong>시간</strong>과 <strong>공간</strong>을 기준으로 삼는다. 해가 뜨고 지는 현상은 시간의 변화로, 물체가 이동한 거리는 공간의 변화로 설명할 수 있다.</p>
+          <div class="notice">자연을 이해하려면 시간과 거리(공간)를 측정해야 한다.</div>
+        </article>
+
+        <article class="concept-card">
+          <h3>(2) 규모(scale)</h3>
+          <p>자연 현상을 설명할 때 필요한 시간과 공간의 범위를 <strong>규모(scale)</strong>라고 한다. 자연에는 매우 작은 세계와 매우 큰 세계가 모두 존재한다.</p>
+          <div class="chips">
+            <span class="chip">미시세계</span>
+            <span class="chip">거시세계</span>
+            <span class="chip">짧은 시간</span>
+            <span class="chip">긴 시간</span>
+          </div>
+        </article>
+
+        <article class="concept-card">
+          <h3>(3) 시간의 규모</h3>
+          <p>자연 현상은 매우 다양한 시간 규모에서 일어난다. 어떤 현상은 아주 짧은 순간에 일어나고, 어떤 현상은 매우 긴 시간에 걸쳐 나타난다.</p>
+          <table>
+            <thead>
+              <tr><th>현상</th><th>시간 규모</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>번개가 번쩍이는 순간</td><td>매우 짧은 시간</td></tr>
+              <tr><td>사람의 성장</td><td>수년~수십 년</td></tr>
+              <tr><td>별의 생성과 변화</td><td>매우 긴 시간</td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="concept-card">
+          <h3>(4) 공간의 규모</h3>
+          <p>자연은 원자처럼 아주 작은 세계부터 은하처럼 매우 큰 세계까지 다양한 공간 규모로 이루어져 있다. 과학은 이 다양한 공간 규모를 구분하여 설명한다.</p>
+          <div class="two-col" style="margin-top:12px;">
+            <div class="mini-card">
+              <strong>미시세계</strong><br />원자, 분자, 세포, 세균처럼 매우 작은 세계
+            </div>
+            <div class="mini-card">
+              <strong>거시세계</strong><br />사람, 지구, 행성, 별, 은하처럼 큰 세계
+            </div>
+          </div>
+        </article>
+
+        <article class="concept-card full">
+          <h3>(5) 관측과 측정 기술</h3>
+          <p>과학이 발전하면서 매우 작은 것과 매우 큰 것을 측정할 수 있게 되었다. 적절한 관측 도구와 측정 기술이 있어야 다양한 규모의 자연을 이해할 수 있다.</p>
+          <table>
+            <thead>
+              <tr><th>대상</th><th>대표 도구/방법</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>아주 작은 물체</td><td>광학 현미경, 전자 현미경</td></tr>
+              <tr><td>아주 먼 천체</td><td>망원경, 연주 시차, 별의 밝기 비교</td></tr>
+              <tr><td>정확한 시간 측정</td><td>원자시계</td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>3. 나의 삶과 연결하기</h2>
+      <div class="activity-step">
+        <strong>활동: 우리 주변의 다양한 규모 찾아보기</strong><br />
+        아래 표를 보며 내가 일상에서 경험한 시간과 거리의 예를 떠올려 보자.
+        <table>
+          <thead>
+            <tr><th>구분</th><th>예시</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>내가 경험한 가장 짧은 시간</td><td><span class="blank"></span></td></tr>
+            <tr><td>내가 경험한 가장 긴 시간</td><td><span class="blank"></span></td></tr>
+            <tr><td>내가 경험한 가장 짧은 거리</td><td><span class="blank"></span></td></tr>
+            <tr><td>내가 경험한 가장 긴 거리</td><td><span class="blank"></span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top: 12px;">
+          <button class="case-button" onclick="toggleCase('lifeConnect1')">
+            <strong>예시 보기</strong>
+            클릭하면 일상과 연결한 예시를 확인할 수 있습니다.
+          </button>
+          <div id="lifeConnect1" class="case-detail">
+            가장 짧은 시간으로는 눈을 깜빡이는 순간이나 스마트폰 화면이 바뀌는 순간을 떠올릴 수 있다. 가장 긴 시간으로는 내가 태어나서 지금까지의 시간이나 초등학교 입학부터 현재까지의 시간을 생각해 볼 수 있다. 가장 짧은 거리로는 연필심의 굵기나 종이 한 장의 두께를 떠올릴 수 있고, 가장 긴 거리로는 집에서 학교까지의 거리나 내가 여행했던 가장 먼 장소까지의 거리를 떠올릴 수 있다.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="quiz-card">
+      <h2>4. 형성평가</h2>
+      <p>문제를 풀고 <strong>채점하기</strong>를 누르세요.</p>
+
+      <div class="question">
+        <strong>1.</strong> 자연 현상을 설명할 때 사용하는 두 가지 기본 기준은 무엇인가?
+        <div class="options">
+          <label><input type="radio" name="q1" value="1"> ① 질량과 속력</label>
+          <label><input type="radio" name="q1" value="2"> ② 시간과 공간</label>
+          <label><input type="radio" name="q1" value="3"> ③ 온도와 압력</label>
+          <label><input type="radio" name="q1" value="4"> ④ 밀도와 부피</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <strong>2.</strong> 다음 중 시간의 규모가 가장 긴 현상은 무엇인가?
+        <div class="options">
+          <label><input type="radio" name="q2" value="1"> ① 번개가 번쩍이는 순간</label>
+          <label><input type="radio" name="q2" value="2"> ② 눈을 깜빡이는 순간</label>
+          <label><input type="radio" name="q2" value="3"> ③ 사람의 성장</label>
+          <label><input type="radio" name="q2" value="4"> ④ 별의 생성과 변화</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <strong>3.</strong> 다음 중 미시세계에 해당하는 것은?
+        <div class="options">
+          <label><input type="radio" name="q3" value="1"> ① 행성</label>
+          <label><input type="radio" name="q3" value="2"> ② 세포</label>
+          <label><input type="radio" name="q3" value="3"> ③ 산</label>
+          <label><input type="radio" name="q3" value="4"> ④ 지구</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <strong>4.</strong> 아주 작은 물체를 관찰할 때 사용하는 도구는 무엇인가?
+        <div class="options">
+          <label><input type="radio" name="q4" value="1"> ① 망원경</label>
+          <label><input type="radio" name="q4" value="2"> ② 현미경</label>
+          <label><input type="radio" name="q4" value="3"> ③ 나침반</label>
+          <label><input type="radio" name="q4" value="4"> ④ 온도계</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <strong>5.</strong> 현대 과학에서 가장 정확한 시간 측정 방법으로 사용되는 것은 무엇인가?
+        <div class="options">
+          <label><input type="radio" name="q5" value="1"> ① 해시계</label>
+          <label><input type="radio" name="q5" value="2"> ② 물시계</label>
+          <label><input type="radio" name="q5" value="3"> ③ 진자 시계</label>
+          <label><input type="radio" name="q5" value="4"> ④ 원자시계</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <strong>6.</strong> 자연 현상을 이해할 때 <strong>시간과 공간의 규모(scale)</strong>를 고려해야 하는 이유를 1~2문장으로 써 보자.
+        <div style="margin-top:10px;">
+          <textarea style="width:100%; min-height:110px; border:1px solid #cbd5e1; border-radius:12px; padding:12px; font-family:inherit; font-size:0.97rem;" placeholder="여기에 서술형 답을 써 보세요."></textarea>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="action" onclick="gradeQuiz()">채점하기</button>
+        <button class="action secondary" onclick="resetQuiz()">다시 풀기</button>
+      </div>
+
+      <div id="resultBox" class="result"></div>
+    </section>
+
+    <section class="footer-card">
+      동북고등학교 통합과학 학생용 수업 자료입니다.<br>copyright © 날아라 물리 강현식
+    </section>
+  </main>
+
+  <script>
+    function toggleCase(id) {
+      const target = document.getElementById(id);
+      target.classList.toggle('show');
+    }
+
+    function gradeQuiz() {
+      const answers = {
+        q1: '2',
+        q2: '4',
+        q3: '2',
+        q4: '2',
+        q5: '4'
+      };
+
+      let score = 0;
+      let feedback = [];
+
+      Object.entries(answers).forEach(([name, answer], idx) => {
+        const checked = document.querySelector(`input[name="${name}"]:checked`);
+        if (checked && checked.value === answer) {
+          score += 1;
+          feedback.push(`${idx + 1}번: 정답`);
+        } else {
+          feedback.push(`${idx + 1}번: 오답 (정답 ${answer}번)`);
+        }
+      });
+
+      const box = document.getElementById('resultBox');
+      box.className = 'result show ' + (score >= 4 ? 'good' : 'mid');
+      box.textContent = `객관식 점수: ${score} / 5
+
+${feedback.join('\n')}
+
+서술형 6번은 스스로 점검해 보세요. 시간과 공간의 규모가 서로 다르기 때문에 자연 현상마다 알맞은 방법으로 관찰하고 설명해야 한다는 점이 들어가면 좋습니다.`;
+    }
+
+    function resetQuiz() {
+      document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+      document.querySelectorAll('textarea').forEach(el => el.value = '');
+      const box = document.getElementById('resultBox');
+      box.className = 'result';
+      box.textContent = '';
+    }
+  </script>
+</body>
+</html>

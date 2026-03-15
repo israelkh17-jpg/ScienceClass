@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>날아라 물리 통합과학 | 수업자료 목록</title>
+  <style>
+    :root {
+      --primary: #2b6cb0;
+      --accent: #0f766e;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --sub: #4b5563;
+      --line: #d1d5db;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: linear-gradient(180deg, #eef5ff 0%, var(--bg) 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1d4ed8 0%, #0f766e 100%);
+      color: white;
+      padding: 50px 20px 42px;
+      text-align: center;
+    }
+
+    header .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      font-size: 0.9rem;
+      margin-bottom: 14px;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: #c7dcf8;
+      font-size: 1rem;
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 18px 60px;
+    }
+
+    /* 단원 그룹 */
+    .unit-group {
+      margin-bottom: 40px;
+    }
+
+    .unit-group-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      border-left: 4px solid var(--primary);
+      padding-left: 12px;
+      margin-bottom: 16px;
+    }
+
+    /* 수업자료 카드 */
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+    }
+
+    .lesson-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lesson-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--card-color, var(--primary));
+    }
+
+    .lesson-card:hover {
+      border-color: var(--card-color, var(--primary));
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.13);
+    }
+
+    .lesson-num {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--card-color, var(--primary));
+      background: color-mix(in srgb, var(--card-color, var(--primary)) 12%, transparent);
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      width: fit-content;
+    }
+
+    .lesson-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .lesson-desc {
+      font-size: 0.9rem;
+      color: var(--sub);
+      line-height: 1.55;
+    }
+
+    .lesson-arrow {
+      margin-top: auto;
+      font-size: 0.88rem;
+      color: var(--card-color, var(--primary));
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .lesson-arrow::after {
+      content: "→";
+      transition: transform 0.2s;
+    }
+
+    .lesson-card:hover .lesson-arrow::after {
+      transform: translateX(4px);
+    }
+
+    /* 준비 중 카드 */
+    .lesson-card.coming-soon {
+      opacity: 0.55;
+      pointer-events: none;
+      cursor: default;
+    }
+
+    .coming-badge {
+      font-size: 0.8rem;
+      background: #f3f4f6;
+      color: #9ca3af;
+      padding: 3px 10px;
+      border-radius: 999px;
+      width: fit-content;
+      margin-top: auto;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--sub);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--line);
+      background: var(--card);
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.6rem; }
+      .lesson-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">동북고등학교 · 통합과학 1</div>
+  <h1>날아라 물리 통합과학</h1>
+  <p>단원을 선택하면 수업자료 페이지로 이동합니다.</p>
+</header>
+
+<main class="wrap">
+
+  <!-- I. 과학의 기초 -->
+  <div class="unit-group">
+    <div class="unit-group-title">Ⅰ. 과학의 기초</div>
+    <div class="lesson-grid">
+
+      <a class="lesson-card" href="과학의 기초_자연의 기술.html"
+         style="--card-color: #0f766e;">
+        <span class="lesson-num">01</span>
+        <div class="lesson-title">자연의 기술</div>
+        <div class="lesson-desc">자연 현상을 과학적으로 관찰하고 기술하는 방법을 탐구합니다.</div>
+        <div class="lesson-arrow">학습하기</div>
+      </a>
+
+      <a class="lesson-card" href="과학의 기초_기본량과 단위.html"
+         style="--card-color: #2563eb;">
+        <span class="lesson-num">02</span>
+        <div class="lesson-title">기본량의 의미와 적용</div>
+        <div class="lesson-desc">기본량과 단위, 유도량, 접두어의 개념을 사례 중심으로 학습합니다.</div>
+        <div class="lesson-arrow">학습하기</div>
+      </a>
+
+      <div class="lesson-card coming-soon" style="--card-color: #7c3aed;">
+        <span class="lesson-num">03</span>
+        <div class="lesson-title">과학적 탐구 방법</div>
+        <div class="lesson-desc">가설 설정, 변인 통제, 실험 설계의 원리를 익힙니다.</div>
+        <div class="coming-badge">준비 중</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 다음 단원 (준비 중 예시) -->
+  <div class="unit-group">
+    <div class="unit-group-title">Ⅱ. 물질과 규칙성</div>
+    <div class="lesson-grid">
+
+      <div class="lesson-card coming-soon" style="--card-color: #b45309;">
+        <span class="lesson-num">04</span>
+        <div class="lesson-title">원소와 주기율표</div>
+        <div class="lesson-desc">원소의 규칙성과 주기율표 구성 원리를 이해합니다.</div>
+        <div class="coming-badge">준비 중</div>
+      </div>
+
+      <div class="lesson-card coming-soon" style="--card-color: #b45309;">
+        <span class="lesson-num">05</span>
+        <div class="lesson-title">화학 결합과 물질</div>
+        <div class="lesson-desc">이온 결합, 공유 결합의 특성을 탐구합니다.</div>
+        <div class="coming-badge">준비 중</div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  날아라 물리 통합과학 학습자료 | © 동북고등학교 강현식
+</footer>
+
+</body>
+</html>

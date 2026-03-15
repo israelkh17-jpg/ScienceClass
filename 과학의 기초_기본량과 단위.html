@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>통합과학 수업자료 | 기본량의 의미와 적용</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --primary: #2b6cb0;
+      --primary-soft: #dbeafe;
+      --text: #1f2937;
+      --sub: #4b5563;
+      --line: #d1d5db;
+      --accent: #0f766e;
+      --warn: #b45309;
+      --good: #166534;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: linear-gradient(180deg, #eef5ff 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1d4ed8 0%, #0f766e 100%);
+      color: white;
+      padding: 44px 20px 36px;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 18px 48px;
+    }
+
+    .hero-card, .section-card, .quiz-card, .footer-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* 섹션별 배경색 */
+    .hero-card            { background: #fffdf0; } /* 생각 열기 - 연노랑 */
+    #sec-concept          { background: #eff6ff; } /* 핵심개념 익히기 - 연파랑 */
+    #sec-daily            { background: #f0fdf4; } /* 일상과 연결하기 - 연초록 */
+    .quiz-card            { background: #fdf4ff; } /* 형성평가 - 연보라 */
+
+    .hero-card {
+      padding: 28px;
+      margin-top: -26px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+      line-height: 1.25;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #e5eefc;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      font-size: 0.92rem;
+      margin-bottom: 12px;
+    }
+
+    .section-card {
+      padding: 24px;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      margin: 0 0 20px;
+      font-size: 1.6rem;
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary-soft);
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      margin: 24px 0 12px;
+      font-size: 1.2rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+    }
+
+    h3::before {
+      content: "•";
+      margin-right: 8px;
+      font-size: 1.5rem;
+    }
+
+    .notice {
+      background: #fff7ed;
+      border-left: 5px solid #f59e0b;
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-top: 14px;
+      color: #7c2d12;
+    }
+
+    .keybox {
+      background: var(--primary-soft);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.94rem;
+      border: 1px solid #c7d2fe;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 11px 12px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 0.97rem;
+    }
+
+    th {
+      background: #eff6ff;
+      color: #1e3a8a;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .example {
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 14px;
+      background: #f8fafc;
+    }
+
+    .case-button {
+      width: 100%;
+      text-align: left;
+      background: #f8fafc;
+      color: var(--text);
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .case-button:hover {
+      background: #eff6ff;
+      border-color: var(--primary);
+    }
+
+    .case-button strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent);
+    }
+
+    .case-detail {
+      display: none;
+      margin-top: 10px;
+      border: 1px solid #dbe4f0;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 18px;
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .case-detail.show {
+      display: block;
+    }
+
+    .activity-step {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-top: 14px;
+    }
+
+    .fill {
+      display: inline-block;
+      min-width: 80px;
+      border-bottom: 2px solid #94a3b8;
+      margin: 0 4px;
+    }
+
+    .quiz-card {
+      padding: 24px;
+      margin-top: 22px;
+    }
+
+    .question {
+      border: 1px solid #dbe4f0;
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 14px;
+      background: #fcfdff;
+    }
+
+    .options label {
+      display: block;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: 0.2s;
+    }
+
+    .options label:hover {
+      background: #f3f4f6;
+      border-color: #e5e7eb;
+    }
+
+    .short-answer {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+
+    button.main-btn {
+      border: none;
+      background: var(--primary);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    button.secondary {
+      background: #475569;
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .result {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 14px;
+      display: none;
+      white-space: pre-line;
+      line-height: 1.6;
+    }
+
+    .result.show { display: block; }
+    .result.good { background: #ecfdf5; color: #14532d; border: 1px solid #86efac; }
+    .result.mid { background: #eff6ff; color: #1e3a8a; border: 1px solid #93c5fd; }
+
+    .summary-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 14px;
+      padding: 18px;
+      margin-top: 20px;
+    }
+
+    .footer-card {
+      margin-top: 22px;
+      padding: 20px 22px;
+      color: var(--sub);
+      font-size: 0.94rem;
+      text-align: center;
+    }
+
+    @media (max-width: 860px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:0.88rem;margin-bottom:14px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,0.15);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">← 목록으로</a>
+      <div class="badge">통합과학 1 · 과학의 기초</div>
+      <h1>기본량의 의미와 적용</h1>
+      <p>단위의 중요성을 깨닫고, 자연 현상을 과학적으로 표현하는 방법을 익혀봅시다.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- 1. 생각 열기 -->
+    <section class="hero-card">
+      <h2>1. 생각 열기</h2>
+      <p>단위를 정확하게 사용하지 않았을 때 어떤 일이 벌어질까요? 실제 사례를 살펴봅시다.</p>
+      <div class="two-col">
+        <div class="example">
+          <button class="case-button" onclick="toggleCase('case1')">
+            <strong>사례 1. 항공기 비상 착륙</strong>
+            연료 계산 과정에서 lb와 kg 단위를 혼동하여 발생한 사고
+          </button>
+          <div id="case1" class="case-detail">
+            1983년 캐나다 몬트리올에서 보잉 767 여객기가 연료 부족으로 비상 착륙했다. 조사 결과, 항공사는 연료 단위를 파운드(lb)에서 킬로그램(kg)으로 바꾸는 과정에 있었으나 정비팀이 이를 혼동했다. 필요한 연료의 절반만 주입되어 공중에서 엔진이 멈추는 아찔한 상황이 연출되었다.
+          </div>
+        </div>
+        <div class="example">
+          <button class="case-button" onclick="toggleCase('case2')">
+            <strong>사례 2. 화성 궤도선 사고</strong>
+            서로 다른 단위 체계를 사용한 계산으로 탐사선 파괴
+          </button>
+          <div id="case2" class="case-detail">
+            1999년 NASA의 화성 기후 관측 위성이 실종되었다. 한 팀은 SI 단위(N·s)를, 다른 팀은 미국식 단위(lbf·s)를 사용하며 소통에 오류가 생겼고, 궤도 계산에 오차가 발생하여 탐사선이 화성 대기권에서 파괴되었다. 약 3억 달러의 예산이 공중분해 된 순간이었다.
+          </div>
+        </div>
+      </div>
+      <div class="keybox">
+        <strong>핵심 질문:</strong> 왜 과학에서는 전 세계가 공통으로 사용하는 단위 체계가 필수적일까요?
+      </div>
+    </section>
+
+    <!-- 2. 핵심개념 익히기 -->
+    <section id="sec-concept" class="section-card" style="margin-top: 22px;">
+      <h2>2. 핵심개념 익히기</h2>
+      
+      <h3>기본량과 기본 단위</h3>
+      <p><strong>기본량</strong>은 다른 양을 나타낼 때 기준이 되는 독립적인 양입니다.</p>
+      <div class="chips">
+        <span class="chip">길이 (m)</span>
+        <span class="chip">시간 (s)</span>
+        <span class="chip">질량 (kg)</span>
+        <span class="chip">전류 (A)</span>
+        <span class="chip">온도 (K)</span>
+        <span class="chip">물질량 (mol)</span>
+        <span class="chip">광도 (cd)</span>
+      </div>
+
+      <h3>유도량과 유도 단위</h3>
+      <p>기본량을 조합하여 나타내는 물리량을 <strong>유도량</strong>이라고 합니다.</p>
+      <table>
+        <thead>
+          <tr><th>유도량</th><th>단위</th><th>조합 원리</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>넓이 / 부피</td><td>m², m³</td><td>길이의 거듭제곱</td></tr>
+          <tr><td>속력</td><td>m/s</td><td>거리(길이) ÷ 시간</td></tr>
+          <tr><td>밀도</td><td>kg/m³</td><td>질량 ÷ 부피</td></tr>
+        </tbody>
+      </table>
+
+      <h3>접두어의 활용</h3>
+      <p>매우 크거나 작은 수치를 간결하게 표현하기 위해 사용합니다.</p>
+      <div class="two-col">
+        <div class="example"><strong>킬로 (k):</strong> 10³배 (1km = 1,000m)</div>
+        <div class="example"><strong>센티 (c) / 밀리 (m):</strong> 10⁻²배 / 10⁻³배</div>
+      </div>
+
+      <h3>자연 현상의 단위 표현</h3>
+      <p>일상에서 접하는 기상 정보 속에도 다양한 과학적 단위가 숨어 있습니다.</p>
+      <div class="notice">
+        • 기온(°C): 온도 지표 | • 강수량(mm): 길이 지표 | • 풍속(m/s): 속력 지표
+      </div>
+    </section>
+
+    <!-- 3. 일상과 연결하기 -->
+    <section id="sec-daily" class="section-card">
+      <h2>3. 일상과 연결하기</h2>
+      
+      <div class="activity-step">
+        <strong>활동 1. 정성적 표현을 정량적(단위) 표현으로 바꾸기</strong>
+        <p>추상적인 표현을 숫자가 포함된 단위 표현으로 구체화해 봅시다.</p>
+        <ul>
+          <li>“학교가 여기서 아주 <strong>가까워</strong>.” → 약 <span class="fill"></span> m 정도야.</li>
+          <li>“라면 물이 <strong>금방</strong> 끓어.” → 약 <span class="fill"></span> 초(s)면 끓어.</li>
+          <li>“짐이 너무 <strong>무거워</strong>.” → 약 <span class="fill"></span> kg이나 돼.</li>
+        </ul>
+      </div>
+
+      <div class="activity-step">
+        <strong>활동 2. 뉴스 속 단위 오류 사례 탐구</strong>
+        <button class="case-button" onclick="toggleCase('newsFull')">
+          <strong>[뉴스] 일본 가려다 2억 7천만 원 카드 결제 내역에 ‘헉’…무슨 일?</strong>
+        </button>
+        <div id="newsFull" class="case-detail">
+          최근 한 네티즌이 항공권 결제 과정에서 거액의 오류를 겪은 사건이 온라인 커뮤니티에 알려져 화제를 모으고 있다. <br><br>
+          지난 19일 네이버 일본여행 동호회 ‘네일동’에는 한 네티즌이 친구 A씨가 일본여행을 가려고 결제를 했는데 2억원이 넘는 항공권 결제가 됐다는 내용의 게시글을 올렸다. <br><br>
+          해당 글에 따르면 A씨는 1월 7일 삿포로행 항공권을 진에어 인·제주항공 아웃으로 예약하며 결제했다. 그런데 결제 후 다음 날인 8일 영문명 기입이 잘못됐다고 연락을 받았다. <br><br>
+          진에어는 미결제 처리, 제주항공은 승인 취소로 처리해주기로 마무리됐다. 그러나 19일 카드 내역을 확인한 A씨는 제주항공에서 약 2억7178만3200원이 승인 처리된 사실을 보고 큰 충격을 받았다. <br><br>
+          사건 발생 하루 뒤 카드사, 항공사, 여행사에 확인한 결과 카드사 측 실수였던 것으로 드러났다. 제주항공에서 실제 취소 승인 요청한 금액은 18만6000원이었으나, 카드사 항공매출 담당자가 <strong>달러 단위와 원화 단위를 혼동하면서 시스템상 달러 칸에 잘못 입력한 것</strong>이 원인이었다. 이후 2억원이 넘는 결제 내역은 사라졌다.
+        </div>
+      </div>
+
+      <div class="activity-step">
+        <strong>활동 3. 사고 예방 시스템 제안하기</strong>
+        <p>위 뉴스 사례와 같은 단위 혼동 사고를 막기 위한 창의적인 아이디어를 제안해 보세요.</p>
+        <div class="chips">
+          <span class="chip">단위 자동 변환 SW</span>
+          <span class="chip">단위별 색상 지정제</span>
+          <span class="chip">결제 전 단위 재확인 팝업</span>
+          <span class="chip">2인 1조 단위 교차 점검</span>
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <strong>오늘의 핵심 정리</strong>
+        <ul style="margin-bottom: 0;">
+          <li>기본량은 측정의 가장 기초가 되는 7가지 물리량이다.</li>
+          <li>유도량은 기본량의 곱셈과 나눗셈으로 정의된다.</li>
+          <li>정확한 단위 사용은 소통의 오류를 줄이고 안전을 지키는 과학의 기본이다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4. 형성평가 -->
+    <section class="quiz-card">
+      <h2>4. 형성평가</h2>
+      
+      <!-- 객관식 1 -->
+      <div class="question" data-answer="4">
+        <strong>Q1.</strong> 다음 중 과학의 7가지 '기본량'에 해당하지 않는 것은?
+        <div class="options">
+          <label><input type="radio" name="q1" value="1"> ① 길이</label>
+          <label><input type="radio" name="q1" value="2"> ② 시간</label>
+          <label><input type="radio" name="q1" value="3"> ③ 물질량</label>
+          <label><input type="radio" name="q1" value="4"> ④ 속력</label>
+        </div>
+      </div>
+
+      <!-- 객관식 2 -->
+      <div class="question" data-answer="4">
+        <strong>Q2.</strong> 국제 표준 단위계(SI)에서 질량의 기본 단위로 사용하는 것은?
+        <div class="options">
+          <label><input type="radio" name="q2" value="1"> ① g (그램)</label>
+          <label><input type="radio" name="q2" value="2"> ② lb (파운드)</label>
+          <label><input type="radio" name="q2" value="3"> ③ mg (밀리그램)</label>
+          <label><input type="radio" name="q2" value="4"> ④ kg (킬로그램)</label>
+        </div>
+      </div>
+
+      <!-- 객관식 3 -->
+      <div class="question" data-answer="2">
+        <strong>Q3.</strong> 다음 중 유도량과 그 단위의 연결이 옳은 것은?
+        <div class="options">
+          <label><input type="radio" name="q3" value="1"> ① 넓이 - m</label>
+          <label><input type="radio" name="q3" value="2"> ② 부피 - m³</label>
+          <label><input type="radio" name="q3" value="3"> ③ 밀도 - m/s</label>
+          <label><input type="radio" name="q3" value="4"> ④ 온도 - °C</label>
+        </div>
+      </div>
+
+      <!-- 객관식 4 -->
+      <div class="question" data-answer="1">
+        <strong>Q4.</strong> 접두어 '킬로(k)'가 의미하는 배수는 얼마인가?
+        <div class="options">
+          <label><input type="radio" name="q4" value="1"> ① 1,000배 (10³)</label>
+          <label><input type="radio" name="q4" value="2"> ② 100배 (10²)</label>
+          <label><input type="radio" name="q4" value="3"> ③ 0.1배 (10⁻¹)</label>
+          <label><input type="radio" name="q4" value="4"> ④ 0.001배 (10⁻³)</label>
+        </div>
+      </div>
+
+      <!-- 객관식 5 -->
+      <div class="question" data-answer="3">
+        <strong>Q5.</strong> 다음 중 일기 예보에서 '풍속'을 나타낼 때 주로 사용하는 단위는?
+        <div class="options">
+          <label><input type="radio" name="q5" value="1"> ① mm</label>
+          <label><input type="radio" name="q5" value="2"> ② %</label>
+          <label><input type="radio" name="q5" value="3"> ③ m/s</label>
+          <label><input type="radio" name="q5" value="4"> ④ hPa</label>
+        </div>
+      </div>
+
+      <!-- 주관식 1 -->
+      <div class="question">
+        <strong>Q6. [주관식]</strong> 기본량을 조합하여 나타내는 물리량을 무엇이라고 하는지 쓰시오.
+        <input type="text" id="q6_input" class="short-answer" placeholder="정답을 입력하세요">
+      </div>
+
+      <div class="btn-row">
+        <button class="main-btn" onclick="gradeQuiz()">채점하기</button>
+        <button class="secondary" onclick="resetQuiz()">다시 풀기</button>
+      </div>
+      <div id="resultBox" class="result"></div>
+    </section>
+
+    <div class="footer-card">
+      날아라 물리 통합과학 학습자료 | © 동북고등학교 강현식
+    </div>
+  </main>
+
+  <script>
+    function toggleCase(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('show');
+    }
+
+    function gradeQuiz() {
+      const objAnswers = { q1: '4', q2: '4', q3: '2', q4: '1', q5: '3' };
+      const subAnswer = "유도량";
+      
+      let score = 0;
+      let total = 6;
+      let feedback = [];
+
+      Object.entries(objAnswers).forEach(([name, answer], idx) => {
+        const checked = document.querySelector(`input[name="${name}"]:checked`);
+        if (checked && checked.value === answer) {
+          score++;
+          feedback.push(`${idx+1}번: O`);
+        } else {
+          feedback.push(`${idx+1}번: X (정답 ${answer}번)`);
+        }
+      });
+
+      const q6Input = document.getElementById('q6_input').value.trim();
+      if (q6Input === subAnswer) {
+        score++;
+        feedback.push(`6번: O`);
+      } else {
+        feedback.push(`6번: X (정답: ${subAnswer})`);
+      }
+
+      const box = document.getElementById('resultBox');
+      box.className = 'result show ' + (score >= 5 ? 'good' : 'mid');
+      
+      let comment = "";
+      if(score === total) comment = "만점입니다! 과학의 기초 개념을 완벽히 이해했군요.";
+      else if(score >= 4) comment = "잘했습니다. 틀린 부분만 다시 한번 확인해 보세요.";
+      else comment = "학습 내용을 다시 복습해 봅시다. 특히 단위의 정의를 확인해 보세요.";
+
+      box.textContent = `결과: ${score} / ${total}\n[채점 내역]\n${feedback.join(' | ')}\n\n${comment}`;
+    }
+
+    function resetQuiz() {
+      document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+      document.getElementById('q6_input').value = "";
+      const box = document.getElementById('resultBox');
+      box.className = 'result';
+      box.textContent = '';
+    }
+  </script>
+</body>
+</html>
