@@ -304,19 +304,48 @@
     .footer-card {
       color: var(--sub);
       font-size: 0.94rem;
+      text-align: center;
     }
-
+    /* 분류 게임 */
+    .classify-grid-s { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; margin-top:16px; }
+    .classify-card-s { border:2px solid #e2e8f0; border-radius:14px; padding:13px; background:#f8fafc; font-size:0.92rem; text-align:center; }
+    .c-btns-s { display:flex; flex-direction:column; gap:6px; margin-top:10px; }
+    .c-btn-s { padding:6px 4px; border-radius:8px; border:1px solid #cbd5e1; background:white; cursor:pointer; font-size:0.82rem; font-weight:700; transition:all 0.15s; }
+    .c-btn-s:hover { background:#f1f5f9; }
+    .c-btn-s.sel-micro  { background:#dbeafe; border-color:#3b82f6; color:#1e40af; }
+    .c-btn-s.sel-human  { background:#d1fae5; border-color:#10b981; color:#065f46; }
+    .c-btn-s.sel-macro  { background:#fde8d8; border-color:#f97316; color:#7c2d12; }
+    .classify-card-s.correct { border-color:#10b981; background:#f0fdf4; }
+    .classify-card-s.wrong   { border-color:#ef4444; background:#fff1f2; }
+    .s-hint { font-size:0.8rem; margin-top:6px; display:none; color:#475569; text-align:left; }
+    .s-hint.show { display:block; }
+    /* 시간 순서 게임 */
+    .time-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin-top:16px; }
+    .time-card { border:2px solid #e2e8f0; border-radius:14px; padding:14px; background:#f8fafc; font-size:0.93rem; }
+    .time-card .rank-select { width:100%; margin-top:8px; padding:7px 10px; border-radius:8px; border:1px solid #cbd5e1; font-size:0.95rem; font-family:inherit; background:white; cursor:pointer; }
+    .time-card.correct { border-color:#10b981; background:#f0fdf4; }
+    .time-card.wrong   { border-color:#ef4444; background:#fff1f2; }
+    .t-fb { font-size:0.82rem; margin-top:6px; display:none; color:#475569; }
+    .t-fb.show { display:block; }
+    .illust-center { display:flex; justify-content:center; margin:18px 0 6px; }
     @media (max-width: 860px) {
       .concept-grid, .two-col {
         grid-template-columns: 1fr;
       }
+    }
+    @media print {
+      button { display: none !important; }
+      a[href="index.html"] { display: none !important; }
     }
   </style>
 </head>
 <body>
   <header>
     <div class="wrap">
-      <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:0.88rem;margin-bottom:14px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,0.15);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">← 목록으로</a>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:0.88rem;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,0.15);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">← 목록으로</a>
+        <button onclick="window.print()" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.9);font-size:0.88rem;padding:5px 14px;border-radius:999px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.35);cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">🖨 PDF로 저장하기</button>
+      </div>
       <div class="badge">통합과학 1 · 과학의 기초</div>
       <h1>자연의 기술</h1>
       <p>시간과 공간의 규모를 이해하고, 자연을 다양한 크기에서 바라보는 힘을 길러 봅시다.</p>
@@ -347,10 +376,83 @@
           </div>
         </div>
       </div>
+      <!-- 크기 규모 스케일 SVG -->
+      <div class="illust-center">
+        <svg viewBox="0 0 520 130" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;" aria-label="자연의 크기 규모 스케일">
+          <!-- 배경 그라데이션 바 -->
+          <defs>
+            <linearGradient id="scaleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#dbeafe"/>
+              <stop offset="50%"  stop-color="#d1fae5"/>
+              <stop offset="100%" stop-color="#fde8d8"/>
+            </linearGradient>
+          </defs>
+          <rect x="10" y="52" width="500" height="16" rx="8" fill="url(#scaleGrad)"/>
+          <!-- 화살표 양끝 -->
+          <polygon points="6,60 16,54 16,66" fill="#3b82f6"/>
+          <polygon points="514,60 504,54 504,66" fill="#f97316"/>
+
+          <!-- 미시세계 항목들 -->
+          <circle cx="32"  cy="60" r="4"  fill="#1d4ed8"/>
+          <line x1="32" y1="52" x2="32" y2="36" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="32"  y="30" font-size="10" fill="#1e40af" text-anchor="middle" font-family="sans-serif">원자</text>
+          <text x="32"  y="20" font-size="9"  fill="#64748b" text-anchor="middle" font-family="sans-serif">~0.1 nm</text>
+
+          <circle cx="80"  cy="60" r="5"  fill="#2563eb"/>
+          <line x1="80" y1="52" x2="80" y2="36" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="80"  y="30" font-size="10" fill="#1e40af" text-anchor="middle" font-family="sans-serif">바이러스</text>
+          <text x="80"  y="20" font-size="9"  fill="#64748b" text-anchor="middle" font-family="sans-serif">~100 nm</text>
+
+          <circle cx="140" cy="60" r="7"  fill="#3b82f6"/>
+          <line x1="140" y1="68" x2="140" y2="84" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="140" y="94" font-size="10" fill="#1e40af" text-anchor="middle" font-family="sans-serif">세균</text>
+          <text x="140" y="106" font-size="9" fill="#64748b" text-anchor="middle" font-family="sans-serif">~1 μm</text>
+
+          <!-- 인간 규모 -->
+          <circle cx="250" cy="60" r="14" fill="#0f766e"/>
+          <line x1="250" y1="46" x2="250" y2="30" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="250" y="24" font-size="11" fill="#065f46" text-anchor="middle" font-weight="700" font-family="sans-serif">사람</text>
+          <text x="250" y="14" font-size="9"  fill="#64748b" text-anchor="middle" font-family="sans-serif">~1.7 m</text>
+
+          <!-- 거시세계 항목들 -->
+          <circle cx="360" cy="60" r="20" fill="#f97316" opacity="0.75"/>
+          <line x1="360" y1="80" x2="360" y2="96" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="360" y="106" font-size="10" fill="#c2410c" text-anchor="middle" font-family="sans-serif">지구</text>
+          <text x="360" y="118" font-size="9"  fill="#64748b" text-anchor="middle" font-family="sans-serif">~12,700 km</text>
+
+          <circle cx="450" cy="60" r="28" fill="#ea580c" opacity="0.6"/>
+          <line x1="450" y1="32" x2="450" y2="16" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="450" y="10" font-size="10" fill="#c2410c" text-anchor="middle" font-family="sans-serif">태양</text>
+          <text x="450" y="0"  font-size="9"  fill="#64748b" text-anchor="middle" font-family="sans-serif">~139만 km</text>
+
+          <!-- 레이블 -->
+          <text x="80"  y="126" font-size="11" fill="#1e40af" text-anchor="middle" font-weight="700" font-family="sans-serif">← 미시세계</text>
+          <text x="250" y="126" font-size="11" fill="#065f46" text-anchor="middle" font-weight="700" font-family="sans-serif">인간 규모</text>
+          <text x="420" y="126" font-size="11" fill="#c2410c" text-anchor="middle" font-weight="700" font-family="sans-serif">거시세계 →</text>
+        </svg>
+      </div>
+
       <div class="lead-box">
         <strong>생각 질문</strong><br />
         너무 작아서 맨눈으로 볼 수 없는 것은 무엇이 있을까? 아주 멀리 있어서 실제보다 작게 보이는 것은 무엇이 있을까?
       </div>
+    </section>
+
+    <!-- 미시/거시 분류 게임 -->
+    <section class="section-card">
+      <h2>🎮 미시세계? 거시세계? — 규모 분류 게임</h2>
+      <p>각 대상이 어느 규모에 해당하는지 골라 보세요.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px;font-size:0.88rem;">
+        <span style="background:#dbeafe;border-radius:999px;padding:4px 12px;color:#1e40af;font-weight:700;">🔬 미시세계</span>
+        <span style="background:#d1fae5;border-radius:999px;padding:4px 12px;color:#065f46;font-weight:700;">👤 인간 규모</span>
+        <span style="background:#fde8d8;border-radius:999px;padding:4px 12px;color:#7c2d12;font-weight:700;">🌌 거시세계</span>
+      </div>
+      <div class="classify-grid-s" id="scaleClassifyGrid"></div>
+      <div class="btn-row">
+        <button class="action" onclick="checkScaleClassify()">결과 확인</button>
+        <button class="action secondary" onclick="resetScaleClassify()">다시하기</button>
+      </div>
+      <div id="scaleClassifyScore" style="display:none;margin-top:14px;padding:14px 18px;border-radius:14px;font-weight:700;font-size:1.05rem;"></div>
     </section>
 
     <section class="section-card">
@@ -446,6 +548,18 @@
       </div>
     </section>
 
+    <!-- 시간 규모 순서 맞추기 -->
+    <section class="section-card">
+      <h2>⏱ 시간 규모 순서 맞추기</h2>
+      <p>각 현상이 일어나는 시간을 짧은 것(1)부터 긴 것(6)까지 순서대로 번호를 골라 보세요.</p>
+      <div class="time-grid" id="timeOrderGrid"></div>
+      <div class="btn-row">
+        <button class="action" onclick="checkTimeOrder()">결과 확인</button>
+        <button class="action secondary" onclick="resetTimeOrder()">다시하기</button>
+      </div>
+      <div id="timeOrderScore" style="display:none;margin-top:14px;padding:14px 18px;border-radius:14px;font-weight:700;font-size:1.05rem;"></div>
+    </section>
+
     <section class="quiz-card">
       <h2>4. 형성평가</h2>
       <p>문제를 풀고 <strong>채점하기</strong>를 누르세요.</p>
@@ -522,11 +636,129 @@
     </section>
 
     <section class="footer-card">
-      동북고등학교 통합과학 학생용 수업 자료입니다.<br>copyright © 날아라 물리 강현식
+      날아라 물리 통합과학 학습자료 | © 동북고등학교 강현식
     </section>
   </main>
 
   <script>
+    /* ─── 미시/거시 분류 게임 ─── */
+    const scaleItems = [
+      { name:"원자",    icon:"⚛️",  answer:"micro",  hint:"크기 약 0.1 nm — 미시세계입니다." },
+      { name:"바이러스",icon:"🦠",  answer:"micro",  hint:"크기 약 100 nm — 미시세계입니다." },
+      { name:"세균",    icon:"🔬",  answer:"micro",  hint:"크기 약 1~10 μm — 미시세계입니다." },
+      { name:"세포",    icon:"🧫",  answer:"micro",  hint:"크기 약 10~100 μm — 미시세계입니다." },
+      { name:"개미",    icon:"🐜",  answer:"human",  hint:"크기 약 1~5 mm — 맨눈으로 볼 수 있어요." },
+      { name:"사람",    icon:"👤",  answer:"human",  hint:"크기 약 1.7 m — 인간 규모입니다." },
+      { name:"건물",    icon:"🏢",  answer:"human",  hint:"크기 수십 m — 인간 규모입니다." },
+      { name:"지구",    icon:"🌍",  answer:"macro",  hint:"직경 약 12,700 km — 거시세계입니다." },
+      { name:"태양",    icon:"⭐",  answer:"macro",  hint:"직경 약 139만 km — 거시세계입니다." },
+      { name:"은하",    icon:"🌌",  answer:"macro",  hint:"수천억 개의 별로 이루어진 거시세계입니다." },
+    ];
+
+    function buildScaleClassify() {
+      document.getElementById('scaleClassifyGrid').innerHTML = scaleItems.map((d, i) => `
+        <div class="classify-card-s" id="sc${i}">
+          <div style="font-size:1.8rem;">${d.icon}</div>
+          <div style="font-weight:700;margin-top:4px;">${d.name}</div>
+          <div class="c-btns-s">
+            <button class="c-btn-s" id="sc${i}_m" onclick="selScale(${i},'micro')">🔬 미시</button>
+            <button class="c-btn-s" id="sc${i}_h" onclick="selScale(${i},'human')">👤 인간</button>
+            <button class="c-btn-s" id="sc${i}_g" onclick="selScale(${i},'macro')">🌌 거시</button>
+          </div>
+          <div class="s-hint" id="sc${i}_hint">${d.hint}</div>
+        </div>`).join('');
+    }
+
+    function selScale(i, choice) {
+      ['micro','human','macro'].forEach(c => {
+        const key = c === 'micro' ? 'm' : c === 'human' ? 'h' : 'g';
+        document.getElementById(`sc${i}_${key}`).className = 'c-btn-s' + (choice === c ? ` sel-${c}` : '');
+      });
+      document.getElementById(`sc${i}`).dataset.choice = choice;
+    }
+
+    function checkScaleClassify() {
+      let correct = 0;
+      scaleItems.forEach((d, i) => {
+        const card = document.getElementById(`sc${i}`);
+        const choice = card.dataset.choice;
+        if (!choice) return;
+        if (choice === d.answer) { card.className = 'classify-card-s correct'; correct++; }
+        else { card.className = 'classify-card-s wrong'; }
+        document.getElementById(`sc${i}_hint`).classList.add('show');
+      });
+      const answered = scaleItems.filter((_,i) => document.getElementById(`sc${i}`).dataset.choice).length;
+      const box = document.getElementById('scaleClassifyScore');
+      box.style.display = 'block';
+      box.style.background = correct === scaleItems.length ? '#ecfdf5' : '#eff6ff';
+      box.style.border = `1px solid ${correct === scaleItems.length ? '#86efac' : '#93c5fd'}`;
+      box.style.color = correct === scaleItems.length ? '#14532d' : '#1e3a8a';
+      box.textContent = `${answered}개 중 ${correct}개 정답! ${correct === scaleItems.length ? '🎉 완벽해요!' : '힌트를 참고해 보세요.'}`;
+    }
+
+    function resetScaleClassify() {
+      buildScaleClassify();
+      document.getElementById('scaleClassifyScore').style.display = 'none';
+    }
+
+    /* ─── 시간 규모 순서 맞추기 ─── */
+    const timeEvents = [
+      { event:"번개가 번쩍이는 순간", order:1, desc:"약 1 ms (0.001초)" },
+      { event:"눈을 한 번 깜빡이는 시간", order:2, desc:"약 0.3~0.4초" },
+      { event:"심장이 한 번 뛰는 시간", order:3, desc:"약 0.8~1초" },
+      { event:"하루(1일)", order:4, desc:"86,400초 (24시간)" },
+      { event:"사람의 일생", order:5, desc:"약 70~80년" },
+      { event:"별의 일생", order:6, desc:"약 10억~100억 년" },
+    ];
+
+    function buildTimeOrder() {
+      const shuffled = [...timeEvents].sort(() => Math.random() - 0.5);
+      document.getElementById('timeOrderGrid').innerHTML = shuffled.map((d, i) => `
+        <div class="time-card" id="tc${i}" data-correct="${d.order}">
+          <div style="font-size:0.95rem;font-weight:600;line-height:1.5;">${d.event}</div>
+          <select class="rank-select" id="ts${i}">
+            <option value="">순서 선택</option>
+            ${[1,2,3,4,5,6].map(n => `<option value="${n}">${n}번째</option>`).join('')}
+          </select>
+          <div class="t-fb" id="tf${i}"></div>
+        </div>`).join('');
+    }
+
+    function checkTimeOrder() {
+      let correct = 0, answered = 0;
+      for (let i = 0; i < timeEvents.length; i++) {
+        const card = document.getElementById(`tc${i}`);
+        const sel = document.getElementById(`ts${i}`).value;
+        const fb = document.getElementById(`tf${i}`);
+        if (!sel) continue;
+        answered++;
+        const correctOrder = parseInt(card.dataset.correct);
+        const correctEvent = timeEvents.find(e => e.order === correctOrder);
+        if (parseInt(sel) === correctOrder) {
+          card.className = 'time-card correct'; correct++;
+          fb.className = 't-fb show'; fb.textContent = `✅ 정답! ${correctEvent.desc}`;
+        } else {
+          card.className = 'time-card wrong';
+          fb.className = 't-fb show'; fb.textContent = `❌ 정답: ${correctOrder}번째 — ${correctEvent.desc}`;
+        }
+      }
+      const box = document.getElementById('timeOrderScore');
+      box.style.display = 'block';
+      box.style.background = correct === timeEvents.length ? '#ecfdf5' : '#eff6ff';
+      box.style.border = `1px solid ${correct === timeEvents.length ? '#86efac' : '#93c5fd'}`;
+      box.style.color = correct === timeEvents.length ? '#14532d' : '#1e3a8a';
+      box.textContent = `${answered}개 중 ${correct}개 정답! ${correct === timeEvents.length ? '🎉 시간 감각 완벽!' : '정답과 단위 크기를 다시 비교해 보세요.'}`;
+    }
+
+    function resetTimeOrder() {
+      buildTimeOrder();
+      document.getElementById('timeOrderScore').style.display = 'none';
+    }
+
+    /* ─── 초기화 ─── */
+    buildScaleClassify();
+    buildTimeOrder();
+
     function toggleCase(id) {
       const target = document.getElementById(id);
       target.classList.toggle('show');

@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>과학의 기초_신호와 정보</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --text: #1f2937;
+      --sub: #4b5563;
+      --line: #d1d5db;
+      --accent: #0f766e;
+      --accent-soft: #ccfbf1;
+      --warn-bg: #fff7ed;
+      --warn-line: #f59e0b;
+      --good: #166534;
+      --shadow: 0 10px 28px rgba(0,0,0,0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: linear-gradient(180deg, #eef5ff 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.72;
+    }
+    header {
+      background: linear-gradient(135deg, #1d4ed8 0%, #0f766e 100%);
+      color: white;
+      padding: 28px 20px 34px;
+    }
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 18px 48px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      font-size: 0.92rem;
+      margin-bottom: 12px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+      line-height: 1.25;
+    }
+    header p {
+      margin: 0;
+      color: #e5eefc;
+      font-size: 1.02rem;
+    }
+    .section-card, .quiz-card, .footer-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-top: 22px;
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.35rem;
+      color: var(--primary);
+    }
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.06rem;
+      color: #1e3a8a;
+    }
+    .lead-box {
+      background: var(--primary-soft);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .notice {
+      background: var(--warn-bg);
+      border-left: 5px solid var(--warn-line);
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-top: 14px;
+      color: #7c2d12;
+    }
+    .tip {
+      background: var(--accent-soft);
+      border-left: 5px solid var(--accent);
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-top: 14px;
+      color: #115e59;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .full { grid-column: 1 / -1; }
+    .example, .activity-step, .mini-card, .concept-card, .interactive-box {
+      border: 1px solid #dbe4f0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      background: #f8fafc;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .chip {
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.94rem;
+    }
+    .case-button {
+      width: 100%;
+      text-align: left;
+      background: #f8fafc;
+      color: var(--text);
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .case-button:hover { background: #eff6ff; }
+    .case-button strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent);
+    }
+    .case-detail {
+      display: none;
+      margin-top: 10px;
+      border: 1px solid #dbe4f0;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 14px;
+    }
+    .case-detail.show { display: block; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 11px 12px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 0.97rem;
+    }
+    th {
+      background: #eff6ff;
+      color: #1e3a8a;
+    }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    button.action, .mini-btn {
+      border: none;
+      background: var(--primary);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.98rem;
+      font-weight: 700;
+    }
+    button.secondary { background: #475569; }
+    .mini-btn {
+      padding: 8px 12px;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+    .signal-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .signal-btn {
+      border: 1px solid #cbd5e1;
+      background: white;
+      border-radius: 14px;
+      padding: 14px 12px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 0.96rem;
+    }
+    .signal-btn:hover, .signal-btn.active {
+      background: #eff6ff;
+      border-color: #60a5fa;
+    }
+    .interactive-result {
+      margin-top: 12px;
+      background: white;
+      border: 1px solid #dbe4f0;
+      border-radius: 12px;
+      padding: 14px;
+      min-height: 72px;
+    }
+    .analog-wrap {
+      margin-top: 14px;
+    }
+    .slider-row {
+      display: grid;
+      grid-template-columns: 110px 1fr 70px;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    input[type="range"] { width: 100%; }
+    .meter {
+      height: 18px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .meter-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #60a5fa, #2563eb);
+      width: 0%;
+      transition: width 0.2s ease;
+    }
+    .digital-box {
+      margin-top: 12px;
+      display: inline-block;
+      background: #111827;
+      color: #93c5fd;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-family: Consolas, monospace;
+      font-size: 1.05rem;
+    }
+    .sensor-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .sensor-card {
+      border: 1px solid #dbe4f0;
+      border-radius: 14px;
+      background: white;
+      padding: 14px;
+      cursor: pointer;
+    }
+    .sensor-card:hover, .sensor-card.active {
+      border-color: #60a5fa;
+      background: #eff6ff;
+    }
+    .match-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .match-item {
+      display: block;
+      background: white;
+      border: 1px solid #dbe4f0;
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .match-label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+    .match-item select {
+      margin-top: 4px;
+    }
+    select, textarea, input[type="text"] {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 0.97rem;
+      background: white;
+    }
+    textarea { min-height: 110px; }
+    .quiz-card .question {
+      border: 1px solid #dbe4f0;
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 14px;
+      background: #fcfdff;
+    }
+    .options label {
+      display: block;
+      margin: 8px 0;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .options label:hover { background: #f3f4f6; }
+    .result {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      display: none;
+      white-space: pre-line;
+    }
+    .result.show { display: block; }
+    .result.good { background: #ecfdf5; color: #14532d; border: 1px solid #86efac; }
+    .result.mid { background: #eff6ff; color: #1e3a8a; border: 1px solid #93c5fd; }
+    .small-note {
+      color: var(--sub);
+      font-size: 0.94rem;
+      margin-top: 10px;
+    }
+    @media print {
+      button { display: none !important; }
+      a[href="index.html"] { display: none !important; }
+    }
+    .footer-card {
+      color: var(--sub);
+      font-size: 0.94rem;
+      text-align: center;
+    }
+    /* 분류 게임 */
+    .classify-grid-sig { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-top:16px; }
+    .classify-card-sig { border:2px solid #e2e8f0; border-radius:14px; padding:14px; background:#f8fafc; font-size:0.92rem; }
+    .c-btns-sig { display:flex; gap:8px; margin-top:10px; }
+    .c-btn-sig { flex:1; padding:6px 4px; border-radius:8px; border:1px solid #cbd5e1; background:white; cursor:pointer; font-size:0.85rem; font-weight:700; transition:all 0.15s; }
+    .c-btn-sig:hover { background:#f1f5f9; }
+    .c-btn-sig.sel-signal { background:#dbeafe; border-color:#3b82f6; color:#1e40af; }
+    .c-btn-sig.sel-info   { background:#d1fae5; border-color:#10b981; color:#065f46; }
+    .c-btn-sig.sel-analog  { background:#fef9c3; border-color:#eab308; color:#713f12; }
+    .c-btn-sig.sel-digital { background:#fce7f3; border-color:#ec4899; color:#9d174d; }
+    .classify-card-sig.correct { border-color:#10b981; background:#f0fdf4; }
+    .classify-card-sig.wrong   { border-color:#ef4444; background:#fff1f2; }
+    .sig-hint { font-size:0.82rem; margin-top:6px; display:none; color:#475569; }
+    .sig-hint.show { display:block; }
+    .illust-center { display:flex; justify-content:center; margin:18px 0 6px; }
+    @media (max-width: 900px) {
+      .concept-grid, .two-col, .sensor-grid, .signal-buttons, .match-grid {
+        grid-template-columns: 1fr;
+      }
+      .slider-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:0.88rem;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,0.15);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">← 목록으로</a>
+        <button onclick="window.print()" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.9);font-size:0.88rem;padding:5px 14px;border-radius:999px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.35);cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">🖨 PDF로 저장하기</button>
+      </div>
+      <div class="badge">통합과학 1 · 과학의 기초</div>
+      <h1>신호와 정보</h1>
+      <p>자연의 변화가 어떻게 신호가 되고, 그 신호가 어떻게 정보가 되는지 인터랙티브 활동으로 이해해 봅시다.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="section-card">
+      <h2>1. 생각 열기</h2>
+      <p>옛날 제주에서는 대문 대신 <strong>정낭</strong>을 사용했다. 정낭의 개수와 놓인 방식에 따라 “집에 있음”, “금방 돌아옴”, “멀리 외출 중” 같은 정보를 전달할 수 있었다. 즉, 보이는 상태는 <strong>신호</strong>이고, 그 신호를 해석해 얻은 내용은 <strong>정보</strong>이다.</p>
+
+      <div class="interactive-box">
+        <h3>인터랙션 1 : 정낭 신호 해석기</h3>
+        <p>아래 버튼을 눌러 정낭 신호를 선택하면 그림과 함께 의미가 나타납니다.</p>
+        <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;margin-top:14px;">
+          <div style="flex:0 0 auto;">
+            <svg id="jeongnangSVG" viewBox="0 0 260 145" xmlns="http://www.w3.org/2000/svg" style="width:220px;height:auto;border-radius:14px;border:1px solid #e5e7eb;" aria-label="정낭 그림">
+              <rect x="0" y="0" width="260" height="145" rx="14" fill="#fef9f0"/>
+              <rect x="0" y="118" width="260" height="27" rx="0" fill="#d4b483" opacity="0.55"/>
+              <!-- 기둥 -->
+              <rect x="50" y="12" width="16" height="110" rx="6" fill="#92400e"/>
+              <rect x="194" y="12" width="16" height="110" rx="6" fill="#92400e"/>
+              <!-- 막대 (JS로 on/off) -->
+              <rect id="jstick1" x="66" y="40" width="128" height="13" rx="5" fill="#b45309" display="none"/>
+              <rect id="jstick2" x="66" y="66" width="128" height="13" rx="5" fill="#b45309" display="none"/>
+              <rect id="jstick3" x="66" y="92" width="128" height="13" rx="5" fill="#b45309" display="none"/>
+              <text x="130" y="140" font-size="11" fill="#78350f" text-anchor="middle" font-family="sans-serif" font-weight="600">제주 정낭</text>
+            </svg>
+          </div>
+          <div style="flex:1;min-width:190px;">
+            <div class="signal-buttons">
+              <button class="signal-btn" onclick="showJeongnang(0)">막대 0개</button>
+              <button class="signal-btn" onclick="showJeongnang(1)">막대 1개</button>
+              <button class="signal-btn" onclick="showJeongnang(2)">막대 2개</button>
+              <button class="signal-btn" onclick="showJeongnang(3)">막대 3개</button>
+            </div>
+            <div id="jeongnangResult" class="interactive-result" style="margin-top:10px;">정낭 신호를 선택하면 그 의미가 나타납니다.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:16px;">
+        <div class="example">
+          <button class="case-button" onclick="toggleCase('openCase1')">
+            <strong>일상생활의 신호</strong>
+            우리가 매일 만나는 신호를 떠올려 보자.
+          </button>
+          <div id="openCase1" class="case-detail">
+            교통 신호등, 학교 종소리, 엘리베이터 도착 알림음, 휴대전화 진동, 자동차 방향 지시등은 모두 사람들이 해석하여 행동에 이용하는 신호이다.
+          </div>
+        </div>
+        <div class="example">
+          <button class="case-button" onclick="toggleCase('openCase2')">
+            <strong>자연의 신호</strong>
+            자연에서도 다양한 신호를 받을 수 있다.
+          </button>
+          <div id="openCase2" class="case-detail">
+            번개 뒤에 들리는 천둥, 해가 뜨고 지는 변화, 기온 변화, 동물의 울음소리, 빛의 반사, 몸에서 나오는 열은 모두 자연에서 전달되는 신호이다.
+          </div>
+        </div>
+      </div>
+
+      <!-- 신호 → 정보 흐름 SVG -->
+      <div class="illust-center" style="margin-top:18px;">
+        <svg viewBox="0 0 520 85" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;width:100%;" aria-label="신호에서 정보가 되는 과정">
+          <!-- 신호 -->
+          <rect x="8" y="12" width="130" height="60" rx="14" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+          <text x="73" y="37" font-size="13" fill="#1e40af" text-anchor="middle" font-weight="800" font-family="sans-serif">신호</text>
+          <text x="73" y="55" font-size="10.5" fill="#1e40af" text-anchor="middle" font-family="sans-serif">자연의 변화 · 전달</text>
+          <!-- 화살표 1 -->
+          <line x1="138" y1="42" x2="188" y2="42" stroke="#94a3b8" stroke-width="2"/>
+          <polygon points="188,42 180,37 180,47" fill="#94a3b8"/>
+          <!-- 측정/분석 -->
+          <rect x="193" y="12" width="134" height="60" rx="14" fill="#fef9c3" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="260" y="37" font-size="13" fill="#713f12" text-anchor="middle" font-weight="800" font-family="sans-serif">측정 · 분석</text>
+          <text x="260" y="55" font-size="10.5" fill="#713f12" text-anchor="middle" font-family="sans-serif">센서 · 해석 · 처리</text>
+          <!-- 화살표 2 -->
+          <line x1="327" y1="42" x2="377" y2="42" stroke="#94a3b8" stroke-width="2"/>
+          <polygon points="377,42 369,37 369,47" fill="#94a3b8"/>
+          <!-- 정보 -->
+          <rect x="382" y="12" width="130" height="60" rx="14" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+          <text x="447" y="37" font-size="13" fill="#065f46" text-anchor="middle" font-weight="800" font-family="sans-serif">정보</text>
+          <text x="447" y="55" font-size="10.5" fill="#065f46" text-anchor="middle" font-family="sans-serif">유용한 자료 · 의미</text>
+        </svg>
+      </div>
+
+      <div class="lead-box">
+        <strong>생각 질문</strong><br />
+        일상생활에서 사람들이 사용하는 신호에는 어떤 것이 있을까? 자연의 신호에서 정보를 얻는 예는 무엇이 있을까?
+      </div>
+    </section>
+
+    <!-- 신호 vs 정보 분류 게임 -->
+    <section class="section-card">
+      <h2>🎮 신호일까? 정보일까? — 분류 게임</h2>
+      <p>각 항목이 <strong style="color:#1e40af;">신호</strong>인지 <strong style="color:#065f46;">정보</strong>인지 골라 보세요.</p>
+      <div class="classify-grid-sig" id="sigInfoGrid"></div>
+      <div class="btn-row">
+        <button class="action" onclick="checkSigInfo()">결과 확인</button>
+        <button class="action secondary" onclick="resetSigInfo()">다시하기</button>
+      </div>
+      <div id="sigInfoScore" style="display:none;margin-top:14px;padding:14px 18px;border-radius:14px;font-weight:700;font-size:1.05rem;"></div>
+    </section>
+
+    <section class="section-card">
+      <h2>2. 핵심 개념 익히기</h2>
+      <div class="concept-grid">
+        <article class="concept-card">
+          <h3>(1) 신호와 정보</h3>
+          <p><strong>신호</strong>는 자연의 변화가 전달되는 것이고, <strong>정보</strong>는 그 신호를 측정하고 분석하여 쓸모 있는 자료로 만든 것이다.</p>
+          <table>
+            <thead><tr><th>신호</th><th>분석하여 얻는 정보</th></tr></thead>
+            <tbody>
+              <tr><td>빛</td><td>물체의 모양과 위치</td></tr>
+              <tr><td>번개와 천둥</td><td>번개가 친 곳까지의 거리</td></tr>
+              <tr><td>체온 변화</td><td>건강 상태</td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="concept-card">
+          <h3>(2) 신호를 분석하면 정보가 된다</h3>
+          <p>예를 들어 번개가 친 뒤 천둥이 들릴 때까지의 시간을 재면 번개가 친 곳이 얼마나 떨어져 있는지 어림할 수 있다. 즉, 같은 신호라도 <strong>측정과 분석</strong>을 거치면 정보가 된다.</p>
+          <div class="tip">신호는 그대로 두면 단순한 변화이지만, 해석하면 유용한 정보가 된다.</div>
+        </article>
+
+        <article class="concept-card">
+          <h3>(3) 아날로그와 디지털</h3>
+          <p>자연의 대부분의 신호는 연속적으로 변하며, 이를 <strong>아날로그 신호</strong>라고 한다. 반면 컴퓨터는 0과 1처럼 불연속적인 값을 다루며, 이를 <strong>디지털 신호</strong>라고 한다.</p>
+          <div class="analog-wrap">
+            <div class="slider-row">
+              <strong>온도 변화</strong>
+              <input type="range" id="tempSlider" min="0" max="40" value="18" oninput="updateSignalDemo()" />
+              <span id="tempValue">18℃</span>
+            </div>
+            <div class="meter"><div id="meterFill" class="meter-fill"></div></div>
+            <div class="digital-box">디지털 표시: <span id="digitalTemp">18</span> ℃</div>
+          </div>
+          <div class="small-note">슬라이더를 움직여 연속적인 아날로그 변화와 숫자로 표시된 디지털 정보를 함께 확인해 보자.</div>
+        </article>
+
+        <article class="concept-card">
+          <h3>(4) 센서의 역할</h3>
+          <p>센서는 인간의 감각을 대신하여 빛, 소리, 온도, 압력 같은 아날로그 신호를 감지한 뒤 전기 신호로 바꾸어 준다.</p>
+          <div class="sensor-grid">
+            <div class="sensor-card" onclick="showSensor('light', this)"><strong>광센서</strong><br />빛 감지</div>
+            <div class="sensor-card" onclick="showSensor('sound', this)"><strong>소리 센서</strong><br />소리 감지</div>
+            <div class="sensor-card" onclick="showSensor('temp', this)"><strong>온도 센서</strong><br />온도 감지</div>
+            <div class="sensor-card" onclick="showSensor('pressure', this)"><strong>압력 센서</strong><br />압력 감지</div>
+          </div>
+          <div id="sensorResult" class="interactive-result">센서를 선택하면 쓰임새가 나타납니다.</div>
+        </article>
+
+        <article class="concept-card full">
+          <h3>(5) 정보 처리 시스템과 현대 생활</h3>
+          <p>현대 사회에서는 센서가 신호를 감지하고, 이를 전기 신호로 바꾸고, 저장·전송한 뒤 다시 사람이 이해할 수 있는 형태로 재생한다. 스마트폰, 바코드 스캐너, 초음파 진단기, 적외선 온도계는 모두 이 과정을 활용한다.</p>
+          <table>
+            <thead><tr><th>기술</th><th>사용한 센서 또는 원리</th><th>얻는 정보</th></tr></thead>
+            <tbody>
+              <tr><td>바코드 스캐너</td><td>광센서</td><td>상품 정보</td></tr>
+              <tr><td>터치스크린</td><td>정전 센서</td><td>사용자의 입력</td></tr>
+              <tr><td>초음파 진단기</td><td>소리 센서</td><td>보이지 않는 곳의 상태</td></tr>
+              <tr><td>적외선 온도계</td><td>열 신호 측정</td><td>물체의 온도</td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>3. 나의 삶과 연결하기</h2>
+
+      <div class="activity-step">
+        <strong>활동 1 : 신호 → 정보 짝 맞추기</strong><br />
+        아래 각 상황에 가장 알맞은 정보를 골라 보자.
+        <div class="match-grid">
+          <div class="match-item">
+            <span class="match-label">번개 후 천둥까지의 시간</span>
+            <select id="match1">
+              <option value="">선택</option>
+              <option value="distance">번개가 친 곳까지의 거리</option>
+              <option value="owner">집주인의 부재 여부</option>
+              <option value="rotation">화면 회전 여부</option>
+            </select>
+          </div>
+          <div class="match-item">
+            <span class="match-label">스마트폰 기울기 변화</span>
+            <select id="match2">
+              <option value="">선택</option>
+              <option value="distance">번개가 친 곳까지의 거리</option>
+              <option value="owner">집주인의 부재 여부</option>
+              <option value="rotation">화면 회전 여부</option>
+            </select>
+          </div>
+          <div class="match-item">
+            <span class="match-label">정낭의 개수</span>
+            <select id="match3">
+              <option value="">선택</option>
+              <option value="distance">번개가 친 곳까지의 거리</option>
+              <option value="owner">집주인의 부재 여부</option>
+              <option value="rotation">화면 회전 여부</option>
+            </select>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="mini-btn" onclick="checkMatch()">확인하기</button>
+        </div>
+        <div id="matchResult" class="interactive-result">세 가지 짝을 맞추어 보세요.</div>
+      </div>
+
+      <div class="activity-step" style="margin-top:16px;">
+        <strong>활동 2 : 스마트 기기 속 센서 찾기</strong><br />
+        스마트폰에 들어 있는 센서를 떠올리고, 어떤 기능에 쓰이는지 적어 보자.
+        <table>
+          <thead><tr><th>센서</th><th>기능</th><th>예</th></tr></thead>
+          <tbody>
+            <tr><td>가속도 센서</td><td><input type="text" placeholder="예: 기울기 감지" /></td><td><input type="text" placeholder="예: 화면 자동 회전" /></td></tr>
+            <tr><td>광센서</td><td><input type="text" placeholder="예: 주변 밝기 감지" /></td><td><input type="text" placeholder="예: 화면 밝기 자동 조절" /></td></tr>
+            <tr><td>마이크</td><td><input type="text" placeholder="예: 소리 감지" /></td><td><input type="text" placeholder="예: 음성 인식" /></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="activity-step" style="margin-top:16px;">
+        <strong>활동 3 : 나만의 미래 센서 상상하기</strong><br />
+        앞으로 생기면 좋을 새로운 센서를 상상해 보자.
+        <textarea id="futureSensor" placeholder="예: 공기 질을 실시간으로 분석해 건강 위험을 알려 주는 센서"></textarea>
+        <div class="btn-row">
+          <button class="mini-btn" onclick="showFutureIdea()">아이디어 확인</button>
+        </div>
+        <div id="futureResult" class="interactive-result">센서 아이디어를 입력해 보세요.</div>
+      </div>
+
+      <div class="lead-box">
+        <strong>생각 질문</strong><br />
+        센서가 없다면 스마트 기기의 기능은 어떻게 달라질까? 미래에는 어떤 새로운 센서가 필요할까?
+      </div>
+    </section>
+
+    <!-- 아날로그 vs 디지털 분류 게임 -->
+    <section class="section-card">
+      <h2>🔀 아날로그일까? 디지털일까?</h2>
+      <p>각 예시가 <strong style="color:#713f12;">아날로그 신호</strong>인지 <strong style="color:#9d174d;">디지털 신호</strong>인지 골라 보세요.</p>
+      <div class="classify-grid-sig" id="anaDigGrid"></div>
+      <div class="btn-row">
+        <button class="action" onclick="checkAnaDig()">결과 확인</button>
+        <button class="action secondary" onclick="resetAnaDig()">다시하기</button>
+      </div>
+      <div id="anaDigScore" style="display:none;margin-top:14px;padding:14px 18px;border-radius:14px;font-weight:700;font-size:1.05rem;"></div>
+    </section>
+
+    <section class="quiz-card">
+      <h2>4. 형성평가</h2>
+      <p>문제를 풀고 <strong>채점하기</strong>를 누르세요.</p>
+
+      <div class="question">
+        <strong>1.</strong> 신호의 의미로 가장 알맞은 것은?
+        <div class="options">
+          <label><input type="radio" name="q1" value="1"> ① 측정 결과를 정리한 표</label>
+          <label><input type="radio" name="q1" value="2"> ② 자연의 변화가 전달되는 것</label>
+          <label><input type="radio" name="q1" value="3"> ③ 사람이 만든 모든 데이터</label>
+          <label><input type="radio" name="q1" value="4"> ④ 컴퓨터에 저장된 숫자</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <strong>2.</strong> 정보의 의미로 가장 알맞은 것은?
+        <div class="options">
+          <label><input type="radio" name="q2" value="1"> ① 신호를 측정하고 분석하여 만든 자료</label>
+          <label><input type="radio" name="q2" value="2"> ② 센서의 종류</label>
+          <label><input type="radio" name="q2" value="3"> ③ 전기 신호 그 자체</label>
+          <label><input type="radio" name="q2" value="4"> ④ 자연에서 생기는 모든 변화</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <strong>3.</strong> 아날로그 신호의 특징으로 옳은 것은?
+        <div class="options">
+          <label><input type="radio" name="q3" value="1"> ① 0과 1만 가진다</label>
+          <label><input type="radio" name="q3" value="2"> ② 연속적으로 변한다</label>
+          <label><input type="radio" name="q3" value="3"> ③ 항상 저장이 불가능하다</label>
+          <label><input type="radio" name="q3" value="4"> ④ 숫자로 표시될 수 없다</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <strong>4.</strong> 센서의 역할로 옳은 것은?
+        <div class="options">
+          <label><input type="radio" name="q4" value="1"> ① 신호를 감지하여 전기 신호로 바꾼다</label>
+          <label><input type="radio" name="q4" value="2"> ② 정보를 삭제한다</label>
+          <label><input type="radio" name="q4" value="3"> ③ 데이터를 인쇄한다</label>
+          <label><input type="radio" name="q4" value="4"> ④ 전류의 방향을 바꾼다</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <strong>5.</strong> 다음 중 센서 활용 사례로 가장 적절한 것은?
+        <div class="options">
+          <label><input type="radio" name="q5" value="1"> ① 바코드 스캐너가 상품 정보를 읽는다</label>
+          <label><input type="radio" name="q5" value="2"> ② 공책에 손으로 기록한다</label>
+          <label><input type="radio" name="q5" value="3"> ③ 눈으로만 시간을 추정한다</label>
+          <label><input type="radio" name="q5" value="4"> ④ 종이에 그림을 그린다</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <strong>6.</strong> 신호와 정보의 관계를 한 가지 예를 들어 1~2문장으로 설명해 보자.
+        <div style="margin-top:10px;">
+          <textarea id="essay" placeholder="여기에 서술형 답을 써 보세요."></textarea>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="action" onclick="gradeQuiz()">채점하기</button>
+        <button class="action secondary" onclick="resetQuiz()">다시 풀기</button>
+      </div>
+
+      <div id="resultBox" class="result"></div>
+    </section>
+
+    <section class="footer-card">
+      날아라 물리 통합과학 학습자료 | © 동북고등학교 강현식
+    </section>
+  </main>
+
+  <script>
+    const jeongnangMap = {
+      0: '막대가 없으면 집에 있음을 뜻한다. 보이는 신호를 해석하여 집주인이 집에 있다는 정보를 얻는다.',
+      1: '막대 1개는 금방 돌아온다는 뜻이다. 신호를 통해 부재 시간이 짧다는 정보를 얻는다.',
+      2: '막대 2개는 잠시 외출 중이라는 뜻으로 볼 수 있다. 즉, 곧 돌아올 가능성이 있다는 정보를 준다.',
+      3: '막대 3개는 멀리 외출 중이라는 뜻이다. 신호를 해석하여 집주인이 오랫동안 자리를 비웠다는 정보를 얻는다.'
+    };
+
+    const sensorMap = {
+      light: '광센서는 빛을 감지하여 전기 신호로 바꾼다. 바코드 스캐너, 자동 밝기 조절, 카메라 등에 활용된다.',
+      sound: '소리 센서는 소리의 크기나 변화를 감지한다. 음성 인식, 초음파 진단, 녹음 기능 등에 활용된다.',
+      temp: '온도 센서는 온도 변화를 감지한다. 적외선 온도계, 냉장고 온도 조절, 체온 측정 등에 활용된다.',
+      pressure: '압력 센서는 누르거나 눌리는 힘의 정도를 감지한다. 터치 기능, 압력 측정 장치, 일부 버튼 장치에 활용된다.'
+    };
+
+    function toggleCase(id) {
+      document.getElementById(id).classList.toggle('show');
+    }
+
+    function showJeongnang(count) {
+      document.querySelectorAll('.signal-btn').forEach((btn, idx) => {
+        btn.classList.toggle('active', idx === count);
+      });
+      [1,2,3].forEach(i => {
+        const s = document.getElementById(`jstick${i}`);
+        if (s) s.setAttribute('display', i <= count ? 'block' : 'none');
+      });
+      const labels = ['막대 0개 — 집에 있음','막대 1개 — 금방 돌아옴','막대 2개 — 잠시 외출 중','막대 3개 — 멀리 외출 중'];
+      document.getElementById('jeongnangResult').innerHTML = `<strong>${labels[count]}</strong><br>${jeongnangMap[count]}`;
+    }
+
+    function updateSignalDemo() {
+      const value = Number(document.getElementById('tempSlider').value);
+      document.getElementById('tempValue').textContent = value + '℃';
+      document.getElementById('digitalTemp').textContent = value;
+      document.getElementById('meterFill').style.width = (value / 40 * 100) + '%';
+    }
+
+    function showSensor(type, el) {
+      document.querySelectorAll('.sensor-card').forEach(card => card.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('sensorResult').textContent = sensorMap[type];
+    }
+
+    function checkMatch() {
+      const a = document.getElementById('match1').value === 'distance';
+      const b = document.getElementById('match2').value === 'rotation';
+      const c = document.getElementById('match3').value === 'owner';
+      const result = document.getElementById('matchResult');
+      const score = [a, b, c].filter(Boolean).length;
+      if (score === 3) {
+        result.textContent = '모두 맞았습니다. 같은 신호라도 해석하면 서로 다른 정보가 될 수 있습니다.';
+      } else {
+        result.textContent = `3문항 중 ${score}개 정답입니다. 번개와 천둥 → 거리, 스마트폰 기울기 → 화면 회전, 정낭 → 집주인의 상태를 떠올려 보세요.`;
+      }
+    }
+
+    function showFutureIdea() {
+      const text = document.getElementById('futureSensor').value.trim();
+      const result = document.getElementById('futureResult');
+      if (!text) {
+        result.textContent = '센서 아이디어를 먼저 입력해 보세요.';
+        return;
+      }
+      result.textContent = `좋은 아이디어입니다. 이 센서는 '${text}'와 관련된 신호를 감지하여 새로운 정보를 만들어 줄 수 있습니다.`;
+    }
+
+    function gradeQuiz() {
+      const answers = { q1: '2', q2: '1', q3: '2', q4: '1', q5: '1' };
+      let score = 0;
+      let feedback = [];
+      Object.entries(answers).forEach(([name, answer], idx) => {
+        const checked = document.querySelector(`input[name="${name}"]:checked`);
+        if (checked && checked.value === answer) {
+          score += 1;
+          feedback.push(`${idx + 1}번: 정답`);
+        } else {
+          feedback.push(`${idx + 1}번: 오답`);
+        }
+      });
+
+      const essay = document.getElementById('essay').value.trim();
+      const essayGuide = essay
+        ? '서술형 6번: 신호와 정보가 구분되어 있고, 측정·분석 과정을 예와 함께 설명하면 좋습니다.'
+        : '서술형 6번: 아직 작성하지 않았습니다.';
+
+      const box = document.getElementById('resultBox');
+      box.className = 'result show ' + (score >= 4 ? 'good' : 'mid');
+      box.textContent = `객관식 점수: ${score} / 5\n\n${feedback.join('\n')}\n\n${essayGuide}`;
+    }
+
+    function resetQuiz() {
+      document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+      document.querySelectorAll('textarea').forEach(el => el.value = '');
+      document.querySelectorAll('input[type="text"]').forEach(el => el.value = '');
+      document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+      const box = document.getElementById('resultBox');
+      box.className = 'result';
+      box.textContent = '';
+      document.getElementById('matchResult').textContent = '세 가지 짝을 맞추어 보세요.';
+      document.getElementById('futureResult').textContent = '센서 아이디어를 입력해 보세요.';
+    }
+
+    /* ─── 신호 vs 정보 분류 게임 ─── */
+    const sigInfoItems = [
+      { text:"번개 빛이 번쩍인다",            answer:"signal", hint:"자연의 변화가 전달되는 것 → 신호입니다." },
+      { text:"번개까지 거리 약 3 km",          answer:"info",   hint:"측정·분석을 거쳐 얻은 유용한 자료 → 정보입니다." },
+      { text:"몸에서 열이 느껴진다",            answer:"signal", hint:"체온 변화가 전달되는 것 → 신호입니다." },
+      { text:"체온이 38.5 ℃로 나타난다",       answer:"info",   hint:"측정 결과로 얻은 구체적 수치 → 정보입니다." },
+      { text:"정낭 막대 2개가 걸려 있다",       answer:"signal", hint:"보이는 상태 그 자체 → 신호입니다." },
+      { text:"집주인이 잠시 외출 중이다",       answer:"info",   hint:"신호를 해석하여 얻은 내용 → 정보입니다." },
+      { text:"스마트폰이 기울어진다",           answer:"signal", hint:"가속도 센서가 감지하는 물리적 변화 → 신호입니다." },
+      { text:"화면이 가로 모드로 전환된다",     answer:"info",   hint:"기울기 신호를 분석해 얻은 결과 → 정보입니다." },
+    ];
+
+    function buildSigInfo() {
+      document.getElementById('sigInfoGrid').innerHTML = sigInfoItems.map((d, i) => `
+        <div class="classify-card-sig" id="si${i}">
+          <div style="line-height:1.5;">${d.text}</div>
+          <div class="c-btns-sig">
+            <button class="c-btn-sig" id="si${i}_s" onclick="selSigInfo(${i},'signal')">📡 신호</button>
+            <button class="c-btn-sig" id="si${i}_i" onclick="selSigInfo(${i},'info')">💡 정보</button>
+          </div>
+          <div class="sig-hint" id="si${i}_h">${d.hint}</div>
+        </div>`).join('');
+    }
+
+    function selSigInfo(i, choice) {
+      document.getElementById(`si${i}_s`).className = 'c-btn-sig' + (choice === 'signal' ? ' sel-signal' : '');
+      document.getElementById(`si${i}_i`).className = 'c-btn-sig' + (choice === 'info'   ? ' sel-info'   : '');
+      document.getElementById(`si${i}`).dataset.choice = choice;
+    }
+
+    function checkSigInfo() {
+      let correct = 0;
+      sigInfoItems.forEach((d, i) => {
+        const card = document.getElementById(`si${i}`);
+        const choice = card.dataset.choice;
+        if (!choice) return;
+        if (choice === d.answer) { card.className = 'classify-card-sig correct'; correct++; }
+        else { card.className = 'classify-card-sig wrong'; }
+        document.getElementById(`si${i}_h`).classList.add('show');
+      });
+      const answered = sigInfoItems.filter((_,i) => document.getElementById(`si${i}`).dataset.choice).length;
+      const box = document.getElementById('sigInfoScore');
+      box.style.display = 'block';
+      box.style.background = correct === sigInfoItems.length ? '#ecfdf5' : '#eff6ff';
+      box.style.border = `1px solid ${correct === sigInfoItems.length ? '#86efac' : '#93c5fd'}`;
+      box.style.color = correct === sigInfoItems.length ? '#14532d' : '#1e3a8a';
+      box.textContent = `${answered}개 중 ${correct}개 정답! ${correct === sigInfoItems.length ? '🎉 완벽해요!' : '힌트를 확인해 보세요.'}`;
+    }
+
+    function resetSigInfo() {
+      buildSigInfo();
+      document.getElementById('sigInfoScore').style.display = 'none';
+    }
+
+    /* ─── 아날로그 vs 디지털 게임 ─── */
+    const anaDigItems = [
+      { text:"수은 온도계 눈금이 천천히 올라간다",    answer:"analog",   hint:"연속적으로 변하는 값 → 아날로그입니다." },
+      { text:"스마트폰 화면에 36.5℃라고 표시된다",   answer:"digital",  hint:"숫자로 이산화된 값 → 디지털입니다." },
+      { text:"LP 레코드 홈의 진동이 소리를 만든다",   answer:"analog",   hint:"연속적인 물리적 파동 → 아날로그입니다." },
+      { text:"MP3 파일로 저장된 음악 데이터",         answer:"digital",  hint:"0과 1로 이산화된 정보 → 디지털입니다." },
+      { text:"시계 초침이 부드럽게 돌아간다",         answer:"analog",   hint:"연속적으로 변하는 움직임 → 아날로그입니다." },
+      { text:"디지털 시계에 12:34 표시된다",           answer:"digital",  hint:"숫자로 이산화된 시간 → 디지털입니다." },
+      { text:"마이크가 소리의 파동을 감지한다",        answer:"analog",   hint:"연속적인 소리 파동 → 아날로그입니다." },
+      { text:"음성이 디지털 파일로 변환·저장된다",     answer:"digital",  hint:"디지털 변환(ADC) 후 저장 → 디지털입니다." },
+    ];
+
+    function buildAnaDig() {
+      document.getElementById('anaDigGrid').innerHTML = anaDigItems.map((d, i) => `
+        <div class="classify-card-sig" id="ad${i}">
+          <div style="line-height:1.5;">${d.text}</div>
+          <div class="c-btns-sig">
+            <button class="c-btn-sig" id="ad${i}_a" onclick="selAnaDig(${i},'analog')">〰 아날로그</button>
+            <button class="c-btn-sig" id="ad${i}_d" onclick="selAnaDig(${i},'digital')">01 디지털</button>
+          </div>
+          <div class="sig-hint" id="ad${i}_h">${d.hint}</div>
+        </div>`).join('');
+    }
+
+    function selAnaDig(i, choice) {
+      document.getElementById(`ad${i}_a`).className = 'c-btn-sig' + (choice === 'analog'  ? ' sel-analog'  : '');
+      document.getElementById(`ad${i}_d`).className = 'c-btn-sig' + (choice === 'digital' ? ' sel-digital' : '');
+      document.getElementById(`ad${i}`).dataset.choice = choice;
+    }
+
+    function checkAnaDig() {
+      let correct = 0;
+      anaDigItems.forEach((d, i) => {
+        const card = document.getElementById(`ad${i}`);
+        const choice = card.dataset.choice;
+        if (!choice) return;
+        if (choice === d.answer) { card.className = 'classify-card-sig correct'; correct++; }
+        else { card.className = 'classify-card-sig wrong'; }
+        document.getElementById(`ad${i}_h`).classList.add('show');
+      });
+      const answered = anaDigItems.filter((_,i) => document.getElementById(`ad${i}`).dataset.choice).length;
+      const box = document.getElementById('anaDigScore');
+      box.style.display = 'block';
+      box.style.background = correct === anaDigItems.length ? '#ecfdf5' : '#eff6ff';
+      box.style.border = `1px solid ${correct === anaDigItems.length ? '#86efac' : '#93c5fd'}`;
+      box.style.color = correct === anaDigItems.length ? '#14532d' : '#1e3a8a';
+      box.textContent = `${answered}개 중 ${correct}개 정답! ${correct === anaDigItems.length ? '🎉 완벽해요!' : '힌트를 확인해 보세요.'}`;
+    }
+
+    function resetAnaDig() {
+      buildAnaDig();
+      document.getElementById('anaDigScore').style.display = 'none';
+    }
+
+    /* ─── 초기화 ─── */
+    buildSigInfo();
+    buildAnaDig();
+
+    updateSignalDemo();
+  </script>
+</body>
+</html>

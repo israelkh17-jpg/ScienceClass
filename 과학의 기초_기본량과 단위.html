@@ -323,12 +323,41 @@
         grid-template-columns: 1fr;
       }
     }
+    /* 분류 게임 */
+    .classify-grid-u { display:grid; grid-template-columns:repeat(auto-fill,minmax(175px,1fr)); gap:12px; margin-top:16px; }
+    .classify-card-u { border:2px solid #e2e8f0; border-radius:14px; padding:14px; background:#f8fafc; font-size:0.92rem; }
+    .c-btns-u { display:flex; gap:8px; margin-top:10px; }
+    .c-btn-u { flex:1; padding:6px 3px; border-radius:8px; border:1px solid #cbd5e1; background:white; cursor:pointer; font-size:0.83rem; font-weight:700; transition:all 0.15s; }
+    .c-btn-u:hover { background:#f1f5f9; }
+    .c-btn-u.sel-basic { background:#dbeafe; border-color:#3b82f6; color:#1e40af; }
+    .c-btn-u.sel-derived { background:#fef9c3; border-color:#eab308; color:#713f12; }
+    .classify-card-u.correct { border-color:#10b981; background:#f0fdf4; }
+    .classify-card-u.wrong { border-color:#ef4444; background:#fff1f2; }
+    .u-hint { font-size:0.82rem; margin-top:6px; display:none; color:#475569; }
+    .u-hint.show { display:block; }
+    /* 접두어 챌린지 */
+    .prefix-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; margin-top:16px; }
+    .prefix-item { border:1px solid #dbe4f0; border-radius:14px; padding:16px 18px; background:#f8fafc; }
+    .p-q { font-weight:700; font-size:0.97rem; margin-bottom:10px; color:var(--primary); }
+    .prefix-item input[type=text] { width:100%; border:1px solid #cbd5e1; border-radius:8px; padding:8px 12px; font-size:0.97rem; font-family:inherit; background:white; outline:none; }
+    .prefix-item input:focus { border-color:var(--primary); }
+    .p-fb { margin-top:8px; font-size:0.9rem; display:none; padding:6px 12px; border-radius:8px; }
+    .p-fb.ok { display:block; background:#ecfdf5; color:#14532d; border:1px solid #86efac; }
+    .p-fb.ng { display:block; background:#fff1f2; color:#991b1b; border:1px solid #fca5a5; }
+    .illust-center { display:flex; justify-content:center; margin:18px 0 6px; }
+    @media print {
+      button { display: none !important; }
+      a[href="index.html"] { display: none !important; }
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="wrap hero">
-      <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:0.88rem;margin-bottom:14px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,0.15);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">← 목록으로</a>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:0.88rem;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,0.15);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">← 목록으로</a>
+        <button onclick="window.print()" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.9);font-size:0.88rem;padding:5px 14px;border-radius:999px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.35);cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">🖨 PDF로 저장하기</button>
+      </div>
       <div class="badge">통합과학 1 · 과학의 기초</div>
       <h1>기본량의 의미와 적용</h1>
       <p>단위의 중요성을 깨닫고, 자연 현상을 과학적으로 표현하는 방법을 익혀봅시다.</p>
@@ -363,6 +392,50 @@
       <div class="keybox">
         <strong>핵심 질문:</strong> 왜 과학에서는 전 세계가 공통으로 사용하는 단위 체계가 필수적일까요?
       </div>
+
+      <!-- kg vs lb 비교 SVG -->
+      <div class="illust-center">
+        <svg viewBox="0 0 440 155" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;width:100%;" aria-label="kg와 lb 단위 비교 그림">
+          <!-- 정확한 단위(kg) 패널 -->
+          <rect x="4" y="4" width="190" height="147" rx="16" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+          <text x="99" y="34" font-size="12" fill="#1e40af" text-anchor="middle" font-weight="700" font-family="sans-serif">필요한 연료 (정확)</text>
+          <!-- 저울 -->
+          <line x1="99" y1="42" x2="99" y2="58" stroke="#1d4ed8" stroke-width="2.5"/>
+          <line x1="65" y1="58" x2="133" y2="58" stroke="#1d4ed8" stroke-width="2.5"/>
+          <ellipse cx="65" cy="70" rx="22" ry="13" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+          <ellipse cx="133" cy="70" rx="22" ry="13" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+          <text x="99" y="105" font-size="26" font-weight="900" fill="#1e3a8a" text-anchor="middle" font-family="sans-serif">22,300 kg</text>
+          <text x="99" y="138" font-size="12" fill="#1e40af" text-anchor="middle" font-weight="600" font-family="sans-serif">✅ SI 단위 (킬로그램)</text>
+
+          <!-- ≠ -->
+          <circle cx="220" cy="77" r="17" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1.5"/>
+          <text x="220" y="82" font-size="18" fill="#ef4444" text-anchor="middle" font-weight="900" font-family="sans-serif">≠</text>
+
+          <!-- 혼동된 단위(lb) 패널 -->
+          <rect x="246" y="4" width="190" height="147" rx="16" fill="#fee2e2" stroke="#fca5a5" stroke-width="1.5"/>
+          <text x="341" y="34" font-size="12" fill="#991b1b" text-anchor="middle" font-weight="700" font-family="sans-serif">실제 주입량 (혼동)</text>
+          <!-- 기울어진 저울 -->
+          <line x1="341" y1="42" x2="341" y2="58" stroke="#dc2626" stroke-width="2.5"/>
+          <line x1="307" y1="64" x2="375" y2="52" stroke="#dc2626" stroke-width="2.5"/>
+          <ellipse cx="307" cy="76" rx="22" ry="13" fill="#fecaca" stroke="#ef4444" stroke-width="1.5"/>
+          <ellipse cx="375" cy="64" rx="22" ry="13" fill="#fecaca" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="341" y="105" font-size="26" font-weight="900" fill="#991b1b" text-anchor="middle" font-family="sans-serif">22,300 lb</text>
+          <text x="341" y="124" font-size="11" fill="#b91c1c" text-anchor="middle" font-family="sans-serif">= 약 10,115 kg</text>
+          <text x="341" y="142" font-size="11.5" fill="#7f1d1d" text-anchor="middle" font-weight="700" font-family="sans-serif">⚠ 약 12,185 kg 부족!</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- 기본량 vs 유도량 분류 게임 -->
+    <section id="sec-classify" class="section-card" style="margin-top:22px;">
+      <h2>🎮 기본량일까? 유도량일까? — 분류 게임</h2>
+      <p>각 물리량이 <strong style="color:#1e40af;">기본량</strong>인지 <strong style="color:#713f12;">유도량</strong>인지 골라 보세요.</p>
+      <div class="classify-grid-u" id="unitClassifyGrid"></div>
+      <div class="btn-row">
+        <button class="main-btn" onclick="checkUnitClassify()">결과 확인</button>
+        <button class="secondary" onclick="resetUnitClassify()">다시하기</button>
+      </div>
+      <div id="unitClassifyScore" style="display:none;margin-top:14px;padding:14px 18px;border-radius:14px;font-weight:700;font-size:1.05rem;"></div>
     </section>
 
     <!-- 2. 핵심개념 익히기 -->
@@ -425,25 +498,64 @@
       <div class="activity-step">
         <strong>활동 2. 뉴스 속 단위 오류 사례 탐구</strong>
         <button class="case-button" onclick="toggleCase('newsFull')">
-          <strong>[뉴스] 일본 가려다 2억 7천만 원 카드 결제 내역에 ‘헉’…무슨 일?</strong>
+          <strong>[뉴스] 일본 가려다 ??억 ???만 원 카드 결제 내역에 "헉"… 무슨 일?</strong>
         </button>
         <div id="newsFull" class="case-detail">
           최근 한 네티즌이 항공권 결제 과정에서 거액의 오류를 겪은 사건이 온라인 커뮤니티에 알려져 화제를 모으고 있다. <br><br>
           지난 19일 네이버 일본여행 동호회 ‘네일동’에는 한 네티즌이 친구 A씨가 일본여행을 가려고 결제를 했는데 2억원이 넘는 항공권 결제가 됐다는 내용의 게시글을 올렸다. <br><br>
           해당 글에 따르면 A씨는 1월 7일 삿포로행 항공권을 진에어 인·제주항공 아웃으로 예약하며 결제했다. 그런데 결제 후 다음 날인 8일 영문명 기입이 잘못됐다고 연락을 받았다. <br><br>
-          진에어는 미결제 처리, 제주항공은 승인 취소로 처리해주기로 마무리됐다. 그러나 19일 카드 내역을 확인한 A씨는 제주항공에서 약 2억7178만3200원이 승인 처리된 사실을 보고 큰 충격을 받았다. <br><br>
-          사건 발생 하루 뒤 카드사, 항공사, 여행사에 확인한 결과 카드사 측 실수였던 것으로 드러났다. 제주항공에서 실제 취소 승인 요청한 금액은 18만6000원이었으나, 카드사 항공매출 담당자가 <strong>달러 단위와 원화 단위를 혼동하면서 시스템상 달러 칸에 잘못 입력한 것</strong>이 원인이었다. 이후 2억원이 넘는 결제 내역은 사라졌다.
+          진에어는 미결제 처리, 제주항공은 승인 취소로 처리해주기로 마무리됐다. 그러나 19일 카드 내역을 확인한 A씨는 제주항공에서 약 <input type="text" style="width:160px; border:2px solid #94a3b8; border-radius:6px; padding:3px 8px; font-size:0.95rem; font-family:inherit; text-align:center;" placeholder="　　　　　">이 승인 처리된 사실을 보고 큰 충격을 받았다. <br><br>
+          사건 발생 하루 뒤 카드사, 항공사, 여행사에 확인한 결과 카드사 측 실수였던 것으로 드러났다. 제주항공에서 실제 취소 승인 요청한 금액은 18만6000원이었으나, 카드사 항공매출 담당자가 <strong>달러 단위와 원화 단위를 혼동하면서 시스템상 달러 칸에 잘못 입력한 것</strong>이 원인이었다.        </div>
+
+        <div style="margin-top: 16px;">
+          <label style="font-weight: 600; font-size: 0.97rem; display: block; margin-bottom: 6px;">
+            Q. 만약 18만 6000이라는 숫자를 달러에 입력하면 원화로 환산할 때 얼마가 되는지 계산해 보세요.
+          </label>
+          <input type="text" class="short-answer" placeholder="계산 과정과 결과를 써 보세요.">
         </div>
       </div>
 
       <div class="activity-step">
         <strong>활동 3. 사고 예방 시스템 제안하기</strong>
         <p>위 뉴스 사례와 같은 단위 혼동 사고를 막기 위한 창의적인 아이디어를 제안해 보세요.</p>
-        <div class="chips">
-          <span class="chip">단위 자동 변환 SW</span>
-          <span class="chip">단위별 색상 지정제</span>
-          <span class="chip">결제 전 단위 재확인 팝업</span>
-          <span class="chip">2인 1조 단위 교차 점검</span>
+        <div class="chips" style="align-items: flex-start;">
+
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button class="chip" style="cursor:pointer; border:none; text-align:left;" onclick="toggleIdea('idea1')">단위 자동 변환 SW</button>
+            <div id="idea1" class="case-detail" style="min-width:220px; margin-top:0;">
+              입력 시스템이 자동으로 단위를 감지하고, 다른 단위로 잘못 입력하면 즉시 경고 메시지를 표시하거나 자동 변환해주는 소프트웨어. 예) 달러 칸에 원화 규모의 숫자가 입력되면 알림 발생.
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button class="chip" style="cursor:pointer; border:none; text-align:left;" onclick="toggleIdea('idea2')">단위별 색상 지정제</button>
+            <div id="idea2" class="case-detail" style="min-width:220px; margin-top:0;">
+              단위마다 고유한 색상을 지정하여 입력 화면에 시각적으로 구분. 예) 달러 입력칸은 파란색, 원화 입력칸은 빨간색으로 표시해 혼동 방지.
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button class="chip" style="cursor:pointer; border:none; text-align:left;" onclick="toggleIdea('idea3')">결제 전 단위 재확인 팝업</button>
+            <div id="idea3" class="case-detail" style="min-width:220px; margin-top:0;">
+              최종 결제 전 "입력하신 금액은 ○○달러입니다. 원화로 환산하면 ○○원입니다. 확인하시겠습니까?"와 같이 단위와 환산 금액을 함께 보여주는 확인 단계 추가.
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button class="chip" style="cursor:pointer; border:none; text-align:left;" onclick="toggleIdea('idea4')">2인 1조 단위 교차 점검</button>
+            <div id="idea4" class="case-detail" style="min-width:220px; margin-top:0;">
+              중요한 금액 입력 시 한 명이 입력하고 다른 한 명이 단위와 수치를 독립적으로 검토하는 이중 확인 절차. 항공·의료·금융 등 고위험 분야에서 실제 활용되는 방식.
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button class="chip" style="cursor:pointer; border:none; text-align:left; background:#e0f2fe; color:#0369a1; border:1px solid #7dd3fc !important;" onclick="toggleIdea('idea5')">💡 나의 참신한 아이디어</button>
+            <div id="idea5" class="case-detail" style="width: min(100vw - 80px, 660px); margin-top:0;">
+              <strong style="display:block; margin-bottom:8px; color:#0369a1;">나의 아이디어</strong>
+              <textarea class="short-answer" style="min-height:80px; resize:vertical;" placeholder="단위 혼동 사고를 막을 수 있는 나만의 아이디어를 자유롭게 써 보세요."></textarea>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -455,6 +567,18 @@
           <li>정확한 단위 사용은 소통의 오류를 줄이고 안전을 지키는 과학의 기본이다.</li>
         </ul>
       </div>
+    </section>
+
+    <!-- 접두어 변환 챌린지 -->
+    <section class="section-card" style="margin-top:22px; background:#fdf4ff;">
+      <h2>🔢 접두어 변환 챌린지</h2>
+      <p>접두어의 뜻을 활용하여 빈칸에 알맞은 숫자를 입력하고 <strong>채점하기</strong>를 누르세요.</p>
+      <div class="prefix-grid" id="prefixGrid"></div>
+      <div class="btn-row">
+        <button class="main-btn" onclick="checkPrefix()">채점하기</button>
+        <button class="secondary" onclick="resetPrefix()">다시 풀기</button>
+      </div>
+      <div id="prefixScore" style="display:none;margin-top:14px;padding:14px 18px;border-radius:14px;font-weight:700;font-size:1.05rem;"></div>
     </section>
 
     <!-- 4. 형성평가 -->
@@ -535,6 +659,122 @@
   </main>
 
   <script>
+    /* ─── 기본량 vs 유도량 분류 게임 ─── */
+    const unitItems = [
+      { name:"길이", unit:"m",      answer:"basic",   hint:"SI 7대 기본량 중 하나입니다." },
+      { name:"속력", unit:"m/s",    answer:"derived", hint:"거리(m) ÷ 시간(s)으로 나타냅니다." },
+      { name:"시간", unit:"s",      answer:"basic",   hint:"SI 7대 기본량 중 하나입니다." },
+      { name:"질량", unit:"kg",     answer:"basic",   hint:"SI 7대 기본량 중 하나입니다." },
+      { name:"넓이", unit:"m²",     answer:"derived", hint:"길이 × 길이로 나타냅니다." },
+      { name:"온도", unit:"K",      answer:"basic",   hint:"SI 7대 기본량 중 하나입니다." },
+      { name:"밀도", unit:"kg/m³",  answer:"derived", hint:"질량 ÷ 부피로 나타냅니다." },
+      { name:"전류", unit:"A",      answer:"basic",   hint:"SI 7대 기본량 중 하나입니다." },
+      { name:"부피", unit:"m³",     answer:"derived", hint:"길이 × 길이 × 길이로 나타냅니다." },
+      { name:"물질량",unit:"mol",   answer:"basic",   hint:"SI 7대 기본량 중 하나입니다." },
+    ];
+
+    function buildUnitClassify() {
+      document.getElementById('unitClassifyGrid').innerHTML = unitItems.map((d, i) => `
+        <div class="classify-card-u" id="uc${i}">
+          <div style="font-weight:700;">${d.name}</div>
+          <div style="font-size:0.85rem;color:var(--sub);">단위: ${d.unit}</div>
+          <div class="c-btns-u">
+            <button class="c-btn-u" id="uc${i}_b" onclick="selUnit(${i},'basic')">📐 기본량</button>
+            <button class="c-btn-u" id="uc${i}_d" onclick="selUnit(${i},'derived')">🔗 유도량</button>
+          </div>
+          <div class="u-hint" id="uc${i}_h">${d.hint}</div>
+        </div>`).join('');
+    }
+
+    function selUnit(i, choice) {
+      document.getElementById(`uc${i}_b`).className = 'c-btn-u' + (choice === 'basic' ? ' sel-basic' : '');
+      document.getElementById(`uc${i}_d`).className = 'c-btn-u' + (choice === 'derived' ? ' sel-derived' : '');
+      document.getElementById(`uc${i}`).dataset.choice = choice;
+    }
+
+    function checkUnitClassify() {
+      let correct = 0;
+      unitItems.forEach((d, i) => {
+        const card = document.getElementById(`uc${i}`);
+        const choice = card.dataset.choice;
+        if (!choice) return;
+        const hint = document.getElementById(`uc${i}_h`);
+        if (choice === d.answer) { card.className = 'classify-card-u correct'; correct++; }
+        else { card.className = 'classify-card-u wrong'; }
+        hint.classList.add('show');
+      });
+      const answered = unitItems.filter((_,i) => document.getElementById(`uc${i}`).dataset.choice).length;
+      const box = document.getElementById('unitClassifyScore');
+      box.style.display = 'block';
+      box.style.background = correct === unitItems.length ? '#ecfdf5' : '#eff6ff';
+      box.style.border = `1px solid ${correct === unitItems.length ? '#86efac' : '#93c5fd'}`;
+      box.style.color = correct === unitItems.length ? '#14532d' : '#1e3a8a';
+      box.textContent = `${answered}개 중 ${correct}개 정답! ${correct === unitItems.length ? '🎉 완벽해요!' : '힌트를 확인해 보세요.'}`;
+    }
+
+    function resetUnitClassify() {
+      buildUnitClassify();
+      document.getElementById('unitClassifyScore').style.display = 'none';
+    }
+
+    /* ─── 접두어 변환 챌린지 ─── */
+    const prefixItems = [
+      { q:"1 km = _____ m",        answer:"1000",  hint:"킬로(k) = 10³ → × 1,000" },
+      { q:"1 mg = _____ g",        answer:"0.001", hint:"밀리(m) = 10⁻³ → ÷ 1,000" },
+      { q:"1 cm = _____ m",        answer:"0.01",  hint:"센티(c) = 10⁻² → ÷ 100" },
+      { q:"3,000 m = _____ km",    answer:"3",     hint:"1 km = 1,000 m이므로 ÷ 1,000" },
+      { q:"500 mL = _____ L",      answer:"0.5",   hint:"밀리(m) = 10⁻³ → ÷ 1,000" },
+      { q:"2.5 kg = _____ g",      answer:"2500",  hint:"킬로(k) = 10³ → × 1,000" },
+    ];
+
+    function buildPrefix() {
+      document.getElementById('prefixGrid').innerHTML = prefixItems.map((d, i) => `
+        <div class="prefix-item" id="pi${i}">
+          <div class="p-q">${d.q.replace('_____','<input type="text" id="pa${i}" placeholder="숫자 입력" style="width:100px;display:inline;margin:0 4px;" onkeydown="if(event.key===\'Enter\') checkPrefix()">')}</div>
+          <div class="p-fb" id="pf${i}"></div>
+        </div>`).join('');
+      // re-render with actual ids
+      document.getElementById('prefixGrid').innerHTML = prefixItems.map((d, i) => `
+        <div class="prefix-item" id="pi${i}">
+          <div class="p-q">${d.q.replace('_____',`<input type="text" id="pa${i}" placeholder="숫자 입력" style="width:100px;display:inline;margin:0 4px;" onkeydown="if(event.key==='Enter')checkPrefix()">`)}</div>
+          <div class="p-fb" id="pf${i}"></div>
+        </div>`).join('');
+    }
+
+    function checkPrefix() {
+      let correct = 0;
+      prefixItems.forEach((d, i) => {
+        const val = (document.getElementById(`pa${i}`)?.value || '').trim();
+        const fb = document.getElementById(`pf${i}`);
+        if (!val) { fb.className = 'p-fb'; return; }
+        const isOk = parseFloat(val) === parseFloat(d.answer);
+        if (isOk) correct++;
+        fb.className = `p-fb ${isOk ? 'ok' : 'ng'}`;
+        fb.textContent = isOk ? `✅ 정답!` : `❌ 정답: ${d.answer}  (${d.hint})`;
+      });
+      const answered = prefixItems.filter((_,i) => document.getElementById(`pa${i}`)?.value.trim()).length;
+      const box = document.getElementById('prefixScore');
+      box.style.display = 'block';
+      box.style.background = correct === answered && answered > 0 ? '#ecfdf5' : '#eff6ff';
+      box.style.border = `1px solid ${correct === answered && answered > 0 ? '#86efac' : '#93c5fd'}`;
+      box.style.color = correct === answered && answered > 0 ? '#14532d' : '#1e3a8a';
+      box.textContent = `${answered}문제 중 ${correct}개 정답! ${correct === prefixItems.length ? '🎉 완벽!' : ''}`;
+    }
+
+    function resetPrefix() {
+      buildPrefix();
+      document.getElementById('prefixScore').style.display = 'none';
+    }
+
+    /* ─── 초기화 ─── */
+    buildUnitClassify();
+    buildPrefix();
+
+    function toggleIdea(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('show');
+    }
+
     function toggleCase(id) {
       const el = document.getElementById(id);
       el.classList.toggle('show');
