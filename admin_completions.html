@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>학습 완료 현황 관리 | 날아라 물리 통합과학</title>
+  <style>
+    :root {
+      --primary: #2b6cb0;
+      --accent: #166534;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --sub: #4b5563;
+      --line: #d1d5db;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: linear-gradient(180deg, #eef5ff 0%, var(--bg) 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1d4ed8 0%, #166534 100%);
+      color: white;
+      padding: 40px 20px 36px;
+      text-align: center;
+    }
+
+    header .badge {
+      display: inline-block;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    header h1 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: #c7f0d8;
+      font-size: 0.97rem;
+    }
+
+    .wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 36px 18px 60px;
+    }
+
+    .control-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 14px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--sub);
+    }
+
+    .filter-group select,
+    .filter-group input {
+      padding: 10px 14px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      font-size: 0.97rem;
+      font-family: inherit;
+      outline: none;
+      background: white;
+      transition: border-color 0.2s;
+    }
+
+    .filter-group select:focus,
+    .filter-group input:focus {
+      border-color: var(--primary);
+    }
+
+    .btn-search {
+      background: linear-gradient(135deg, #1d4ed8 0%, #0f766e 100%);
+      color: white;
+      border: none;
+      padding: 11px 28px;
+      border-radius: 11px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-search:hover { opacity: 0.88; }
+
+    .btn-reset {
+      background: #f3f4f6;
+      color: var(--sub);
+      border: 1.5px solid var(--line);
+      padding: 10px 20px;
+      border-radius: 11px;
+      font-size: 0.97rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-reset:hover { background: #e5e7eb; }
+
+    .btn-export {
+      background: linear-gradient(135deg, #166534 0%, #15803d 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 11px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+
+    .btn-export:hover { opacity: 0.88; }
+
+    .btn-delete-all {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1.5px solid #fca5a5;
+      padding: 10px 20px;
+      border-radius: 11px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .btn-delete-all:hover { background: #fecaca; }
+
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .stat-chip {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+      padding: 14px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      min-width: 130px;
+    }
+
+    .stat-chip .num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-chip .lbl {
+      font-size: 0.87rem;
+      color: var(--sub);
+    }
+
+    .result-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .result-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .result-header h2 {
+      font-size: 1.15rem;
+      color: var(--primary);
+    }
+
+    .result-count {
+      font-size: 0.9rem;
+      color: var(--sub);
+      background: #f3f4f6;
+      padding: 4px 12px;
+      border-radius: 999px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    thead th {
+      background: #f8fafc;
+      padding: 13px 16px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--sub);
+      border-bottom: 1.5px solid var(--line);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f0f2f5;
+      transition: background 0.15s;
+    }
+
+    tbody tr:hover { background: #f8fafc; }
+
+    tbody td {
+      padding: 13px 16px;
+      vertical-align: top;
+    }
+
+    .page-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      background: #dbeafe;
+      color: #1d4ed8;
+      white-space: nowrap;
+    }
+
+    .comment-cell {
+      color: var(--sub);
+      font-size: 0.92rem;
+      max-width: 280px;
+    }
+
+    .empty-msg {
+      padding: 56px 24px;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 1.05rem;
+    }
+
+    .row-delete {
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+
+    .row-delete:hover { background: #fee2e2; }
+
+    footer {
+      text-align: center;
+      padding: 22px;
+      color: var(--sub);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--line);
+      background: var(--card);
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.4rem; }
+      .control-row { flex-direction: column; }
+      .btn-search, .btn-reset, .btn-export, .btn-delete-all { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 비밀번호 오버레이 -->
+<div id="pwOverlay" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.7); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:20px; padding:40px 36px; max-width:360px; width:90%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+    <div style="font-size:2.4rem; margin-bottom:12px;">🔒</div>
+    <h2 style="font-size:1.3rem; color:#1f2937; margin-bottom:8px;">교사용 페이지</h2>
+    <p style="color:#6b7280; font-size:0.95rem; margin-bottom:24px;">비밀번호를 입력하세요.</p>
+    <input type="password" id="pwInput" placeholder="비밀번호"
+      style="width:100%; padding:12px 16px; border:1.5px solid #d1d5db; border-radius:11px; font-size:1.1rem; text-align:center; letter-spacing:6px; outline:none; font-family:inherit; margin-bottom:10px;">
+    <div id="pwError" style="display:none; color:#ef4444; font-size:0.9rem; margin-bottom:10px;">비밀번호가 올바르지 않습니다.</div>
+    <button onclick="submitPassword()"
+      style="width:100%; background:linear-gradient(135deg,#1d4ed8 0%,#0f766e 100%); color:white; border:none; padding:13px; border-radius:11px; font-size:1rem; font-weight:700; cursor:pointer;">
+      확인
+    </button>
+  </div>
+</div>
+
+<header>
+  <div class="badge">동북고등학교 · 통합과학 1 — 교사용</div>
+  <h1>📋 학습 완료 현황 관리</h1>
+  <p>학생들이 각 수업 페이지에서 제출한 학습 완료 기록을 조회합니다.</p>
+</header>
+
+<main class="wrap">
+
+  <!-- 검색/필터 -->
+  <div class="control-card">
+    <div class="control-row">
+      <div class="filter-group">
+        <label>단원 필터</label>
+        <select id="filterPage">
+          <option value="">전체 단원</option>
+          <option value="자연의 기술">자연의 기술</option>
+          <option value="기본량의 의미와 적용">기본량의 의미와 적용</option>
+          <option value="측정과 어림">측정과 어림</option>
+          <option value="신호와 정보">신호와 정보</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>학번 검색</label>
+        <input type="text" id="filterStudentId" placeholder="예) 20101">
+      </div>
+      <div class="filter-group">
+        <label>이름 검색</label>
+        <input type="text" id="filterName" placeholder="이름 일부 입력">
+      </div>
+      <button class="btn-search" onclick="loadData()">조회하기</button>
+      <button class="btn-reset" onclick="resetFilters()">초기화</button>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+      <button class="btn-export" onclick="exportCSV()">CSV 내보내기</button>
+      <button class="btn-delete-all" onclick="deleteAll()">전체 삭제</button>
+    </div>
+  </div>
+
+  <!-- 통계 -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-chip">
+      <span class="num" id="statTotal">0</span>
+      <span class="lbl">전체 완료 수</span>
+    </div>
+    <div class="stat-chip">
+      <span class="num" id="statStudents">0</span>
+      <span class="lbl">참여 학생 수</span>
+    </div>
+    <div class="stat-chip">
+      <span class="num" id="statPages">0</span>
+      <span class="lbl">완료된 단원 수</span>
+    </div>
+  </div>
+
+  <!-- 결과 테이블 -->
+  <div class="result-card">
+    <div class="result-header">
+      <h2>학습 완료 목록</h2>
+      <span class="result-count" id="resultCount">0건</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>단원</th>
+            <th>학번</th>
+            <th>이름</th>
+            <th>소감 / 질문</th>
+            <th>완료 시각</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="7" class="empty-msg">조회하기 버튼을 눌러 주세요.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  날아라 물리 통합과학 학습자료 | © 동북고등학교 강현식 &nbsp;·&nbsp; 이 페이지의 데이터는 이 브라우저에만 저장됩니다.
+</footer>
+
+<script>
+  let allData = [];
+  let filteredData = [];
+
+  function getAllData() {
+    return JSON.parse(localStorage.getItem('scienceCompletions') || '[]');
+  }
+
+  function loadData() {
+    allData = getAllData();
+    const pageFil = document.getElementById('filterPage').value;
+    const idFil = document.getElementById('filterStudentId').value.trim();
+    const nameFil = document.getElementById('filterName').value.trim();
+
+    filteredData = allData.filter(r => {
+      if (pageFil && r.page !== pageFil) return false;
+      if (idFil && !r.studentId.includes(idFil)) return false;
+      if (nameFil && !r.name.includes(nameFil)) return false;
+      return true;
+    });
+
+    renderTable(filteredData);
+    renderStats(allData, filteredData);
+  }
+
+  function renderTable(data) {
+    const tbody = document.getElementById('tableBody');
+    document.getElementById('resultCount').textContent = `${data.length}건`;
+
+    if (data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty-msg">해당 조건의 기록이 없습니다.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map((r, i) => {
+      const globalIdx = allData.indexOf(r);
+      const comment = r.comment ? escHtml(r.comment) : '<span style="color:#d1d5db;">—</span>';
+      return `<tr>
+        <td style="color:var(--sub); font-size:0.88rem;">${i + 1}</td>
+        <td><span class="page-badge">${escHtml(r.page)}</span></td>
+        <td style="font-weight:600;">${escHtml(r.studentId)}</td>
+        <td style="font-weight:600;">${escHtml(r.name)}</td>
+        <td class="comment-cell">${comment}</td>
+        <td style="color:var(--sub); font-size:0.88rem; white-space:nowrap;">${escHtml(r.timestamp || '')}</td>
+        <td><button class="row-delete" onclick="deleteRow(${globalIdx})" title="삭제">✕</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  function renderStats(all, filtered) {
+    document.getElementById('statTotal').textContent = filtered.length;
+    const uniqueStudents = new Set(filtered.map(r => r.studentId + r.name)).size;
+    const uniquePages = new Set(filtered.map(r => r.page)).size;
+    document.getElementById('statStudents').textContent = uniqueStudents;
+    document.getElementById('statPages').textContent = uniquePages;
+  }
+
+  function deleteRow(idx) {
+    if (!confirm('이 기록을 삭제할까요?')) return;
+    const data = getAllData();
+    data.splice(idx, 1);
+    localStorage.setItem('scienceCompletions', JSON.stringify(data));
+    loadData();
+  }
+
+  function deleteAll() {
+    if (!confirm('전체 학습 완료 기록을 삭제할까요? 이 작업은 되돌릴 수 없습니다.')) return;
+    localStorage.removeItem('scienceCompletions');
+    loadData();
+  }
+
+  function resetFilters() {
+    document.getElementById('filterPage').value = '';
+    document.getElementById('filterStudentId').value = '';
+    document.getElementById('filterName').value = '';
+    loadData();
+  }
+
+  function exportCSV() {
+    const data = filteredData.length > 0 ? filteredData : getAllData();
+    if (data.length === 0) { alert('내보낼 데이터가 없습니다.'); return; }
+
+    const header = ['단원', '학번', '이름', '소감/질문', '완료 시각'];
+    const rows = data.map(r => [
+      csvEsc(r.page), csvEsc(r.studentId), csvEsc(r.name),
+      csvEsc(r.comment || ''), csvEsc(r.timestamp || '')
+    ]);
+
+    const csv = '\uFEFF' + [header, ...rows].map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `학습완료_${new Date().toLocaleDateString('ko-KR').replace(/\./g,'').replace(/ /g,'')}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function csvEsc(s) {
+    const str = String(s || '');
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  }
+
+  // 비밀번호 확인 후 자동 조회
+  window.addEventListener('load', function() {
+    checkPassword();
+  });
+
+  function checkPassword() {
+    const overlay = document.getElementById('pwOverlay');
+    overlay.style.display = 'flex';
+    document.getElementById('pwInput').focus();
+  }
+
+  function submitPassword() {
+    const val = document.getElementById('pwInput').value;
+    if (val === '2026') {
+      document.getElementById('pwOverlay').style.display = 'none';
+      loadData();
+    } else {
+      document.getElementById('pwError').style.display = 'block';
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwInput').focus();
+    }
+  }
+
+  document.addEventListener('keydown', function(e) {
+    const overlay = document.getElementById('pwOverlay');
+    if (overlay && overlay.style.display !== 'none' && e.key === 'Enter') {
+      submitPassword();
+    }
+  });
+</script>
+
+</body>
+</html>

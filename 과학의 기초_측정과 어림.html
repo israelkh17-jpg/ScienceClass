@@ -909,5 +909,64 @@
     }
 
   </script>
+
+  <!-- ─── 학습 완료 체크 ─── -->
+  <div class="wrap">
+    <div class="section-card" id="completionSection" style="border-top: 4px solid #16a34a;">
+      <h2 style="color: #166534; margin-bottom:6px;">✅ 학습 완료 체크</h2>
+      <p style="margin-bottom:18px; color: var(--sub); font-size:0.97rem;">이 페이지 학습을 마쳤다면 아래 정보를 입력하고 <strong>학습 완료합니다</strong> 버튼을 눌러 주세요.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+        <div>
+          <label style="font-weight:600; font-size:0.95rem; display:block; margin-bottom:6px;">학번</label>
+          <input type="text" id="inputStudentId" placeholder="예) 20101"
+            style="width:100%; padding:10px 14px; border:1.5px solid var(--line); border-radius:10px; font-size:1rem; font-family:inherit; outline:none;">
+        </div>
+        <div>
+          <label style="font-weight:600; font-size:0.95rem; display:block; margin-bottom:6px;">이름</label>
+          <input type="text" id="inputName" placeholder="이름을 입력하세요"
+            style="width:100%; padding:10px 14px; border:1.5px solid var(--line); border-radius:10px; font-size:1rem; font-family:inherit; outline:none;">
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="font-weight:600; font-size:0.95rem; display:block; margin-bottom:6px;">나의 소감 또는 질문</label>
+        <textarea id="inputComment" rows="3" placeholder="배운 내용 중 인상 깊었던 점, 궁금한 점을 자유롭게 적어 주세요."
+          style="width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:10px; font-size:1rem; font-family:inherit; resize:vertical; outline:none;"></textarea>
+      </div>
+      <button id="submitBtn" onclick="submitCompletion()"
+        style="background: linear-gradient(135deg, #166534 0%, #15803d 100%); color:white; border:none; padding:14px 32px; border-radius:12px; font-size:1.05rem; font-weight:700; cursor:pointer; width:100%; transition:opacity 0.2s;">
+        학습 완료합니다 ✅
+      </button>
+      <div id="completionMsg" style="display:none; margin-top:16px; padding:16px; background:#f0fdf4; border:1.5px solid #86efac; border-radius:12px; color:#166534; text-align:center; font-weight:600; font-size:1.05rem;"></div>
+    </div>
+  </div>
+
+  <script>
+    const COMPLETION_PAGE_TITLE = "측정과 어림";
+    function submitCompletion() {
+      const studentId = document.getElementById('inputStudentId').value.trim();
+      const name = document.getElementById('inputName').value.trim();
+      const comment = document.getElementById('inputComment').value.trim();
+      if (!studentId || !name) {
+        alert('학번과 이름을 입력해 주세요.');
+        return;
+      }
+      const record = {
+        page: COMPLETION_PAGE_TITLE,
+        studentId, name, comment,
+        timestamp: new Date().toLocaleString('ko-KR')
+      };
+      const existing = JSON.parse(localStorage.getItem('scienceCompletions') || '[]');
+      existing.push(record);
+      localStorage.setItem('scienceCompletions', JSON.stringify(existing));
+      const msg = document.getElementById('completionMsg');
+      msg.innerHTML = `<strong>${name}</strong> 학생, 학습 완료 기록이 저장되었습니다! 수고했어요 😊`;
+      msg.style.display = 'block';
+      document.getElementById('inputStudentId').disabled = true;
+      document.getElementById('inputName').disabled = true;
+      document.getElementById('inputComment').disabled = true;
+      document.getElementById('submitBtn').disabled = true;
+      document.getElementById('submitBtn').style.opacity = '0.45';
+    }
+  </script>
 </body>
 </html>
