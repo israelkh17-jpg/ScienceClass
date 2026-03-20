@@ -841,9 +841,26 @@ ${feedback.join('\n')}
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDJXyFUHxPJSXD3saoohvGI2z9zZuppmac",
+      authDomain: "science-eec10.firebaseapp.com",
+      databaseURL: "https://science-eec10-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "science-eec10",
+      storageBucket: "science-eec10.firebasestorage.app",
+      messagingSenderId: "294772360137",
+      appId: "1:294772360137:web:7c6d9f9151e2cbc83d9e18"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
     const COMPLETION_PAGE_TITLE = "자연의 기술";
-    function submitCompletion() {
+
+    window.submitCompletion = async function() {
       const studentId = document.getElementById('inputStudentId').value.trim();
       const name = document.getElementById('inputName').value.trim();
       const comment = document.getElementById('inputComment').value.trim();
@@ -851,23 +868,27 @@ ${feedback.join('\n')}
         alert('학번과 이름을 입력해 주세요.');
         return;
       }
+      document.getElementById('submitBtn').disabled = true;
+      document.getElementById('submitBtn').style.opacity = '0.45';
       const record = {
         page: COMPLETION_PAGE_TITLE,
         studentId, name, comment,
         timestamp: new Date().toLocaleString('ko-KR')
       };
-      const existing = JSON.parse(localStorage.getItem('scienceCompletions') || '[]');
-      existing.push(record);
-      localStorage.setItem('scienceCompletions', JSON.stringify(existing));
-      const msg = document.getElementById('completionMsg');
-      msg.innerHTML = `<strong>${name}</strong> 학생, 학습 완료 기록이 저장되었습니다! 수고했어요 😊`;
-      msg.style.display = 'block';
-      document.getElementById('inputStudentId').disabled = true;
-      document.getElementById('inputName').disabled = true;
-      document.getElementById('inputComment').disabled = true;
-      document.getElementById('submitBtn').disabled = true;
-      document.getElementById('submitBtn').style.opacity = '0.45';
-    }
+      try {
+        await push(ref(db, 'completions'), record);
+        const msg = document.getElementById('completionMsg');
+        msg.innerHTML = `<strong>${name}</strong> 학생, 학습 완료 기록이 저장되었습니다! 수고했어요 😊`;
+        msg.style.display = 'block';
+        document.getElementById('inputStudentId').disabled = true;
+        document.getElementById('inputName').disabled = true;
+        document.getElementById('inputComment').disabled = true;
+      } catch (err) {
+        alert('저장 중 오류가 발생했습니다. 인터넷 연결을 확인해 주세요.');
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('submitBtn').style.opacity = '1';
+      }
+    };
   </script>
 </body>
 </html>

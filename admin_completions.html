@@ -416,16 +416,39 @@
   날아라 물리 통합과학 학습자료 | © 동북고등학교 강현식 &nbsp;·&nbsp; 이 페이지의 데이터는 이 브라우저에만 저장됩니다.
 </footer>
 
-<script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getDatabase, ref, get, remove } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDJXyFUHxPJSXD3saoohvGI2z9zZuppmac",
+    authDomain: "science-eec10.firebaseapp.com",
+    databaseURL: "https://science-eec10-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "science-eec10",
+    storageBucket: "science-eec10.firebasestorage.app",
+    messagingSenderId: "294772360137",
+    appId: "1:294772360137:web:7c6d9f9151e2cbc83d9e18"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
   let allData = [];
   let filteredData = [];
 
-  function getAllData() {
-    return JSON.parse(localStorage.getItem('scienceCompletions') || '[]');
+  async function getAllData() {
+    const snapshot = await get(ref(db, 'completions'));
+    if (!snapshot.exists()) return [];
+    return Object.entries(snapshot.val()).map(([key, val]) => ({ fbKey: key, ...val }));
   }
 
-  function loadData() {
-    allData = getAllData();
+  window.loadData = async function() {
+    try {
+      allData = await getAllData();
+    } catch(err) {
+      alert('Firebase 읽기 오류: ' + err.message);
+      return;
+    }
     const pageFil = document.getElementById('filterPage').value;
     const idFil = document.getElementById('filterStudentId').value.trim();
     const nameFil = document.getElementById('filterName').value.trim();
@@ -439,7 +462,7 @@
 
     renderTable(filteredData);
     renderStats(allData, filteredData);
-  }
+  };
 
   function renderTable(data) {
     const tbody = document.getElementById('tableBody');
@@ -451,7 +474,6 @@
     }
 
     tbody.innerHTML = data.map((r, i) => {
-      const globalIdx = allData.indexOf(r);
       const comment = r.comment ? escHtml(r.comment) : '<span style="color:#d1d5db;">—</span>';
       return `<tr>
         <td style="color:var(--sub); font-size:0.88rem;">${i + 1}</td>
@@ -460,7 +482,7 @@
         <td style="font-weight:600;">${escHtml(r.name)}</td>
         <td class="comment-cell">${comment}</td>
         <td style="color:var(--sub); font-size:0.88rem; white-space:nowrap;">${escHtml(r.timestamp || '')}</td>
-        <td><button class="row-delete" onclick="deleteRow(${globalIdx})" title="삭제">✕</button></td>
+        <td><button class="row-delete" onclick="deleteRow('${escHtml(r.fbKey)}')" title="삭제">✕</button></td>
       </tr>`;
     }).join('');
   }
@@ -473,29 +495,27 @@
     document.getElementById('statPages').textContent = uniquePages;
   }
 
-  function deleteRow(idx) {
+  window.deleteRow = async function(fbKey) {
     if (!confirm('이 기록을 삭제할까요?')) return;
-    const data = getAllData();
-    data.splice(idx, 1);
-    localStorage.setItem('scienceCompletions', JSON.stringify(data));
-    loadData();
-  }
+    await remove(ref(db, `completions/${fbKey}`));
+    window.loadData();
+  };
 
-  function deleteAll() {
+  window.deleteAll = async function() {
     if (!confirm('전체 학습 완료 기록을 삭제할까요? 이 작업은 되돌릴 수 없습니다.')) return;
-    localStorage.removeItem('scienceCompletions');
-    loadData();
-  }
+    await remove(ref(db, 'completions'));
+    window.loadData();
+  };
 
-  function resetFilters() {
+  window.resetFilters = function() {
     document.getElementById('filterPage').value = '';
     document.getElementById('filterStudentId').value = '';
     document.getElementById('filterName').value = '';
-    loadData();
-  }
+    window.loadData();
+  };
 
-  function exportCSV() {
-    const data = filteredData.length > 0 ? filteredData : getAllData();
+  window.exportCSV = function() {
+    const data = filteredData.length > 0 ? filteredData : allData;
     if (data.length === 0) { alert('내보낼 데이터가 없습니다.'); return; }
 
     const header = ['단원', '학번', '이름', '소감/질문', '완료 시각'];
@@ -512,7 +532,7 @@
     a.download = `학습완료_${new Date().toLocaleDateString('ko-KR').replace(/\./g,'').replace(/ /g,'')}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-  }
+  };
 
   function escHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -526,33 +546,28 @@
     return str;
   }
 
-  // 비밀번호 확인 후 자동 조회
-  window.addEventListener('load', function() {
-    checkPassword();
-  });
-
-  function checkPassword() {
-    const overlay = document.getElementById('pwOverlay');
-    overlay.style.display = 'flex';
-    document.getElementById('pwInput').focus();
-  }
-
-  function submitPassword() {
+  window.submitPassword = function() {
     const val = document.getElementById('pwInput').value;
     if (val === '2026') {
       document.getElementById('pwOverlay').style.display = 'none';
-      loadData();
+      window.loadData();
     } else {
       document.getElementById('pwError').style.display = 'block';
       document.getElementById('pwInput').value = '';
       document.getElementById('pwInput').focus();
     }
-  }
+  };
+
+  window.addEventListener('load', function() {
+    const overlay = document.getElementById('pwOverlay');
+    overlay.style.display = 'flex';
+    document.getElementById('pwInput').focus();
+  });
 
   document.addEventListener('keydown', function(e) {
     const overlay = document.getElementById('pwOverlay');
     if (overlay && overlay.style.display !== 'none' && e.key === 'Enter') {
-      submitPassword();
+      window.submitPassword();
     }
   });
 </script>
