@@ -352,6 +352,12 @@
         </select>
       </div>
       <div class="filter-group">
+        <label>반 필터</label>
+        <select id="filterClass">
+          <option value="">전체 반</option>
+        </select>
+      </div>
+      <div class="filter-group">
         <label>학번 검색</label>
         <input type="text" id="filterStudentId" placeholder="예) 20101">
       </div>
@@ -379,8 +385,8 @@
       <span class="lbl">참여 학생 수</span>
     </div>
     <div class="stat-chip">
-      <span class="num" id="statPages">0</span>
-      <span class="lbl">완료된 단원 수</span>
+      <span class="num" id="statAllCompleted">0</span>
+      <span class="lbl">모두 완료한 학생 수</span>
     </div>
   </div>
 
@@ -442,6 +448,20 @@
     return Object.entries(snapshot.val()).map(([key, val]) => ({ fbKey: key, ...val }));
   }
 
+  function getClassFromId(studentId) {
+    const id = String(studentId || '');
+    return id.length >= 3 ? id[2] + '반' : '';
+  }
+
+  function populateClassFilter(data) {
+    const sel = document.getElementById('filterClass');
+    const current = sel.value;
+    const classes = [...new Set(data.map(r => getClassFromId(r.studentId)).filter(Boolean))].sort();
+    sel.innerHTML = '<option value="">전체 반</option>' +
+      classes.map(c => `<option value="${c}">${c}</option>`).join('');
+    if (classes.includes(current)) sel.value = current;
+  }
+
   window.loadData = async function() {
     try {
       allData = await getAllData();
@@ -449,12 +469,16 @@
       alert('Firebase 읽기 오류: ' + err.message);
       return;
     }
+    populateClassFilter(allData);
+
     const pageFil = document.getElementById('filterPage').value;
+    const classFil = document.getElementById('filterClass').value;
     const idFil = document.getElementById('filterStudentId').value.trim();
     const nameFil = document.getElementById('filterName').value.trim();
 
     filteredData = allData.filter(r => {
       if (pageFil && r.page !== pageFil) return false;
+      if (classFil && getClassFromId(r.studentId) !== classFil) return false;
       if (idFil && !r.studentId.includes(idFil)) return false;
       if (nameFil && !r.name.includes(nameFil)) return false;
       return true;
@@ -490,9 +514,20 @@
   function renderStats(all, filtered) {
     document.getElementById('statTotal').textContent = filtered.length;
     const uniqueStudents = new Set(filtered.map(r => r.studentId + r.name)).size;
-    const uniquePages = new Set(filtered.map(r => r.page)).size;
     document.getElementById('statStudents').textContent = uniqueStudents;
-    document.getElementById('statPages').textContent = uniquePages;
+
+    // 전체 데이터 기준 등록된 모든 단원
+    const allPages = new Set(all.map(r => r.page));
+    // 조회된 데이터에서 학생별 완료 단원 집계
+    const studentPages = {};
+    filtered.forEach(r => {
+      const key = r.studentId + '|' + r.name;
+      if (!studentPages[key]) studentPages[key] = new Set();
+      studentPages[key].add(r.page);
+    });
+    const allCompletedCount = Object.values(studentPages)
+      .filter(pages => allPages.size > 0 && pages.size >= allPages.size).length;
+    document.getElementById('statAllCompleted').textContent = allCompletedCount;
   }
 
   window.deleteRow = async function(fbKey) {
@@ -509,6 +544,7 @@
 
   window.resetFilters = function() {
     document.getElementById('filterPage').value = '';
+    document.getElementById('filterClass').value = '';
     document.getElementById('filterStudentId').value = '';
     document.getElementById('filterName').value = '';
     window.loadData();
