@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>자연의 규칙성 탐험 | 통합과학</title>
+  <style>
+    :root {
+      --bg: #f0f4f0;
+      --card: #ffffff;
+      --primary: #16a34a;
+      --primary-dark: #15803d;
+      --primary-soft: #dcfce7;
+      --text: #1f2937;
+      --sub: #4b5563;
+      --line: #d1d5db;
+      --accent: #0d9488;
+      --accent-soft: #ccfbf1;
+      --warn: #f59e0b;
+      --warn-soft: #fef3c7;
+      --danger: #dc2626;
+      --shadow: 0 10px 28px rgba(0,0,0,0.08);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+      background: linear-gradient(180deg,#e8f5e9 0%,var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg,#166534 0%,#0d9488 100%);
+      color: white;
+      padding: 28px 20px 34px;
+      text-align: center;
+    }
+    .badge { display:inline-block; padding:5px 14px; border-radius:999px; background:rgba(255,255,255,.18); font-size:.9rem; margin-bottom:10px; }
+    header h1 { font-size:2rem; font-weight:800; margin-bottom:8px; }
+    header p { color:#c6f6d5; font-size:1rem; }
+    .home-link { position:absolute; top:18px; left:18px; color:white; text-decoration:none; font-size:.95rem; opacity:.85; }
+    .home-link:hover { opacity:1; }
+    header { position: relative; }
+
+    /* Navigation */
+    .stage-nav {
+      display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+      padding:18px 12px 0;
+      max-width:900px; margin:0 auto;
+    }
+    .stage-nav button {
+      padding:10px 20px; border:2px solid var(--line); border-radius:999px;
+      background:var(--card); color:var(--sub); font-size:.92rem; font-weight:600;
+      cursor:pointer; transition:all .2s;
+    }
+    .stage-nav button:hover { border-color:var(--primary); color:var(--primary); }
+    .stage-nav button.active {
+      background:var(--primary); color:white; border-color:var(--primary);
+    }
+
+    /* Wrap */
+    .wrap { max-width:1000px; margin:0 auto; padding:0 16px 60px; }
+
+    /* Stage panels */
+    .stage { display:none; margin-top:24px; }
+    .stage.active { display:block; }
+
+    /* Cards */
+    .card {
+      background:var(--card); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:28px; margin-bottom:22px;
+    }
+    .card h2 { color:var(--primary-dark); font-size:1.35rem; margin-bottom:14px; }
+    .card h3 { color:#166534; font-size:1.08rem; margin-bottom:10px; }
+
+    .lead-box {
+      background:var(--primary-soft); border-radius:14px; padding:18px 20px;
+      font-size:.97rem; margin-bottom:18px; line-height:1.7;
+    }
+
+    /* Buttons */
+    .btn {
+      display:inline-block; padding:10px 22px; border-radius:12px;
+      border:none; font-size:.95rem; font-weight:600; cursor:pointer;
+      transition:all .15s;
+    }
+    .btn-primary { background:var(--primary); color:white; }
+    .btn-primary:hover { background:var(--primary-dark); }
+    .btn-outline { background:transparent; border:2px solid var(--primary); color:var(--primary); }
+    .btn-outline:hover { background:var(--primary-soft); }
+    .btn-sm { padding:7px 16px; font-size:.85rem; border-radius:10px; }
+
+    /* ======= STAGE 1: History Puzzle ======= */
+    .history-intro { display:flex; gap:18px; flex-wrap:wrap; margin-bottom:20px; }
+    .scientist-card {
+      flex:1; min-width:180px; background:#f8fafc; border-radius:14px;
+      padding:16px; text-align:center; border:2px solid transparent;
+      transition:all .2s;
+    }
+    .scientist-card .name { font-weight:700; font-size:1.05rem; margin-bottom:4px; }
+    .scientist-card .year { font-size:.82rem; color:var(--sub); }
+    .scientist-card .desc { font-size:.88rem; color:var(--sub); margin-top:8px; line-height:1.5; }
+
+    /* Drag & drop matching */
+    .match-area { display:flex; gap:24px; flex-wrap:wrap; margin-top:20px; }
+    .match-col { flex:1; min-width:200px; }
+    .match-col h4 { font-size:.95rem; color:var(--sub); margin-bottom:10px; text-align:center; }
+    .drop-zone {
+      min-height:60px; border:2px dashed var(--line); border-radius:12px;
+      padding:12px; margin-bottom:10px; transition:all .2s;
+      display:flex; align-items:center; justify-content:center;
+      font-size:.9rem; color:var(--sub);
+    }
+    .drop-zone.highlight { border-color:var(--primary); background:var(--primary-soft); }
+    .drop-zone.correct { border-color:#16a34a; background:#dcfce7; }
+    .drop-zone.wrong { border-color:#dc2626; background:#fef2f2; }
+
+    .drag-items { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:16px; }
+    .drag-item {
+      padding:8px 16px; background:#e0f2fe; border-radius:10px;
+      font-size:.88rem; font-weight:600; cursor:grab; user-select:none;
+      border:2px solid #93c5fd; transition:all .15s;
+    }
+    .drag-item:active { cursor:grabbing; opacity:.7; }
+    .drag-item.placed { opacity:.35; pointer-events:none; }
+
+    /* Mendeleev animation */
+    .mendeleev-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(60px,1fr));
+      gap:6px; margin-top:16px;
+    }
+    .m-cell {
+      aspect-ratio:1; border-radius:10px; display:flex; align-items:center;
+      justify-content:center; font-weight:700; font-size:.82rem;
+      background:#f1f5f9; color:var(--sub); border:2px solid var(--line);
+      transition:all .5s;
+    }
+    .m-cell.filled { background:#dbeafe; color:#1e40af; border-color:#93c5fd; }
+    .m-cell.predicted {
+      background:#fef3c7; color:#92400e; border-color:#f59e0b;
+      animation:pulse 1.5s infinite;
+    }
+    .m-cell.discovered {
+      background:#dcfce7; color:#166534; border-color:#16a34a;
+      animation:popIn .5s ease;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+    @keyframes popIn { 0%{transform:scale(0);opacity:0} 100%{transform:scale(1);opacity:1} }
+
+    /* ======= STAGE 2: Metal Heatmap ======= */
+    .toggle-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+    .toggle-btn {
+      padding:8px 18px; border-radius:999px; border:2px solid var(--line);
+      background:white; font-size:.88rem; font-weight:600; cursor:pointer;
+      transition:all .2s;
+    }
+    .toggle-btn.active { background:var(--primary); color:white; border-color:var(--primary); }
+
+    .pt-grid {
+      display:grid;
+      grid-template-columns:repeat(18,1fr);
+      gap:3px;
+      margin-top:14px;
+      overflow-x:auto;
+    }
+    .pt-cell {
+      aspect-ratio:1; border-radius:6px; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; font-size:.6rem;
+      border:1px solid #e5e7eb; transition:all .3s; cursor:pointer;
+      position:relative; min-width:0;
+    }
+    .pt-cell .symbol { font-weight:700; font-size:.75rem; }
+    .pt-cell .num { font-size:.5rem; color:var(--sub); }
+    .pt-cell.metal { background:#dbeafe; border-color:#93c5fd; }
+    .pt-cell.nonmetal { background:#fef3c7; border-color:#fbbf24; }
+    .pt-cell.metalloid { background:#e0e7ff; border-color:#a5b4fc; }
+    .pt-cell.noble { background:#f3e8ff; border-color:#c084fc; }
+    .pt-cell.alkali { background:#dcfce7; border-color:#4ade80; }
+    .pt-cell.halogen { background:#ffe4e6; border-color:#fb7185; }
+    .pt-cell.empty { border:none; background:transparent; }
+    .pt-cell.highlight { box-shadow:0 0 0 3px var(--primary); transform:scale(1.15); z-index:2; }
+    .pt-cell.dim { opacity:.2; }
+
+    .pt-legend { display:flex; gap:14px; flex-wrap:wrap; margin-top:14px; font-size:.82rem; }
+    .pt-legend span { display:flex; align-items:center; gap:5px; }
+    .pt-legend .dot { width:14px; height:14px; border-radius:4px; }
+
+    /* Popup */
+    .popup-overlay {
+      display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+      background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;
+    }
+    .popup-overlay.show { display:flex; }
+    .popup-box {
+      background:white; border-radius:var(--radius); padding:28px; max-width:400px;
+      width:90%; box-shadow:0 20px 60px rgba(0,0,0,.2); position:relative;
+    }
+    .popup-box h3 { color:var(--primary-dark); margin-bottom:10px; }
+    .popup-close {
+      position:absolute; top:12px; right:14px; background:none; border:none;
+      font-size:1.4rem; cursor:pointer; color:var(--sub);
+    }
+
+    /* ======= STAGE 3: Virtual Lab ======= */
+    .lab-container {
+      display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start;
+    }
+    .lab-bench {
+      flex:2; min-width:300px; background:#f8fafc; border-radius:16px;
+      padding:24px; text-align:center; position:relative; min-height:360px;
+    }
+    .beaker {
+      width:160px; height:180px; margin:20px auto 0;
+      background:linear-gradient(180deg,rgba(186,230,253,.3) 0%,rgba(186,230,253,.7) 100%);
+      border:3px solid #7dd3fc; border-top:none; border-radius:0 0 20px 20px;
+      position:relative; overflow:hidden;
+      transition:all .5s;
+    }
+    .beaker .water {
+      position:absolute; bottom:0; left:0; right:0; height:70%;
+      background:rgba(186,230,253,.6);
+      transition:all 1s;
+    }
+    .beaker .water.reacting {
+      animation:bubbles 0.5s infinite;
+    }
+    .beaker .water.pink {
+      background:rgba(244,114,182,.4);
+    }
+    @keyframes bubbles {
+      0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)}
+    }
+    .beaker .flame {
+      position:absolute; top:-30px; left:50%; transform:translateX(-50%);
+      font-size:2rem; display:none;
+    }
+    .beaker .flame.show { display:block; animation:flicker .3s infinite alternate; }
+    @keyframes flicker { 0%{transform:translateX(-50%) scale(1)} 100%{transform:translateX(-50%) scale(1.2)} }
+
+    .metal-tray {
+      flex:1; min-width:200px;
+    }
+    .metal-piece {
+      padding:14px 20px; background:white; border-radius:12px;
+      border:2px solid var(--line); margin-bottom:10px;
+      cursor:pointer; transition:all .2s; text-align:center;
+      font-weight:600;
+    }
+    .metal-piece:hover { border-color:var(--primary); background:var(--primary-soft); }
+    .metal-piece.active { border-color:var(--primary); background:var(--primary-soft); }
+    .metal-piece.used { opacity:.4; pointer-events:none; }
+
+    .lab-result {
+      margin-top:16px; padding:16px; background:#f0fdf4; border-radius:12px;
+      border:1px solid #bbf7d0; font-size:.92rem; display:none;
+    }
+    .lab-result.show { display:block; }
+
+    .reaction-info {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+      gap:12px; margin-top:14px;
+    }
+    .reaction-stat {
+      background:white; border-radius:10px; padding:12px; text-align:center;
+      border:1px solid var(--line);
+    }
+    .reaction-stat .label { font-size:.78rem; color:var(--sub); }
+    .reaction-stat .value { font-size:1.2rem; font-weight:700; color:var(--primary-dark); }
+
+    .phenol-btn {
+      margin-top:14px; padding:10px 22px; border-radius:12px;
+      border:2px solid #ec4899; background:#fdf2f8; color:#be185d;
+      font-weight:600; cursor:pointer; font-size:.9rem;
+      transition:all .2s;
+    }
+    .phenol-btn:hover { background:#fce7f3; }
+
+    /* ======= STAGE 4: Electron Config ======= */
+    .atom-display {
+      display:flex; gap:30px; flex-wrap:wrap; justify-content:center;
+      align-items:center; margin-top:18px;
+    }
+    .atom-visual {
+      position:relative; width:280px; height:280px;
+    }
+    .shell {
+      position:absolute; border:2px dashed #94a3b8; border-radius:50%;
+      top:50%; left:50%; transform:translate(-50%,-50%);
+    }
+    .shell-1 { width:80px; height:80px; }
+    .shell-2 { width:160px; height:160px; }
+    .shell-3 { width:240px; height:240px; }
+    .nucleus {
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      width:40px; height:40px; background:linear-gradient(135deg,#f97316,#dc2626);
+      border-radius:50%; display:flex; align-items:center; justify-content:center;
+      color:white; font-weight:800; font-size:.7rem; z-index:5;
+    }
+    .electron {
+      position:absolute; width:14px; height:14px; background:#3b82f6;
+      border-radius:50%; border:2px solid #1d4ed8; z-index:3;
+      transition:all .5s ease;
+    }
+    .electron.bounce {
+      animation:electronBounce .4s ease;
+    }
+    @keyframes electronBounce {
+      0%{transform:scale(1)} 30%{transform:scale(1.5)} 60%{transform:scale(.8)} 100%{transform:scale(1)}
+    }
+
+    .electron-pool {
+      display:flex; gap:6px; flex-wrap:wrap; justify-content:center;
+      padding:14px; background:#f1f5f9; border-radius:12px;
+      min-height:50px; margin-top:14px;
+    }
+    .pool-electron {
+      width:24px; height:24px; background:#3b82f6; border-radius:50%;
+      border:2px solid #1d4ed8; cursor:grab; transition:all .2s;
+    }
+    .pool-electron:hover { transform:scale(1.2); }
+
+    .element-selector {
+      display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+      margin-bottom:16px;
+    }
+    .element-btn {
+      width:52px; height:52px; border-radius:10px; border:2px solid var(--line);
+      background:white; cursor:pointer; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; transition:all .2s;
+    }
+    .element-btn:hover { border-color:var(--primary); }
+    .element-btn.active { border-color:var(--primary); background:var(--primary-soft); }
+    .element-btn .sym { font-weight:700; font-size:1rem; }
+    .element-btn .z { font-size:.65rem; color:var(--sub); }
+
+    /* Compare view */
+    .compare-container {
+      display:flex; gap:30px; justify-content:center; flex-wrap:wrap;
+      margin-top:20px;
+    }
+    .compare-item {
+      text-align:center;
+    }
+    .compare-item h4 { margin-bottom:8px; color:var(--primary-dark); }
+    .compare-label {
+      margin-top:8px; padding:6px 14px; border-radius:8px;
+      background:var(--primary-soft); font-size:.85rem; font-weight:600;
+      color:var(--primary-dark);
+    }
+
+    .config-text {
+      font-size:1.1rem; font-weight:600; text-align:center;
+      margin-top:14px; padding:12px; background:#f0fdf4; border-radius:10px;
+      color:var(--primary-dark);
+    }
+
+    /* Summary */
+    .summary-card {
+      background:linear-gradient(135deg,#166534,#0d9488); color:white;
+      border-radius:var(--radius); padding:28px; margin-top:24px;
+    }
+    .summary-card h2 { color:white; }
+    .summary-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:14px; margin-top:16px;
+    }
+    .summary-item {
+      background:rgba(255,255,255,.15); border-radius:12px; padding:16px;
+    }
+    .summary-item h4 { font-size:.95rem; margin-bottom:6px; }
+    .summary-item p { font-size:.88rem; opacity:.9; line-height:1.6; }
+
+    /* Score bar */
+    .score-bar {
+      display:flex; align-items:center; gap:12px; padding:14px 20px;
+      background:white; border-radius:14px; margin-bottom:18px;
+      box-shadow:var(--shadow);
+    }
+    .score-bar .label { font-weight:600; color:var(--sub); font-size:.9rem; }
+    .score-bar .points { font-size:1.4rem; font-weight:800; color:var(--primary); }
+    .score-bar .bar-track {
+      flex:1; height:10px; background:#e5e7eb; border-radius:99px; overflow:hidden;
+    }
+    .score-bar .bar-fill {
+      height:100%; background:linear-gradient(90deg,var(--primary),var(--accent));
+      border-radius:99px; transition:width .5s;
+    }
+
+    /* Footer */
+    footer {
+      text-align:center; padding:20px; color:var(--sub);
+      font-size:.88rem; border-top:1px solid var(--line); background:var(--card);
+    }
+
+    @media (max-width:700px) {
+      header h1 { font-size:1.5rem; }
+      .pt-grid { font-size:.5rem; gap:2px; }
+      .pt-cell .symbol { font-size:.6rem; }
+      .atom-visual { width:220px; height:220px; }
+      .shell-3 { width:200px; height:200px; }
+      .shell-2 { width:130px; height:130px; }
+      .shell-1 { width:65px; height:65px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="home-link" href="index.html">&#8592; 목록</a>
+  <div class="badge">Ⅱ. 물질과 규칙성</div>
+  <h1>자연의 규칙성 탐험</h1>
+  <p>원소의 주기성과 전자 배치를 인터랙티브 활동으로 탐구해 봅시다.</p>
+</header>
+
+<!-- Stage Navigation -->
+<nav class="stage-nav">
+  <button class="active" onclick="showStage(0)">1. 역사 퍼즐</button>
+  <button onclick="showStage(1)">2. 금속 히트맵</button>
+  <button onclick="showStage(2)">3. 가상 실험실</button>
+  <button onclick="showStage(3)">4. 전자 배치</button>
+</nav>
+
+<main class="wrap">
+
+<!-- Score Bar -->
+<div class="score-bar" style="margin-top:22px;">
+  <span class="label">탐구 점수</span>
+  <span class="points" id="scoreDisplay">0</span>
+  <div class="bar-track"><div class="bar-fill" id="scoreBar" style="width:0%"></div></div>
+  <span class="label" id="scoreMax">/ 100</span>
+</div>
+
+<!-- ============ STAGE 1: History Puzzle ============ -->
+<div class="stage active" id="stage0">
+  <div class="card">
+    <h2>스테이지 1: 주기율표의 역사 퍼즐</h2>
+    <div class="lead-box">
+      인간은 오래전부터 자연을 구성하는 물질을 연구했습니다. 수많은 과학자가 원소의 규칙성을 찾기 위해 노력했습니다.
+      각 과학자와 그들의 업적을 연결해 봅시다!
+    </div>
+
+    <div class="history-intro">
+      <div class="scientist-card">
+        <div class="name">되베라이너</div>
+        <div class="year">1780~1849</div>
+        <div class="desc">화학적 성질이 비슷한 세 개의 원소 사이에서 원자량의 규칙성을 발견</div>
+      </div>
+      <div class="scientist-card">
+        <div class="name">뉴랜즈</div>
+        <div class="year">1837~1898</div>
+        <div class="desc">원소를 원자량순으로 배열하면 8번째마다 비슷한 성질 반복</div>
+      </div>
+      <div class="scientist-card">
+        <div class="name">멘델레예프</div>
+        <div class="year">1834~1907</div>
+        <div class="desc">원자량순 배열 후 화학적 성질이 비슷한 원소를 같은 세로줄에 배치</div>
+      </div>
+      <div class="scientist-card">
+        <div class="name">모즐리</div>
+        <div class="year">1887~1915</div>
+        <div class="desc">양성자 수(원자 번호)를 기준으로 현대 주기율표의 기반을 마련</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Matching Game -->
+  <div class="card">
+    <h3>과학자와 업적 연결하기</h3>
+    <p style="font-size:.9rem;color:var(--sub);margin-bottom:14px;">아래 키워드를 드래그하여 해당 과학자의 칸에 놓아주세요.</p>
+
+    <div class="match-area">
+      <div class="match-col">
+        <div class="drop-zone" data-answer="dobereiner" id="dz1">
+          <strong>되베라이너</strong>&nbsp;&mdash;&nbsp;<span class="dz-text">여기에 놓기</span>
+        </div>
+        <div class="drop-zone" data-answer="newlands" id="dz2">
+          <strong>뉴랜즈</strong>&nbsp;&mdash;&nbsp;<span class="dz-text">여기에 놓기</span>
+        </div>
+        <div class="drop-zone" data-answer="mendeleev" id="dz3">
+          <strong>멘델레예프</strong>&nbsp;&mdash;&nbsp;<span class="dz-text">여기에 놓기</span>
+        </div>
+        <div class="drop-zone" data-answer="moseley" id="dz4">
+          <strong>모즐리</strong>&nbsp;&mdash;&nbsp;<span class="dz-text">여기에 놓기</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="drag-items" id="dragItems">
+      <div class="drag-item" draggable="true" data-key="moseley">원자 번호 기준 정리</div>
+      <div class="drag-item" draggable="true" data-key="dobereiner">세 쌍 원소설</div>
+      <div class="drag-item" draggable="true" data-key="mendeleev">주기율표 최초 제작</div>
+      <div class="drag-item" draggable="true" data-key="newlands">옥타브설 (8번째 반복)</div>
+    </div>
+  </div>
+
+  <!-- Mendeleev's Prediction -->
+  <div class="card">
+    <h3>멘델레예프의 예측: 빈칸을 채워라!</h3>
+    <p style="font-size:.9rem;color:var(--sub);margin-bottom:10px;">
+      멘델레예프는 당시 발견되지 않은 원소의 자리를 비워두었습니다.
+      아래 버튼을 눌러 나중에 발견된 원소들이 빈칸을 채우는 과정을 확인해 보세요!
+    </p>
+    <div class="mendeleev-grid" id="mendeleevGrid"></div>
+    <div style="text-align:center;margin-top:16px;">
+      <button class="btn btn-primary" onclick="revealPredicted()">예측 원소 채우기!</button>
+      <button class="btn btn-outline" onclick="resetMendeleev()" style="margin-left:8px;">초기화</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ STAGE 2: Metal Heatmap ============ -->
+<div class="stage" id="stage1">
+  <div class="card">
+    <h2>스테이지 2: 금속 vs 비금속 히트맵</h2>
+    <div class="lead-box">
+      주기율표에서 금속, 비금속, 준금속 원소의 위치를 확인하고, 다양한 성질에 따라 원소들이 어떻게 분류되는지 알아봅시다.
+    </div>
+
+    <div class="toggle-bar">
+      <button class="toggle-btn active" onclick="ptFilter('all',this)">전체</button>
+      <button class="toggle-btn" onclick="ptFilter('metal',this)">금속</button>
+      <button class="toggle-btn" onclick="ptFilter('nonmetal',this)">비금속</button>
+      <button class="toggle-btn" onclick="ptFilter('metalloid',this)">준금속</button>
+      <button class="toggle-btn" onclick="ptFilter('alkali',this)">알칼리 금속</button>
+      <button class="toggle-btn" onclick="ptFilter('halogen',this)">할로젠</button>
+      <button class="toggle-btn" onclick="ptFilter('noble',this)">비활성 기체</button>
+    </div>
+
+    <div class="pt-grid" id="ptGrid"></div>
+
+    <div class="pt-legend">
+      <span><span class="dot" style="background:#dbeafe;border:1px solid #93c5fd;"></span> 금속</span>
+      <span><span class="dot" style="background:#fef3c7;border:1px solid #fbbf24;"></span> 비금속</span>
+      <span><span class="dot" style="background:#e0e7ff;border:1px solid #a5b4fc;"></span> 준금속</span>
+      <span><span class="dot" style="background:#dcfce7;border:1px solid #4ade80;"></span> 알칼리 금속</span>
+      <span><span class="dot" style="background:#ffe4e6;border:1px solid #fb7185;"></span> 할로젠</span>
+      <span><span class="dot" style="background:#f3e8ff;border:1px solid #c084fc;"></span> 비활성 기체</span>
+    </div>
+  </div>
+</div>
+
+<!-- Element Popup -->
+<div class="popup-overlay" id="elementPopup">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup()">&times;</button>
+    <h3 id="popupTitle"></h3>
+    <p id="popupBody" style="font-size:.92rem;line-height:1.7;color:var(--sub);"></p>
+  </div>
+</div>
+
+<!-- ============ STAGE 3: Virtual Lab ============ -->
+<div class="stage" id="stage2">
+  <div class="card">
+    <h2>스테이지 3: 가상 실험실 - 알칼리 금속의 반응</h2>
+    <div class="lead-box">
+      알칼리 금속(Li, Na, K)을 물에 넣으면 어떤 반응이 일어날까요?<br>
+      금속 조각을 선택하여 비커에 넣어 보세요. 반응성의 차이를 관찰해 봅시다!
+    </div>
+
+    <div style="background:#fff7ed;border-radius:12px;padding:14px 18px;margin-bottom:18px;border:1px solid #fed7aa;font-size:.88rem;">
+      <strong style="color:#c2410c;">안전 수칙</strong><br>
+      &bull; 알칼리 금속은 물과의 반응성이 커 폭발이나 화재의 위험이 있습니다.<br>
+      &bull; 실제 실험 시 보안경과 실험용 장갑을 반드시 착용하세요.<br>
+      &bull; 남은 금속은 에탄올이 든 비커에 담아 제거합니다.
+    </div>
+
+    <div class="lab-container">
+      <div class="lab-bench">
+        <div style="font-size:.9rem;color:var(--sub);margin-bottom:8px;">물이 담긴 비커</div>
+        <div class="beaker" id="labBeaker">
+          <div class="water" id="labWater"></div>
+          <div class="flame" id="labFlame"></div>
+        </div>
+        <button class="phenol-btn" id="phenolBtn" onclick="addPhenol()" style="display:none;">
+          페놀프탈레인 용액 떨어뜨리기
+        </button>
+        <div class="lab-result" id="labResult"></div>
+      </div>
+
+      <div class="metal-tray">
+        <div style="font-size:.95rem;font-weight:600;margin-bottom:12px;">금속 선택</div>
+        <div class="metal-piece" onclick="dropMetal('Li',this)">
+          <div>Li (리튬)</div>
+          <div style="font-size:.78rem;color:var(--sub);">원자번호 3 | 1족</div>
+        </div>
+        <div class="metal-piece" onclick="dropMetal('Na',this)">
+          <div>Na (나트륨)</div>
+          <div style="font-size:.78rem;color:var(--sub);">원자번호 11 | 1족</div>
+        </div>
+        <div class="metal-piece" onclick="dropMetal('K',this)">
+          <div>K (칼륨)</div>
+          <div style="font-size:.78rem;color:var(--sub);">원자번호 19 | 1족</div>
+        </div>
+        <div style="margin-top:16px;">
+          <button class="btn btn-outline btn-sm" onclick="resetLab()">실험 초기화</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ STAGE 4: Electron Config ============ -->
+<div class="stage" id="stage3">
+  <div class="card">
+    <h2>스테이지 4: 전자 배치 시뮬레이터</h2>
+    <div class="lead-box">
+      원자핵에 가까운 전자껍질부터 전자가 채워집니다.<br>
+      <strong>첫 번째 껍질: 최대 2개 | 두 번째 껍질: 최대 8개 | 세 번째 껍질: 최대 8개</strong><br>
+      원소를 선택하면 전자 배치를 확인할 수 있습니다.
+    </div>
+
+    <div class="element-selector" id="elemSelector"></div>
+
+    <div class="atom-display">
+      <div class="atom-visual" id="atomVisual">
+        <div class="nucleus" id="nucleusLabel">?</div>
+        <div class="shell shell-1"></div>
+        <div class="shell shell-2"></div>
+        <div class="shell shell-3"></div>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <div id="elemInfo" style="font-size:.95rem;line-height:1.8;">
+          <p style="color:var(--sub);">왼쪽에서 원소를 선택하면 전자 배치를 볼 수 있습니다.</p>
+        </div>
+        <div class="config-text" id="configText" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group Compare -->
+  <div class="card">
+    <h3>같은 족 원소 비교: 원자가 전자의 비밀</h3>
+    <p style="font-size:.9rem;color:var(--sub);margin-bottom:14px;">
+      1족 원소인 리튬(Li)과 나트륨(Na)의 전자 배치를 비교해 봅시다. 가장 바깥 껍질의 전자 수에 주목하세요!
+    </p>
+    <div class="compare-container" id="compareView"></div>
+    <div style="text-align:center;margin-top:16px;">
+      <button class="btn btn-outline btn-sm" onclick="compareElements('Li','Na')">Li vs Na (1족)</button>
+      <button class="btn btn-outline btn-sm" onclick="compareElements('F','Cl')" style="margin-left:8px;">F vs Cl (17족)</button>
+      <button class="btn btn-outline btn-sm" onclick="compareElements('Ne','Ar')" style="margin-left:8px;">Ne vs Ar (18족)</button>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-card">
+    <h2>학습 정리</h2>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <h4>주기율표</h4>
+        <p>원소를 원자 번호 순서대로 배열하여 화학적 성질이 비슷한 원소가 같은 세로줄(족)에 오도록 정리한 표입니다.</p>
+      </div>
+      <div class="summary-item">
+        <h4>주기와 족</h4>
+        <p>가로줄(주기)이 같으면 전자껍질 수가 같고, 세로줄(족)이 같으면 원자가 전자 수가 같습니다.</p>
+      </div>
+      <div class="summary-item">
+        <h4>알칼리 금속 (1족)</h4>
+        <p>전자 1개를 잃고 양이온이 되기 쉬우며, 물과 격렬히 반응합니다. Li &lt; Na &lt; K 순으로 반응성이 커집니다.</p>
+      </div>
+      <div class="summary-item">
+        <h4>원자가 전자</h4>
+        <p>가장 바깥 전자껍질의 전자로, 화학 반응에 관여합니다. 18족은 매우 안정하여 반응성이 거의 없습니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  날아라 물리 통합과학 학습자료 | &copy; 동북고등학교 강현식
+</footer>
+
+<script>
+// ==================== GLOBAL ====================
+let score = 0;
+const maxScore = 100;
+
+function addScore(pts) {
+  score = Math.min(score + pts, maxScore);
+  document.getElementById('scoreDisplay').textContent = score;
+  document.getElementById('scoreBar').style.width = (score / maxScore * 100) + '%';
+}
+
+// Stage navigation
+function showStage(idx) {
+  document.querySelectorAll('.stage').forEach((s,i) => {
+    s.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.stage-nav button').forEach((b,i) => {
+    b.classList.toggle('active', i === idx);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ==================== STAGE 1: History Puzzle ====================
+// Drag & Drop
+const dragItems = document.querySelectorAll('.drag-item');
+const dropZones = document.querySelectorAll('.drop-zone');
+let stage1Score = 0;
+
+dragItems.forEach(item => {
+  item.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', item.dataset.key);
+  });
+  // Touch support
+  item.addEventListener('touchstart', e => {
+    item._touchKey = item.dataset.key;
+    item.style.opacity = '.6';
+  });
+  item.addEventListener('touchend', e => {
+    item.style.opacity = '';
+    const touch = e.changedTouches[0];
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    const zone = target?.closest('.drop-zone');
+    if (zone) handleDrop(zone, item.dataset.key, item);
+  });
+});
+
+dropZones.forEach(zone => {
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('highlight'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('highlight'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('highlight');
+    const key = e.dataTransfer.getData('text/plain');
+    const item = document.querySelector(`.drag-item[data-key="${key}"]`);
+    handleDrop(zone, key, item);
+  });
+});
+
+function handleDrop(zone, key, item) {
+  if (zone.dataset.answer === key) {
+    zone.classList.add('correct');
+    zone.querySelector('.dz-text').textContent = item.textContent;
+    item.classList.add('placed');
+    stage1Score++;
+    if (stage1Score <= 4) addScore(5);
+  } else {
+    zone.classList.add('wrong');
+    setTimeout(() => zone.classList.remove('wrong'), 600);
+  }
+}
+
+// Mendeleev Grid
+const mendeleevElements = [
+  {sym:'H',z:1,f:true},{sym:'He',z:2,f:true},{sym:'Li',z:3,f:true},{sym:'Be',z:4,f:true},
+  {sym:'B',z:5,f:true},{sym:'C',z:6,f:true},{sym:'N',z:7,f:true},{sym:'O',z:8,f:true},
+  {sym:'F',z:9,f:true},{sym:'Ne',z:10,f:true},{sym:'Na',z:11,f:true},{sym:'Mg',z:12,f:true},
+  {sym:'Al',z:13,f:true},{sym:'Si',z:14,f:true},{sym:'P',z:15,f:true},{sym:'S',z:16,f:true},
+  {sym:'Cl',z:17,f:true},{sym:'Ar',z:18,f:true},{sym:'K',z:19,f:true},{sym:'Ca',z:20,f:true},
+  {sym:'?',z:21,f:false,real:'Sc',pred:'에카-붕소'},{sym:'Ti',z:22,f:true},
+  {sym:'V',z:23,f:true},{sym:'Cr',z:24,f:true},{sym:'Mn',z:25,f:true},{sym:'Fe',z:26,f:true},
+  {sym:'Co',z:27,f:true},{sym:'Ni',z:28,f:true},{sym:'Cu',z:29,f:true},{sym:'Zn',z:30,f:true},
+  {sym:'?',z:31,f:false,real:'Ga',pred:'에카-알루미늄'},{sym:'?',z:32,f:false,real:'Ge',pred:'에카-규소'},
+  {sym:'As',z:33,f:true},{sym:'Se',z:34,f:true},{sym:'Br',z:35,f:true},{sym:'Kr',z:36,f:true}
+];
+
+function buildMendeleev() {
+  const grid = document.getElementById('mendeleevGrid');
+  grid.innerHTML = '';
+  mendeleevElements.forEach(el => {
+    const cell = document.createElement('div');
+    cell.className = 'm-cell' + (el.f ? ' filled' : ' predicted');
+    cell.textContent = el.sym;
+    cell.dataset.real = el.real || '';
+    cell.dataset.pred = el.pred || '';
+    cell.title = el.f ? `${el.sym} (Z=${el.z})` : `${el.pred} → ${el.real} (Z=${el.z})`;
+    grid.appendChild(cell);
+  });
+}
+buildMendeleev();
+
+let mendeleevRevealed = false;
+function revealPredicted() {
+  if (mendeleevRevealed) return;
+  mendeleevRevealed = true;
+  document.querySelectorAll('.m-cell.predicted').forEach((cell, i) => {
+    setTimeout(() => {
+      cell.classList.remove('predicted');
+      cell.classList.add('discovered');
+      cell.textContent = cell.dataset.real;
+    }, i * 600);
+  });
+  addScore(10);
+}
+function resetMendeleev() {
+  mendeleevRevealed = false;
+  buildMendeleev();
+}
+
+// ==================== STAGE 2: Periodic Table Heatmap ====================
+const ptData = [
+  // [Z, symbol, row, col, type]  type: metal, nonmetal, metalloid, alkali, halogen, noble
+  [1,'H',1,1,'nonmetal'],[2,'He',1,18,'noble'],
+  [3,'Li',2,1,'alkali'],[4,'Be',2,2,'metal'],[5,'B',2,13,'metalloid'],[6,'C',2,14,'nonmetal'],
+  [7,'N',2,15,'nonmetal'],[8,'O',2,16,'nonmetal'],[9,'F',2,17,'halogen'],[10,'Ne',2,18,'noble'],
+  [11,'Na',3,1,'alkali'],[12,'Mg',3,2,'metal'],[13,'Al',3,13,'metal'],[14,'Si',3,14,'metalloid'],
+  [15,'P',3,15,'nonmetal'],[16,'S',3,16,'nonmetal'],[17,'Cl',3,17,'halogen'],[18,'Ar',3,18,'noble'],
+  [19,'K',4,1,'alkali'],[20,'Ca',4,2,'metal'],
+  [21,'Sc',4,3,'metal'],[22,'Ti',4,4,'metal'],[23,'V',4,5,'metal'],[24,'Cr',4,6,'metal'],
+  [25,'Mn',4,7,'metal'],[26,'Fe',4,8,'metal'],[27,'Co',4,9,'metal'],[28,'Ni',4,10,'metal'],
+  [29,'Cu',4,11,'metal'],[30,'Zn',4,12,'metal'],[31,'Ga',4,13,'metal'],[32,'Ge',4,14,'metalloid'],
+  [33,'As',4,15,'metalloid'],[34,'Se',4,16,'nonmetal'],[35,'Br',4,17,'halogen'],[36,'Kr',4,18,'noble'],
+  [37,'Rb',5,1,'alkali'],[38,'Sr',5,2,'metal'],
+  [39,'Y',5,3,'metal'],[40,'Zr',5,4,'metal'],[41,'Nb',5,5,'metal'],[42,'Mo',5,6,'metal'],
+  [43,'Tc',5,7,'metal'],[44,'Ru',5,8,'metal'],[45,'Rh',5,9,'metal'],[46,'Pd',5,10,'metal'],
+  [47,'Ag',5,11,'metal'],[48,'Cd',5,12,'metal'],[49,'In',5,13,'metal'],[50,'Sn',5,14,'metal'],
+  [51,'Sb',5,15,'metalloid'],[52,'Te',5,16,'metalloid'],[53,'I',5,17,'halogen'],[54,'Xe',5,18,'noble'],
+  [55,'Cs',6,1,'alkali'],[56,'Ba',6,2,'metal'],
+  [72,'Hf',6,4,'metal'],[73,'Ta',6,5,'metal'],[74,'W',6,6,'metal'],[75,'Re',6,7,'metal'],
+  [76,'Os',6,8,'metal'],[77,'Ir',6,9,'metal'],[78,'Pt',6,10,'metal'],[79,'Au',6,11,'metal'],
+  [80,'Hg',6,12,'metal'],[81,'Tl',6,13,'metal'],[82,'Pb',6,14,'metal'],[83,'Bi',6,15,'metal'],
+  [84,'Po',6,16,'metalloid'],[85,'At',6,17,'halogen'],[86,'Rn',6,18,'noble'],
+  [87,'Fr',7,1,'alkali'],[88,'Ra',7,2,'metal'],
+];
+
+const elementInfo = {
+  'H': {name:'수소', desc:'우주에서 가장 가벼운 원소. 비금속이며 물의 구성 성분입니다.'},
+  'He': {name:'헬륨', desc:'비활성 기체. 매우 안정하여 풍선에 사용됩니다.'},
+  'Li': {name:'리튬', desc:'가장 가벼운 금속. 알칼리 금속으로 물과 반응합니다. 리튬 배터리의 핵심 원소입니다.'},
+  'Be': {name:'베릴륨', desc:'가볍고 단단한 금속. 우주항공 산업에 사용됩니다.'},
+  'B': {name:'붕소', desc:'준금속 원소. 금속과 비금속의 중간 성질을 가집니다. 반도체 재료로 사용됩니다.'},
+  'C': {name:'탄소', desc:'생명체의 기본 원소. 다이아몬드와 흑연 등 다양한 동소체가 있습니다.'},
+  'N': {name:'질소', desc:'대기의 약 78%를 차지하며, 생명체의 단백질과 DNA를 구성합니다.'},
+  'O': {name:'산소', desc:'호흡과 연소에 필수적인 원소입니다. 지각에서 가장 풍부한 원소입니다.'},
+  'F': {name:'플루오린', desc:'가장 반응성이 큰 할로젠 원소. 치약에 포함되어 충치를 예방합니다.'},
+  'Ne': {name:'네온', desc:'비활성 기체. 네온사인에 사용되어 붉은빛을 냅니다.'},
+  'Na': {name:'나트륨', desc:'알칼리 금속. 물과 격렬히 반응합니다. 소금(NaCl)의 구성 원소입니다.'},
+  'Mg': {name:'마그네슘', desc:'가볍고 강한 금속. 연소 시 밝은 빛을 냅니다.'},
+  'Al': {name:'알루미늄', desc:'가볍고 내식성이 좋은 금속. 캔, 항공기에 사용됩니다.'},
+  'Si': {name:'규소', desc:'준금속. 반도체의 핵심 재료이며 지각에서 두 번째로 풍부한 원소입니다.'},
+  'P': {name:'인', desc:'DNA와 ATP의 구성 원소. 성냥과 비료에 사용됩니다.'},
+  'S': {name:'황', desc:'노란색 고체 비금속. 화산 지대에서 발견되며 산업에 널리 사용됩니다.'},
+  'Cl': {name:'염소', desc:'할로젠 원소. 노란 녹색 기체로, 소독제와 표백제에 사용됩니다.'},
+  'Ar': {name:'아르곤', desc:'비활성 기체. 대기의 약 1%를 차지하며 전구에 사용됩니다.'},
+  'K': {name:'칼륨', desc:'알칼리 금속. 물과 매우 격렬히 반응하며 보라색 불꽃을 냅니다.'},
+  'Ca': {name:'칼슘', desc:'뼈와 치아의 주요 구성 원소입니다.'},
+  'Fe': {name:'철', desc:'지구 핵의 주요 성분이며 헤모글로빈의 구성 원소입니다.'},
+  'Cu': {name:'구리', desc:'전기 전도성이 뛰어난 금속. 전선에 사용됩니다.'},
+  'Br': {name:'브로민', desc:'할로젠 원소. 상온에서 액체인 유일한 비금속 원소입니다.'},
+  'Ag': {name:'은', desc:'전기 전도성이 가장 좋은 금속입니다.'},
+  'Au': {name:'금', desc:'부식되지 않는 귀금속. 전자 부품에도 사용됩니다.'},
+  'I': {name:'아이오딘', desc:'할로젠 원소. 보라색 기체로 승화합니다. 갑상선 호르몬에 필수적입니다.'},
+  'Ge': {name:'저마늄', desc:'준금속. 반도체 성질을 가지며, 멘델레예프가 에카-규소로 예측한 원소입니다.'},
+  'Ga': {name:'갈륨', desc:'손 위에서 녹을 정도로 녹는점이 낮은 금속입니다. 에카-알루미늄으로 예측되었습니다.'},
+};
+
+function buildPT() {
+  const grid = document.getElementById('ptGrid');
+  grid.innerHTML = '';
+  // 7 rows x 18 cols
+  for (let r = 1; r <= 7; r++) {
+    for (let c = 1; c <= 18; c++) {
+      const el = ptData.find(e => e[2] === r && e[3] === c);
+      const cell = document.createElement('div');
+      cell.className = 'pt-cell';
+      if (el) {
+        cell.classList.add(el[4]);
+        cell.innerHTML = `<span class="num">${el[0]}</span><span class="symbol">${el[1]}</span>`;
+        cell.dataset.symbol = el[1];
+        cell.dataset.type = el[4];
+        cell.onclick = () => showElementPopup(el[1], el[0], el[4]);
+      } else {
+        cell.classList.add('empty');
+      }
+      grid.appendChild(cell);
+    }
+  }
+}
+buildPT();
+
+let ptFilterUsed = false;
+function ptFilter(type, btn) {
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  if (!ptFilterUsed) { ptFilterUsed = true; addScore(5); }
+
+  document.querySelectorAll('.pt-cell').forEach(cell => {
+    cell.classList.remove('highlight', 'dim');
+    if (cell.classList.contains('empty')) return;
+    if (type === 'all') return;
+    if (cell.dataset.type === type) {
+      cell.classList.add('highlight');
+    } else {
+      cell.classList.add('dim');
+    }
+  });
+}
+
+function showElementPopup(sym, z, type) {
+  const info = elementInfo[sym];
+  const typeNames = {metal:'금속',nonmetal:'비금속',metalloid:'준금속',alkali:'알칼리 금속',halogen:'할로젠',noble:'비활성 기체'};
+  document.getElementById('popupTitle').textContent = info
+    ? `${sym} (${info.name}) - 원자번호 ${z}`
+    : `${sym} - 원자번호 ${z}`;
+  document.getElementById('popupBody').innerHTML = info
+    ? `<strong>분류:</strong> ${typeNames[type]}<br><br>${info.desc}`
+    : `<strong>분류:</strong> ${typeNames[type]}`;
+  document.getElementById('elementPopup').classList.add('show');
+  addScore(1);
+}
+function closePopup() {
+  document.getElementById('elementPopup').classList.remove('show');
+}
+
+// ==================== STAGE 3: Virtual Lab ====================
+const metalReactions = {
+  Li: {
+    speed: 'slow', flameSize: '1.5rem', flameEmoji: '🔥',
+    gasRate: '느림', intensity: '약함', color: '빨간색',
+    desc: '리튬은 물 위에서 천천히 움직이며 반응합니다. 수소 기체가 발생하고 용액은 염기성을 띱니다.',
+    equation: '2Li + 2H₂O → 2LiOH + H₂↑'
+  },
+  Na: {
+    speed: 'medium', flameSize: '2rem', flameEmoji: '🔥',
+    gasRate: '보통', intensity: '보통', color: '노란색',
+    desc: '나트륨은 물 위에서 빠르게 움직이며 녹습니다. 노란색 불꽃을 내며 반응합니다.',
+    equation: '2Na + 2H₂O → 2NaOH + H₂↑'
+  },
+  K: {
+    speed: 'fast', flameSize: '2.5rem', flameEmoji: '💥',
+    gasRate: '빠름', intensity: '강함', color: '보라색',
+    desc: '칼륨은 물에 닿자마자 격렬히 반응하며 보라색 불꽃과 함께 폭발적으로 반응합니다!',
+    equation: '2K + 2H₂O → 2KOH + H₂↑'
+  }
+};
+
+let labState = { currentMetal: null, phenolAdded: false };
+
+function dropMetal(metal, elem) {
+  if (labState.currentMetal) return;
+  labState.currentMetal = metal;
+  elem.classList.add('active');
+
+  const rx = metalReactions[metal];
+  const water = document.getElementById('labWater');
+  const flame = document.getElementById('labFlame');
+  const result = document.getElementById('labResult');
+
+  // Animate reaction
+  water.classList.add('reacting');
+  flame.textContent = rx.flameEmoji;
+  flame.style.fontSize = rx.flameSize;
+  flame.classList.add('show');
+
+  const shakeAmount = metal === 'K' ? 8 : metal === 'Na' ? 4 : 2;
+  const beaker = document.getElementById('labBeaker');
+  beaker.style.animation = `shake ${metal === 'K' ? '.1s' : '.2s'} infinite alternate`;
+
+  setTimeout(() => {
+    beaker.style.animation = '';
+    water.classList.remove('reacting');
+    if (metal !== 'K') flame.classList.remove('show');
+
+    document.getElementById('phenolBtn').style.display = 'inline-block';
+
+    result.innerHTML = `
+      <strong>${metal}의 반응 결과</strong><br>
+      ${rx.desc}<br><br>
+      <strong>화학 반응식:</strong> ${rx.equation}
+      <div class="reaction-info">
+        <div class="reaction-stat"><div class="label">기체 발생</div><div class="value">${rx.gasRate}</div></div>
+        <div class="reaction-stat"><div class="label">반응 세기</div><div class="value">${rx.intensity}</div></div>
+        <div class="reaction-stat"><div class="label">불꽃 색</div><div class="value">${rx.color}</div></div>
+      </div>
+    `;
+    result.classList.add('show');
+    addScore(10);
+  }, metal === 'K' ? 1000 : metal === 'Na' ? 1500 : 2000);
+}
+
+// Add shake keyframes dynamically
+const shakeStyle = document.createElement('style');
+shakeStyle.textContent = `@keyframes shake{0%{transform:translateX(-3px)}100%{transform:translateX(3px)}}`;
+document.head.appendChild(shakeStyle);
+
+function addPhenol() {
+  if (labState.phenolAdded) return;
+  labState.phenolAdded = true;
+  const water = document.getElementById('labWater');
+  water.classList.add('pink');
+  document.getElementById('phenolBtn').textContent = '용액이 붉은색으로 변했습니다! (염기성)';
+  document.getElementById('phenolBtn').style.borderColor = '#ec4899';
+  document.getElementById('phenolBtn').style.background = '#fce7f3';
+  addScore(5);
+}
+
+function resetLab() {
+  labState = { currentMetal: null, phenolAdded: false };
+  document.getElementById('labWater').className = 'water';
+  document.getElementById('labFlame').classList.remove('show');
+  document.getElementById('labResult').classList.remove('show');
+  document.getElementById('phenolBtn').style.display = 'none';
+  document.getElementById('phenolBtn').textContent = '페놀프탈레인 용액 떨어뜨리기';
+  document.getElementById('phenolBtn').style.background = '#fdf2f8';
+  document.querySelectorAll('.metal-piece').forEach(p => p.classList.remove('active','used'));
+  document.getElementById('labBeaker').style.animation = '';
+}
+
+// ==================== STAGE 4: Electron Config ====================
+const elements1to18 = [
+  {sym:'H',z:1,name:'수소',shells:[1]},
+  {sym:'He',z:2,name:'헬륨',shells:[2]},
+  {sym:'Li',z:3,name:'리튬',shells:[2,1]},
+  {sym:'Be',z:4,name:'베릴륨',shells:[2,2]},
+  {sym:'B',z:5,name:'붕소',shells:[2,3]},
+  {sym:'C',z:6,name:'탄소',shells:[2,4]},
+  {sym:'N',z:7,name:'질소',shells:[2,5]},
+  {sym:'O',z:8,name:'산소',shells:[2,6]},
+  {sym:'F',z:9,name:'플루오린',shells:[2,7]},
+  {sym:'Ne',z:10,name:'네온',shells:[2,8]},
+  {sym:'Na',z:11,name:'나트륨',shells:[2,8,1]},
+  {sym:'Mg',z:12,name:'마그네슘',shells:[2,8,2]},
+  {sym:'Al',z:13,name:'알루미늄',shells:[2,8,3]},
+  {sym:'Si',z:14,name:'규소',shells:[2,8,4]},
+  {sym:'P',z:15,name:'인',shells:[2,8,5]},
+  {sym:'S',z:16,name:'황',shells:[2,8,6]},
+  {sym:'Cl',z:17,name:'염소',shells:[2,8,7]},
+  {sym:'Ar',z:18,name:'아르곤',shells:[2,8,8]},
+];
+
+// Build element selector
+(function() {
+  const sel = document.getElementById('elemSelector');
+  elements1to18.forEach(el => {
+    const btn = document.createElement('button');
+    btn.className = 'element-btn';
+    btn.innerHTML = `<span class="z">${el.z}</span><span class="sym">${el.sym}</span>`;
+    btn.onclick = () => selectElement(el);
+    sel.appendChild(btn);
+  });
+})();
+
+let selectedElement = null;
+
+function selectElement(el) {
+  selectedElement = el;
+  document.querySelectorAll('.element-btn').forEach((b,i) => {
+    b.classList.toggle('active', elements1to18[i].sym === el.sym);
+  });
+
+  drawAtom(el);
+
+  const valence = el.shells[el.shells.length - 1];
+  const period = el.shells.length;
+  const group = getGroup(el);
+
+  document.getElementById('elemInfo').innerHTML = `
+    <div style="margin-bottom:10px;"><strong style="font-size:1.3rem;color:var(--primary-dark);">${el.sym}</strong> <span style="color:var(--sub);">${el.name} (Z=${el.z})</span></div>
+    <div><strong>전자 수:</strong> ${el.z}개</div>
+    <div><strong>양성자 수:</strong> ${el.z}개</div>
+    <div><strong>전자껍질 수:</strong> ${period}개 (${period}주기)</div>
+    <div><strong>전자 배치:</strong> ${el.shells.join(', ')}</div>
+    <div><strong>원자가 전자:</strong> ${el.sym === 'He' || el.sym === 'Ne' || el.sym === 'Ar' ? '0개 (비활성 기체)' : valence + '개'}</div>
+  `;
+
+  const configText = document.getElementById('configText');
+  configText.style.display = 'block';
+  configText.textContent = `전자 배치: ${el.shells.map((n,i) => `K L M`.split(' ')[i] + '=' + n).join(', ')}`;
+
+  addScore(2);
+}
+
+function getGroup(el) {
+  const v = el.shells[el.shells.length - 1];
+  if (el.sym === 'He') return 18;
+  if (el.shells.length === 1) return v < 3 ? v : v + 10;
+  return v < 3 ? v : v + 10;
+}
+
+function drawAtom(el) {
+  // Remove old electrons
+  document.querySelectorAll('#atomVisual .electron').forEach(e => e.remove());
+  document.getElementById('nucleusLabel').textContent = el.z + '+';
+
+  const visual = document.getElementById('atomVisual');
+  const cx = 140, cy = 140;
+  const radii = [40, 80, 120]; // shell radii
+
+  el.shells.forEach((count, shellIdx) => {
+    const r = radii[shellIdx];
+    for (let i = 0; i < count; i++) {
+      const angle = (2 * Math.PI * i / count) - Math.PI / 2;
+      const x = cx + r * Math.cos(angle) - 7;
+      const y = cy + r * Math.sin(angle) - 7;
+
+      const electron = document.createElement('div');
+      electron.className = 'electron';
+      electron.style.left = x + 'px';
+      electron.style.top = y + 'px';
+
+      // Highlight valence electrons
+      if (shellIdx === el.shells.length - 1) {
+        electron.style.background = '#f59e0b';
+        electron.style.borderColor = '#d97706';
+        electron.title = '원자가 전자';
+      }
+
+      visual.appendChild(electron);
+
+      // Animate in
+      setTimeout(() => electron.classList.add('bounce'), shellIdx * 200 + i * 80);
+    }
+  });
+}
+
+function compareElements(sym1, sym2) {
+  const el1 = elements1to18.find(e => e.sym === sym1);
+  const el2 = elements1to18.find(e => e.sym === sym2);
+  if (!el1 || !el2) return;
+
+  const container = document.getElementById('compareView');
+  container.innerHTML = '';
+
+  [el1, el2].forEach(el => {
+    const item = document.createElement('div');
+    item.className = 'compare-item';
+
+    const vis = document.createElement('div');
+    vis.style.position = 'relative';
+    vis.style.width = '180px';
+    vis.style.height = '180px';
+    vis.style.margin = '0 auto';
+
+    // Shells
+    const shellSizes = [50, 100, 160];
+    el.shells.forEach((_, idx) => {
+      const shell = document.createElement('div');
+      shell.style.cssText = `position:absolute;border:2px dashed #94a3b8;border-radius:50%;
+        width:${shellSizes[idx]}px;height:${shellSizes[idx]}px;
+        top:50%;left:50%;transform:translate(-50%,-50%);`;
+      vis.appendChild(shell);
+    });
+
+    // Nucleus
+    const nuc = document.createElement('div');
+    nuc.style.cssText = `position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:30px;height:30px;background:linear-gradient(135deg,#f97316,#dc2626);
+      border-radius:50%;display:flex;align-items:center;justify-content:center;
+      color:white;font-weight:800;font-size:.6rem;z-index:5;`;
+    nuc.textContent = el.z + '+';
+    vis.appendChild(nuc);
+
+    // Electrons
+    const radii = [25, 50, 80];
+    const cx = 90, cy = 90;
+    el.shells.forEach((count, sIdx) => {
+      for (let i = 0; i < count; i++) {
+        const angle = (2 * Math.PI * i / count) - Math.PI / 2;
+        const x = cx + radii[sIdx] * Math.cos(angle) - 5;
+        const y = cy + radii[sIdx] * Math.sin(angle) - 5;
+        const dot = document.createElement('div');
+        const isValence = sIdx === el.shells.length - 1;
+        dot.style.cssText = `position:absolute;width:10px;height:10px;border-radius:50%;
+          left:${x}px;top:${y}px;z-index:3;
+          background:${isValence ? '#f59e0b' : '#3b82f6'};
+          border:2px solid ${isValence ? '#d97706' : '#1d4ed8'};`;
+        vis.appendChild(dot);
+      }
+    });
+
+    item.innerHTML = `<h4>${el.sym} (${el.name})</h4>`;
+    item.appendChild(vis);
+
+    const valence = el.shells[el.shells.length - 1];
+    const label = document.createElement('div');
+    label.className = 'compare-label';
+    label.textContent = `원자가 전자: ${['He','Ne','Ar'].includes(el.sym) ? '0' : valence}개 | 전자 배치: ${el.shells.join('-')}`;
+    item.appendChild(label);
+
+    container.appendChild(item);
+  });
+
+  // Add comparison note
+  const note = document.createElement('div');
+  note.style.cssText = 'width:100%;text-align:center;margin-top:12px;padding:12px;background:#fef3c7;border-radius:10px;font-size:.9rem;color:#92400e;';
+  const v1 = ['He','Ne','Ar'].includes(el1.sym) ? 0 : el1.shells[el1.shells.length-1];
+  const v2 = ['He','Ne','Ar'].includes(el2.sym) ? 0 : el2.shells[el2.shells.length-1];
+  if (v1 === v2) {
+    note.innerHTML = `<strong>같은 족!</strong> ${el1.sym}과 ${el2.sym}은 원자가 전자 수가 <strong>${v1}개</strong>로 같아 화학적 성질이 유사합니다.`;
+  } else {
+    note.innerHTML = `${el1.sym}(원자가 전자 ${v1}개)과 ${el2.sym}(원자가 전자 ${v2}개)의 전자 배치를 비교해 보세요.`;
+  }
+  container.appendChild(note);
+
+  addScore(5);
+}
+
+// Initialize compare view with Li vs Na
+setTimeout(() => compareElements('Li','Na'), 100);
+</script>
+
+</body>
+</html>
