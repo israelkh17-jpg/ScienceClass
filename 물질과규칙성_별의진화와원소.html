@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>스타 팩토리 - 별이 남긴 원소 레시피</title>
+<style>
+:root{
+  --bg:#060a1f;--card:#111535;--card-light:#181e48;
+  --text:#e2e8f0;--sub:#8892b0;--line:#253060;
+  --accent:#f39c12;--accent2:#e74c3c;
+  --star-yellow:#ffd93d;--star-orange:#ff8c00;
+  --hydrogen:#ff6b6b;--helium:#ffd93d;--carbon:#2ecc71;
+  --oxygen:#3498db;--silicon:#9b59b6;--iron:#95a5a6;
+  --gold:#f1c40f;--success:#2ecc71;--danger:#e74c3c;
+  --shadow:0 10px 30px rgba(0,0,0,.5);--radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;}
+
+/* Header */
+header{background:linear-gradient(135deg,#0a0f2e 0%,#1a0a2e 50%,#0a1a2e 100%);color:#fff;padding:36px 20px 32px;text-align:center;position:relative;overflow:hidden;}
+header::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(243,156,18,.12) 0%,transparent 60%);}
+header .back{position:relative;z-index:1;display:inline-block;color:#8892b0;text-decoration:none;font-size:.9rem;margin-bottom:10px;}
+header .back:hover{color:#fff;}
+header h1{position:relative;z-index:1;font-size:2rem;font-weight:800;margin-bottom:6px;}
+header p{position:relative;z-index:1;color:#8892b0;font-size:.95rem;}
+
+/* Stars bg */
+.stars-bg{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none;}
+.star-dot{position:absolute;background:#fff;border-radius:50%;animation:twinkle 2s infinite alternate;}
+@keyframes twinkle{0%{opacity:.15;}100%{opacity:1;}}
+
+/* Nav */
+.stage-nav{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:14px 10px;background:rgba(6,10,31,.95);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--line);backdrop-filter:blur(10px);}
+.stage-nav button{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--sub);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;}
+.stage-nav button:hover{border-color:var(--accent);color:var(--accent);}
+.stage-nav button.active{background:var(--accent);border-color:var(--accent);color:#000;}
+
+/* Score */
+.score-bar{max-width:860px;margin:20px auto 0;padding:0 18px;display:flex;align-items:center;gap:12px;}
+.score-bar label{font-size:.85rem;color:var(--sub);font-weight:600;white-space:nowrap;}
+.score-track{flex:1;height:10px;background:var(--card-light);border-radius:99px;overflow:hidden;}
+.score-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--star-yellow));border-radius:99px;transition:width .5s;}
+.score-val{font-size:.85rem;color:var(--accent);font-weight:700;min-width:40px;text-align:right;}
+
+.wrap{max-width:860px;margin:0 auto;padding:24px 18px 60px;position:relative;z-index:1;}
+.stage{display:none;}.stage.active{display:block;animation:fadeUp .4s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:20px;border:1px solid var(--line);}
+.lead-box{background:linear-gradient(135deg,rgba(243,156,18,.1),rgba(255,217,61,.05));border:1px solid rgba(243,156,18,.3);border-radius:var(--radius);padding:18px 22px;margin-bottom:20px;font-size:.95rem;color:#fad390;}
+.section-title{font-size:1.3rem;font-weight:800;margin-bottom:14px;color:#fff;}
+.sub-title{font-size:1.05rem;font-weight:700;margin-bottom:10px;color:var(--star-yellow);}
+
+.btn{padding:10px 20px;border-radius:12px;border:none;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;}
+.btn-primary{background:var(--accent);color:#000;}
+.btn-primary:hover{background:#e67e22;transform:translateY(-1px);}
+.btn-glow{background:linear-gradient(135deg,var(--accent),var(--star-yellow));color:#000;box-shadow:0 4px 15px rgba(243,156,18,.4);}
+.btn-glow:hover{box-shadow:0 6px 20px rgba(243,156,18,.6);transform:translateY(-2px);}
+.btn-outline{background:transparent;border:2px solid var(--accent);color:var(--accent);}
+.btn-outline:hover{background:var(--accent);color:#000;}
+
+.info-panel{background:var(--card-light);border-radius:12px;padding:16px;border-left:3px solid var(--accent);font-size:.9rem;margin:12px 0;}
+.feedback-msg{padding:14px;border-radius:10px;margin:12px 0;font-weight:600;text-align:center;animation:fadeUp .3s;}
+.feedback-msg.success{background:rgba(46,204,113,.15);color:#2ecc71;border:1px solid rgba(46,204,113,.3);}
+.feedback-msg.error{background:rgba(231,76,60,.15);color:#e74c3c;border:1px solid rgba(231,76,60,.3);}
+
+/* Stage 1: Nebula */
+.nebula-sim{position:relative;width:100%;height:360px;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse,#0d1b3e,#000);margin:14px 0;}
+.nebula-particle{position:absolute;border-radius:50%;transition:all 1.5s cubic-bezier(.25,.46,.45,.94);opacity:.8;}
+.nebula-particle.h{background:var(--hydrogen);box-shadow:0 0 4px var(--hydrogen);}
+.nebula-particle.he{background:var(--helium);box-shadow:0 0 4px var(--helium);}
+.proto-star{position:absolute;border-radius:50%;background:radial-gradient(circle,#fff8e1,#ffd54f,#ff8c00,transparent);opacity:0;transition:all 1s;top:50%;left:50%;transform:translate(-50%,-50%);}
+
+.slider-group{margin:14px 0;}
+.slider-group label{display:block;font-size:.85rem;color:var(--sub);margin-bottom:6px;font-weight:600;}
+.custom-slider{-webkit-appearance:none;appearance:none;width:100%;height:10px;border-radius:99px;outline:none;cursor:pointer;position:relative;z-index:10;margin:8px 0;}
+.custom-slider::-webkit-slider-runnable-track{height:10px;border-radius:99px;}
+.custom-slider::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid var(--accent);cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,.3);margin-top:-9px;position:relative;z-index:11;}
+.custom-slider::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid var(--accent);cursor:grab;}
+
+.temp-gauge{display:flex;align-items:center;gap:14px;margin:14px 0;flex-wrap:wrap;}
+.gauge-bar{flex:1;min-width:150px;height:24px;background:var(--card-light);border-radius:99px;overflow:hidden;}
+.gauge-fill{height:100%;border-radius:99px;transition:width 1s,background 1s;width:5%;}
+.gauge-label{font-size:.9rem;font-weight:700;min-width:130px;}
+
+/* Stage 2: Equilibrium */
+.star-diagram{position:relative;width:240px;height:240px;margin:20px auto;border-radius:50%;background:radial-gradient(circle,#fff8e1 0%,#ffd54f 25%,#ff8c00 55%,#c0392b 80%,#2c0a0a 100%);box-shadow:0 0 60px rgba(255,143,0,.4);}
+.arrow-pair{position:absolute;display:flex;align-items:center;justify-content:center;}
+.arrow{font-size:2rem;transition:all .3s;cursor:pointer;}
+.arrow.gravity{color:#3498db;}
+.arrow.pressure{color:#e74c3c;}
+
+.force-controls{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:14px 0;}
+.force-btn{padding:8px 16px;border-radius:10px;border:2px solid var(--line);background:var(--card-light);color:var(--text);font-size:.85rem;cursor:pointer;transition:all .2s;font-family:inherit;font-weight:600;}
+.force-btn:hover{border-color:var(--accent);}
+.force-btn.active{border-color:var(--accent);background:rgba(243,156,18,.15);}
+
+.fusion-area{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0;min-height:100px;}
+.fusion-particle{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:#fff;cursor:pointer;transition:all .3s;user-select:none;}
+.fusion-particle:hover{transform:scale(1.1);}
+.fusion-particle.used{opacity:.3;pointer-events:none;transform:scale(.7);}
+.fusion-arrow{font-size:1.8rem;color:var(--sub);}
+.fusion-result{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#000;opacity:0;transition:all .5s;transform:scale(0);}
+.fusion-result.show{opacity:1;transform:scale(1);}
+.energy-burst{position:absolute;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.8),rgba(255,200,0,.4),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none;}
+
+/* Stage 3: Onion shell */
+.star-select{display:flex;gap:14px;justify-content:center;margin:16px 0;flex-wrap:wrap;}
+.star-option{padding:16px 24px;border-radius:14px;border:2px solid var(--line);background:var(--card-light);cursor:pointer;transition:all .3s;text-align:center;min-width:160px;}
+.star-option:hover{border-color:var(--accent);}
+.star-option.active{border-color:var(--accent);background:rgba(243,156,18,.1);box-shadow:0 0 20px rgba(243,156,18,.2);}
+.star-option .icon{font-size:2.5rem;margin-bottom:6px;}
+.star-option .name{font-weight:700;font-size:1rem;}
+.star-option .desc{font-size:.8rem;color:var(--sub);margin-top:4px;}
+
+.onion-container{position:relative;width:300px;height:300px;margin:20px auto;padding-right:120px;box-sizing:content-box;}
+.onion-layer{position:absolute;border-radius:50%;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);}
+.onion-layer:hover{filter:brightness(1.3);transform:scale(1.03);}
+.onion-layer.selected{box-shadow:0 0 0 3px #fff,0 0 20px rgba(255,255,255,.3);}
+
+.layer-info{background:var(--card-light);border-radius:12px;padding:16px;margin:14px 0;animation:fadeUp .3s;border:1px solid var(--line);}
+.layer-info .element-badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:.85rem;font-weight:700;margin:4px;}
+
+/* Stage 4: Supernova */
+.supernova-scene{position:relative;width:100%;height:320px;border-radius:16px;overflow:hidden;background:#000;margin:14px 0;}
+.sn-star{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;transition:all 1s;}
+.sn-star.iron{background:radial-gradient(circle,#bdc3c7,#95a5a6,#7f8c8d);box-shadow:0 0 20px rgba(149,165,166,.4);}
+.sn-star.exploding{width:600px;height:600px;background:radial-gradient(circle,#fff 0%,#ffd93d 15%,#ff8c00 30%,#e74c3c 50%,transparent 70%);box-shadow:0 0 100px rgba(255,217,61,.8);}
+.sn-star.remnant{width:20px;height:20px;background:radial-gradient(circle,#fff,#3498db);box-shadow:0 0 30px rgba(52,152,219,.8);}
+
+.element-shower{position:absolute;inset:0;pointer-events:none;}
+.shower-particle{position:absolute;border-radius:50%;font-size:.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;color:#000;cursor:pointer;pointer-events:auto;transition:transform .2s;}
+.shower-particle:hover{transform:scale(1.3);}
+.shower-particle.collected{opacity:0;transform:scale(0)!important;transition:all .3s;}
+
+.collection-box{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:14px 0;min-height:50px;padding:12px;border-radius:12px;border:2px dashed var(--line);background:rgba(255,255,255,.02);}
+.collected-element{padding:6px 14px;border-radius:999px;font-size:.85rem;font-weight:700;animation:fadeUp .3s;}
+
+/* Bar charts */
+.bar-chart-section{margin:14px 0;}
+.bar-row{margin-bottom:14px;}
+.bar-label{font-size:.85rem;font-weight:700;color:var(--sub);margin-bottom:4px;padding-left:2px;}
+.bar-track{display:flex;height:34px;border-radius:6px;overflow:hidden;background:var(--card-light);}
+.bar-seg{display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 3px;position:relative;cursor:default;transition:filter .2s;}
+.bar-seg:hover{filter:brightness(1.3);}
+.bar-seg::after{content:attr(data-tip);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.9);color:#fff;padding:4px 10px;border-radius:6px;font-size:.75rem;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10;}
+.bar-seg:hover::after{opacity:1;}
+
+/* Pie charts */
+.chart-row{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin:20px 0;}
+.chart-item{text-align:center;min-width:160px;}
+.chart-item canvas{display:block;margin:0 auto 8px;}
+.chart-item .chart-label{font-size:.95rem;font-weight:700;}
+
+/* Quiz */
+.quiz-option{display:block;width:100%;text-align:left;padding:14px 18px;margin:8px 0;border-radius:12px;background:var(--card-light);border:2px solid var(--line);color:var(--text);font-size:.95rem;cursor:pointer;transition:all .2s;font-family:inherit;}
+.quiz-option:hover{border-color:var(--accent);}
+.quiz-option.selected{border-color:var(--accent);background:rgba(243,156,18,.1);}
+.quiz-option.correct{border-color:var(--success);background:rgba(46,204,113,.15);}
+.quiz-option.wrong{border-color:var(--danger);background:rgba(231,76,60,.1);}
+
+footer{text-align:center;padding:24px;color:var(--sub);font-size:.85rem;border-top:1px solid var(--line);background:var(--card);}
+
+@media(max-width:600px){
+  header h1{font-size:1.5rem;}
+  .stage-nav button{padding:6px 10px;font-size:.75rem;}
+  .star-diagram{width:180px;height:180px;}
+  .onion-container{width:220px;height:220px;padding-right:100px;}
+  .nebula-sim{height:280px;}
+  .supernova-scene{height:260px;}
+  .bar-track{height:28px;}
+  .bar-seg{font-size:.6rem;padding:0 1px;}
+  .chart-item canvas{width:180px!important;height:180px!important;}
+}
+
+.text-center{text-align:center;}
+.mt-10{margin-top:10px;}
+.mt-16{margin-top:16px;}
+.mb-10{margin-bottom:10px;}
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<div class="stars-bg" id="starsBg"></div>
+
+<header>
+  <a class="back" href="index.html">← 목록으로</a>
+  <h1>스타 팩토리 - 별이 남긴 원소 레시피</h1>
+  <p>별의 진화에서 형성된 다양한 원소를 탐구합니다</p>
+</header>
+
+<nav class="stage-nav">
+  <button class="active" onclick="showStage(0)">1. 원시별의 탄생</button>
+  <button onclick="showStage(1)">2. 주계열성 엔진</button>
+  <button onclick="showStage(2)">3. 별의 내부 탐험</button>
+  <button onclick="showStage(3)">4. 초신성과 원소 순환</button>
+</nav>
+
+<div class="score-bar">
+  <label>학습 진행도</label>
+  <div class="score-track"><div class="score-fill" id="scoreFill"></div></div>
+  <span class="score-val" id="scoreVal">0/100</span>
+</div>
+
+<main class="wrap">
+
+<!-- ========== STAGE 1: 원시별의 탄생 ========== -->
+<section class="stage active" id="stage0">
+  <div class="lead-box">
+    <strong>학습 목표:</strong> 성운의 밀도가 높은 곳에서 중력이 커지며 원시별이 형성되는 과정을 이해한다.
+  </div>
+
+  <div class="card">
+    <div class="section-title">중력 수축 시뮬레이터</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:10px;">
+      슬라이더로 입자 밀도를 높여 성운이 수축하고 원시별이 탄생하는 과정을 관찰하세요.
+    </p>
+
+    <div class="nebula-sim" id="nebulaSim">
+      <div class="proto-star" id="protoStar"></div>
+    </div>
+
+    <div class="slider-group">
+      <label>입자 밀도: <span id="densityLabel">낮음</span></label>
+      <input type="range" class="custom-slider" id="densitySlider" min="0" max="100" value="10"
+             style="background:linear-gradient(90deg,#1a1a4e,#ff8c00);"/>
+    </div>
+
+    <div class="temp-gauge">
+      <div class="gauge-label">중심부 온도: <span id="tempValue">1,000 K</span></div>
+      <div class="gauge-bar">
+        <div class="gauge-fill" id="tempFill" style="background:linear-gradient(90deg,#3498db,#e74c3c,#ffd93d);width:1%;"></div>
+      </div>
+    </div>
+
+    <div class="info-panel" id="nebulaInfo">
+      초기 우주 공간에는 수소와 헬륨이 고르게 분포하지 않았습니다. 슬라이더를 오른쪽으로 움직여 밀도를 높여 보세요.
+    </div>
+
+    <div id="starBornMsg" style="display:none;"></div>
+  </div>
+</section>
+
+<!-- ========== STAGE 2: 주계열성 엔진 ========== -->
+<section class="stage" id="stage1">
+  <div class="lead-box">
+    <strong>학습 목표:</strong> 별이 안정적으로 크기를 유지하는 원리(내부 압력과 중력의 평형)를 파악하고, 수소 핵융합 반응을 이해한다.
+  </div>
+
+  <div class="card">
+    <div class="section-title">힘의 평형 퍼즐</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:10px;">
+      별은 <strong>중력</strong>(수축)과 <strong>내부 압력</strong>(팽창)이 균형을 이루어 안정적인 크기를 유지합니다.
+      두 힘을 조절하여 별을 안정시키세요!
+    </p>
+
+    <div style="position:relative;display:flex;justify-content:center;">
+      <div class="star-diagram" id="starDiagram">
+        <!-- Arrows rendered by JS -->
+      </div>
+    </div>
+
+    <div class="force-controls">
+      <div>
+        <div style="font-size:.8rem;color:#3498db;font-weight:600;margin-bottom:4px;text-align:center;">중력 (수축)</div>
+        <input type="range" class="custom-slider" id="gravitySlider" min="0" max="10" value="5"
+               style="width:150px;background:linear-gradient(90deg,#1a1a4e,#3498db);"/>
+      </div>
+      <div>
+        <div style="font-size:.8rem;color:#e74c3c;font-weight:600;margin-bottom:4px;text-align:center;">내부 압력 (팽창)</div>
+        <input type="range" class="custom-slider" id="pressureSlider" min="0" max="10" value="5"
+               style="width:150px;background:linear-gradient(90deg,#1a1a4e,#e74c3c);"/>
+      </div>
+    </div>
+
+    <div id="equilibriumStatus" class="text-center" style="font-weight:700;font-size:1rem;margin:10px 0;min-height:30px;"></div>
+
+    <div class="info-panel" id="eqInfo">
+      별은 핵융합 반응으로 발생하는 에너지가 밖으로 밀어내는 압력과, 별 자체의 중력이 평형을 이루며 안정적으로 유지됩니다. 두 슬라이더를 같은 값으로 맞춰 보세요!
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">수소 핵융합 반응</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:10px;">
+      수소 원자핵(양성자) 4개를 클릭하여 헬륨 원자핵 1개로 융합시키세요!
+    </p>
+
+    <div class="fusion-area" id="fusionArea">
+      <div class="fusion-particle" style="background:var(--hydrogen);box-shadow:0 0 10px var(--hydrogen);" onclick="clickFusionH(this)">H</div>
+      <div class="fusion-particle" style="background:var(--hydrogen);box-shadow:0 0 10px var(--hydrogen);" onclick="clickFusionH(this)">H</div>
+      <div class="fusion-particle" style="background:var(--hydrogen);box-shadow:0 0 10px var(--hydrogen);" onclick="clickFusionH(this)">H</div>
+      <div class="fusion-particle" style="background:var(--hydrogen);box-shadow:0 0 10px var(--hydrogen);" onclick="clickFusionH(this)">H</div>
+      <div class="fusion-arrow">→</div>
+      <div class="fusion-result" id="fusionResult" style="background:var(--helium);box-shadow:0 0 20px var(--helium);">He</div>
+    </div>
+
+    <div id="fusionMsg" style="min-height:50px;"></div>
+
+    <div class="info-panel">
+      별의 중심부 온도가 약 <strong>1,000만 K</strong> 이상이 되면 수소 원자핵 4개가 핵융합하여 헬륨 원자핵 1개를 형성합니다. 이때 질량 차이만큼 에너지가 방출됩니다.
+    </div>
+  </div>
+</section>
+
+<!-- ========== STAGE 3: 별의 내부 탐험 ========== -->
+<section class="stage" id="stage2">
+  <div class="lead-box">
+    <strong>학습 목표:</strong> 별의 질량에 따라 별의 진화가 진행되는 과정에서 중심부에 생성되는 최종 원소가 다름을 학습한다.
+  </div>
+
+  <div class="card">
+    <div class="section-title">별의 질량 선택</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:14px;">
+      별의 질량에 따라 진화 경로가 달라집니다. 질량을 선택하세요.
+    </p>
+
+    <div class="star-select">
+      <div class="star-option" id="optSolar" onclick="selectStarMass('solar')">
+        <div class="icon">⭐</div>
+        <div class="name">태양 정도의 별</div>
+        <div class="desc">중심부에서 탄소까지 형성</div>
+      </div>
+      <div class="star-option" id="optMassive" onclick="selectStarMass('massive')">
+        <div class="icon">🌟</div>
+        <div class="name">태양보다 훨씬 큰 별</div>
+        <div class="desc">중심부에서 철까지 형성</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="onionCard" style="display:none;">
+    <div class="section-title" id="onionTitle">별의 내부 구조</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:10px;">
+      각 층을 클릭하여 별의 진화가 진행되는 과정에서 어떤 원소가 생성되는지 확인하세요.
+    </p>
+
+    <div class="onion-container" id="onionContainer"></div>
+
+    <div id="layerDetail" style="min-height:80px;margin-top:14px;"></div>
+  </div>
+</section>
+
+<!-- ========== STAGE 4: 초신성과 원소의 순환 ========== -->
+<section class="stage" id="stage3">
+  <div class="lead-box">
+    <strong>학습 목표:</strong> 초신성 폭발을 통해 철보다 무거운 원소가 생성되고, 이 원소들이 태양계와 생명체의 재료가 됨을 이해한다.
+  </div>
+
+  <div class="card">
+    <div class="section-title">초신성 폭발</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:10px;">
+      대질량 별의 중심에서 철(Fe)까지 만들어지면 핵융합이 멈추고 초신성 폭발이 일어납니다.
+    </p>
+
+    <div class="supernova-scene" id="snScene">
+      <div class="sn-star iron" id="snStar">Fe</div>
+      <div class="element-shower" id="elementShower"></div>
+    </div>
+
+    <div class="text-center mt-10">
+      <button class="btn btn-glow" id="explodeBtn" onclick="triggerSupernova()">초신성 폭발!</button>
+    </div>
+
+    <div id="snInfo" class="info-panel">
+      철은 핵융합으로 에너지를 방출하지 않으므로, 철이 축적되면 핵융합이 멈추고 별이 붕괴합니다. 버튼을 눌러 초신성 폭발을 일으켜 보세요!
+    </div>
+  </div>
+
+  <div class="card" id="collectCard" style="display:none;">
+    <div class="section-title">무거운 원소 수집</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:10px;">
+      초신성 폭발의 에너지로 철보다 무거운 원소가 생성됩니다. 화면의 원소를 클릭하여 수집하세요!
+    </p>
+
+    <div class="collection-box" id="collectionBox">
+      <span style="color:var(--sub);font-size:.85rem;">수집한 원소가 여기에 표시됩니다</span>
+    </div>
+
+    <div id="collectProgress" class="text-center mt-10" style="font-size:.9rem;color:var(--sub);"></div>
+  </div>
+
+  <div class="card" id="cycleCard" style="display:none;">
+    <div class="section-title">원소의 순환: 우주 → 지구 → 생명</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:14px;">
+      초신성 폭발로 방출된 원소들이 성운을 형성하고, 태양계와 지구, 그리고 우리 몸을 구성합니다.
+    </p>
+
+    <!-- 수평 막대 그래프: 우주 / 지구 / 지각 -->
+    <div class="sub-title mt-16">주요 구성 원소 질량비 비교</div>
+
+    <div class="bar-chart-section">
+      <div class="bar-row">
+        <div class="bar-label">우주</div>
+        <div class="bar-track">
+          <div class="bar-seg" style="width:73.9%;background:#ff6b6b;" data-tip="수소 73.9%">수소(73.9%)</div>
+          <div class="bar-seg" style="width:24%;background:#ffd93d;color:#000;" data-tip="헬륨 24.0%">헬륨(24.0%)</div>
+          <div class="bar-seg" style="width:2.1%;background:#636e72;" data-tip="기타 2.1%"></div>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">지구</div>
+        <div class="bar-track">
+          <div class="bar-seg" style="width:35%;background:#95a5a6;color:#000;" data-tip="철 35.0%">철(35.0%)</div>
+          <div class="bar-seg" style="width:30%;background:#3498db;" data-tip="산소 30.0%">산소(30.0%)</div>
+          <div class="bar-seg" style="width:15%;background:#9b59b6;" data-tip="규소 15.0%">규소</div>
+          <div class="bar-seg" style="width:13%;background:#16a085;" data-tip="마그네슘 13.0%">Mg</div>
+          <div class="bar-seg" style="width:2.4%;background:#636e72;" data-tip="니켈 2.4%"></div>
+          <div class="bar-seg" style="width:1.9%;background:#f39c12;" data-tip="황 1.9%"></div>
+          <div class="bar-seg" style="width:1.1%;background:#e67e22;" data-tip="알루미늄 1.1%"></div>
+          <div class="bar-seg" style="width:1.1%;background:#dfe6e9;color:#333;" data-tip="칼슘 1.1%"></div>
+          <div class="bar-seg" style="width:0.5%;background:#2d3436;" data-tip="기타 0.5%"></div>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">지각</div>
+        <div class="bar-track">
+          <div class="bar-seg" style="width:46.6%;background:#3498db;" data-tip="산소 46.6%">산소(46.6%)</div>
+          <div class="bar-seg" style="width:27.7%;background:#9b59b6;" data-tip="규소 27.7%">규소(27.7%)</div>
+          <div class="bar-seg" style="width:8.1%;background:#e67e22;" data-tip="알루미늄 8.1%">Al</div>
+          <div class="bar-seg" style="width:5%;background:#95a5a6;" data-tip="철 5.0%">Fe</div>
+          <div class="bar-seg" style="width:3.6%;background:#dfe6e9;color:#333;" data-tip="칼슘 3.6%">Ca</div>
+          <div class="bar-seg" style="width:2.8%;background:#fdcb6e;color:#333;" data-tip="나트륨 2.8%"></div>
+          <div class="bar-seg" style="width:2.6%;background:#e17055;" data-tip="칼륨 2.6%"></div>
+          <div class="bar-seg" style="width:2.1%;background:#16a085;" data-tip="마그네슘 2.1%"></div>
+          <div class="bar-seg" style="width:1.5%;background:#2d3436;" data-tip="기타 1.5%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 원형 차트: 지구 / 사람 -->
+    <div class="sub-title mt-16">지구와 사람의 주요 원소 (원형 그래프)</div>
+
+    <div class="chart-row" id="chartRow">
+      <div class="chart-item">
+        <canvas id="chartEarth" width="240" height="240"></canvas>
+        <div class="chart-label">지구의 주요 원소</div>
+        <div style="font-size:.8rem;color:var(--sub);margin-top:4px;">질량비: 철 > 산소 등</div>
+      </div>
+      <div class="chart-item">
+        <canvas id="chartHuman" width="240" height="240"></canvas>
+        <div class="chart-label">사람의 주요 원소</div>
+        <div style="font-size:.8rem;color:var(--sub);margin-top:4px;">질량비: 산소 > 탄소 등</div>
+      </div>
+    </div>
+
+    <!-- 범례 -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0;">
+      <span style="font-size:.8rem;color:var(--sub);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:3px;background:#ff6b6b;display:inline-block;"></span>수소</span>
+      <span style="font-size:.8rem;color:var(--sub);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:3px;background:#ffd93d;display:inline-block;"></span>헬륨</span>
+      <span style="font-size:.8rem;color:var(--sub);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:3px;background:#3498db;display:inline-block;"></span>산소</span>
+      <span style="font-size:.8rem;color:var(--sub);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:3px;background:#2ecc71;display:inline-block;"></span>탄소</span>
+      <span style="font-size:.8rem;color:var(--sub);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:3px;background:#95a5a6;display:inline-block;"></span>철</span>
+      <span style="font-size:.8rem;color:var(--sub);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:3px;background:#9b59b6;display:inline-block;"></span>규소</span>
+      <span style="font-size:.8rem;color:var(--sub);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:3px;background:#16a085;display:inline-block;"></span>마그네슘</span>
+      <span style="font-size:.8rem;color:var(--sub);display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;border-radius:3px;background:#e67e22;display:inline-block;"></span>질소/알루미늄</span>
+    </div>
+
+    <div class="info-panel mt-10">
+      <strong>원소의 유래 정리:</strong><br/>
+      - <span style="color:var(--hydrogen);">수소·헬륨</span> → 빅뱅 초기에 형성<br/>
+      - <span style="color:var(--carbon);">탄소·산소</span> → 별의 내부 핵융합으로 형성<br/>
+      - <span style="color:var(--iron);">철</span> → 질량이 태양보다 매우 큰 별의 내부에서 핵융합으로 형성<br/>
+      - <span style="color:var(--gold);">금·납·우라늄</span> → 초신성 폭발의 에너지로 형성<br/><br/>
+      <strong>비교:</strong> 우주는 수소·헬륨이 대부분이지만, 지구는 철·산소, 사람은 산소·탄소가 대부분입니다. 이 차이는 별의 진화와 초신성 폭발로 형성된 무거운 원소들이 태양계와 지구에 집중되었기 때문입니다.
+    </div>
+  </div>
+
+  <div class="card" id="finalQuizCard" style="display:none;">
+    <div class="section-title">확인 퀴즈</div>
+    <p style="font-size:.95rem;margin-bottom:14px;">
+      지구에서 가장 큰 질량비를 차지하는 원소는 무엇이며, 이 원소는 어디에서 형성되었을까요?
+    </p>
+    <div id="quizSection">
+      <button class="quiz-option" onclick="selectFinalQuiz(this,'A')">A. 산소 — 빅뱅 초기에 형성</button>
+      <button class="quiz-option" onclick="selectFinalQuiz(this,'B')">B. 철 — 대질량 별의 내부 핵융합으로 형성</button>
+      <button class="quiz-option" onclick="selectFinalQuiz(this,'C')">C. 수소 — 빅뱅 초기에 형성</button>
+      <button class="quiz-option" onclick="selectFinalQuiz(this,'D')">D. 규소 — 태양 정도 별의 내부에서 형성</button>
+    </div>
+    <div class="text-center mt-10">
+      <button class="btn btn-glow" onclick="checkFinalQuiz()">정답 확인</button>
+    </div>
+    <div id="finalQuizFeedback"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  날아라 물리 통합과학 학습자료 | &copy; 동북고등학교 강현식
+</footer>
+
+<script>
+// ====== GLOBAL ======
+let score = 0;
+const maxScore = 100;
+const earned = {};
+function addScore(key, pts) {
+  if (earned[key]) return;
+  earned[key] = true;
+  score = Math.min(score + pts, maxScore);
+  document.getElementById('scoreFill').style.width = (score / maxScore * 100) + '%';
+  document.getElementById('scoreVal').textContent = score + '/' + maxScore;
+}
+
+function showStage(idx) {
+  document.querySelectorAll('.stage').forEach((s, i) => s.classList.toggle('active', i === idx));
+  document.querySelectorAll('.stage-nav button').forEach((b, i) => b.classList.toggle('active', i === idx));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Stars
+(function() {
+  const c = document.getElementById('starsBg');
+  for (let i = 0; i < 50; i++) {
+    const s = document.createElement('div');
+    s.className = 'star-dot';
+    const sz = Math.random() * 2.5 + 1;
+    s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*2}s;animation-duration:${1.5+Math.random()*2}s;`;
+    c.appendChild(s);
+  }
+})();
+
+// ====== STAGE 1: NEBULA ======
+const nebulaSim = document.getElementById('nebulaSim');
+const nebulaParticles = [];
+const PARTICLE_COUNT = 60;
+
+(function initNebula() {
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    const p = document.createElement('div');
+    const isHe = Math.random() < 0.25;
+    const sz = Math.random() * 6 + 4;
+    p.className = 'nebula-particle ' + (isHe ? 'he' : 'h');
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+    p.style.cssText = `width:${sz}px;height:${sz}px;left:${x}%;top:${y}%;`;
+    p.dataset.ox = x;
+    p.dataset.oy = y;
+    nebulaSim.appendChild(p);
+    nebulaParticles.push(p);
+  }
+})();
+
+const densitySlider = document.getElementById('densitySlider');
+densitySlider.addEventListener('input', updateNebula);
+densitySlider.addEventListener('change', updateNebula);
+
+function updateNebula() {
+  const val = parseInt(densitySlider.value);
+  const centerX = 50, centerY = 50;
+  const spread = 50 - val * 0.45;
+  const labels = ['낮음', '보통', '높음', '매우 높음', '수축 중!'];
+  const labelIdx = Math.min(Math.floor(val / 25), 4);
+  document.getElementById('densityLabel').textContent = labels[labelIdx];
+
+  nebulaParticles.forEach(p => {
+    const ox = parseFloat(p.dataset.ox);
+    const oy = parseFloat(p.dataset.oy);
+    const dx = ox - centerX;
+    const dy = oy - centerY;
+    const factor = spread / 50;
+    const nx = centerX + dx * factor + (Math.random() - 0.5) * spread * 0.3;
+    const ny = centerY + dy * factor + (Math.random() - 0.5) * spread * 0.3;
+    p.style.left = Math.max(2, Math.min(98, nx)) + '%';
+    p.style.top = Math.max(2, Math.min(98, ny)) + '%';
+  });
+
+  // Temperature
+  const tempK = Math.round(1000 + val * val * 10);
+  const tempStr = tempK >= 10000000 ? (tempK / 1000000).toFixed(0) + ',000만 K'
+    : tempK >= 1000000 ? (tempK / 10000).toFixed(0) + '만 K'
+    : tempK.toLocaleString() + ' K';
+  document.getElementById('tempValue').textContent = tempStr;
+  document.getElementById('tempFill').style.width = Math.min(val, 100) + '%';
+
+  // Proto-star
+  const ps = document.getElementById('protoStar');
+  if (val > 60) {
+    const size = (val - 60) * 1.5 + 10;
+    ps.style.width = size + 'px';
+    ps.style.height = size + 'px';
+    ps.style.opacity = Math.min((val - 60) / 30, 1);
+    ps.style.boxShadow = `0 0 ${size}px rgba(255,143,0,${ps.style.opacity})`;
+  } else {
+    ps.style.opacity = 0;
+  }
+
+  // Info
+  const info = document.getElementById('nebulaInfo');
+  if (val < 30) {
+    info.textContent = '수소와 헬륨이 흩어져 있습니다. 밀도를 더 높여 보세요.';
+  } else if (val < 60) {
+    info.textContent = '밀도가 높은 곳에 중력이 커지면서 입자들이 모여 성운을 형성하고 있습니다.';
+    addScore('nebula_form', 5);
+  } else if (val < 85) {
+    info.textContent = '성운이 계속 수축하여 밀도가 높은 기체 덩어리가 됩니다. 원시별이 형성되고 있습니다!';
+    addScore('protostar', 5);
+  } else {
+    info.textContent = '원시별 중심부 온도가 약 1,000만 K 이상이 되어 수소 핵융합 반응이 시작됩니다. 별이 탄생했습니다!';
+    addScore('star_born', 10);
+    const msg = document.getElementById('starBornMsg');
+    msg.style.display = 'block';
+    msg.innerHTML = '<div class="feedback-msg success">별이 탄생했습니다! 수소 핵융합 반응이 시작되어 빛을 방출합니다.</div>';
+  }
+}
+
+// ====== STAGE 2: EQUILIBRIUM ======
+const gravitySlider = document.getElementById('gravitySlider');
+const pressureSlider = document.getElementById('pressureSlider');
+
+function updateEquilibrium() {
+  const g = parseInt(gravitySlider.value);
+  const p = parseInt(pressureSlider.value);
+  const star = document.getElementById('starDiagram');
+  const status = document.getElementById('equilibriumStatus');
+
+  const diff = p - g;
+  const baseSize = 240;
+  const size = baseSize + diff * 15;
+  star.style.width = size + 'px';
+  star.style.height = size + 'px';
+  star.style.transition = 'all .3s';
+
+  if (g === p && g > 0) {
+    status.innerHTML = '<span style="color:var(--success);">평형 상태! 별이 안정적으로 유지됩니다.</span>';
+    star.style.boxShadow = '0 0 60px rgba(46,204,113,.5)';
+    addScore('equilibrium', 10);
+  } else if (p > g) {
+    status.innerHTML = '<span style="color:var(--danger);">내부 압력 > 중력 → 별이 팽창합니다!</span>';
+    star.style.boxShadow = '0 0 60px rgba(231,76,60,.5)';
+  } else {
+    status.innerHTML = '<span style="color:#3498db;">중력 > 내부 압력 → 별이 수축합니다!</span>';
+    star.style.boxShadow = '0 0 60px rgba(52,152,219,.5)';
+  }
+
+  // Draw arrows on star
+  star.innerHTML = '';
+  // Gravity arrows (inward, blue)
+  const arrowSize = g * 3;
+  const dirs = [
+    { x: '100%', y: '50%', rot: 180 },
+    { x: '0%', y: '50%', rot: 0 },
+    { x: '50%', y: '0%', rot: 90 },
+    { x: '50%', y: '100%', rot: 270 }
+  ];
+  dirs.forEach(d => {
+    const a = document.createElement('div');
+    a.style.cssText = `position:absolute;left:${d.x};top:${d.y};transform:translate(-50%,-50%) rotate(${d.rot}deg);font-size:${Math.max(arrowSize,8)}px;color:#3498db;transition:font-size .3s;`;
+    a.textContent = '→';
+    star.appendChild(a);
+  });
+  // Pressure arrows (outward, red)
+  const pSize = p * 3;
+  const pdirs = [
+    { x: '50%', y: '50%', rot: 0 },
+    { x: '50%', y: '50%', rot: 90 },
+    { x: '50%', y: '50%', rot: 180 },
+    { x: '50%', y: '50%', rot: 270 }
+  ];
+  pdirs.forEach(d => {
+    const a = document.createElement('div');
+    a.style.cssText = `position:absolute;left:${d.x};top:${d.y};transform:translate(-50%,-50%) rotate(${d.rot}deg);font-size:${Math.max(pSize,8)}px;color:#e74c3c;transition:font-size .3s;`;
+    a.textContent = '→';
+    star.appendChild(a);
+  });
+}
+
+gravitySlider.addEventListener('input', updateEquilibrium);
+gravitySlider.addEventListener('change', updateEquilibrium);
+pressureSlider.addEventListener('input', updateEquilibrium);
+pressureSlider.addEventListener('change', updateEquilibrium);
+updateEquilibrium();
+
+// Fusion
+let fusionCount = 0;
+function clickFusionH(el) {
+  if (el.classList.contains('used')) return;
+  el.classList.add('used');
+  fusionCount++;
+
+  if (fusionCount === 4) {
+    const result = document.getElementById('fusionResult');
+    result.classList.add('show');
+    document.getElementById('fusionMsg').innerHTML =
+      '<div class="feedback-msg success">수소 원자핵 4개 → 헬륨 원자핵 1개 + 에너지 방출! 이것이 별의 에너지원입니다.</div>';
+    addScore('fusion', 10);
+  }
+}
+
+// ====== STAGE 3: ONION SHELL ======
+const layerData = {
+  solar: {
+    title: '태양 정도의 별 — 내부 구조',
+    layers: [
+      { name: '수소', elements: ['H'], color: '#ff6b6b', size: 100, info: '가장 바깥층에서는 수소가 존재합니다.' },
+      { name: '헬륨', elements: ['He'], color: '#ffd93d', size: 75, info: '수소 핵융합으로 헬륨이 형성되었습니다.' },
+      { name: '탄소', elements: ['C'], color: '#2ecc71', size: 40, info: '중심부 온도가 약 1억 K이 되면 헬륨 핵융합이 일어나 탄소가 형성됩니다. 태양 정도의 별은 여기서 핵융합이 멈춥니다.' }
+    ]
+  },
+  massive: {
+    title: '대질량 별 — 내부 구조 (양파 껍질 구조)',
+    layers: [
+      { name: '수소', elements: ['H'], color: '#ff6b6b', size: 100, info: '가장 바깥층. 아직 핵융합이 일어나지 않은 수소가 있습니다.' },
+      { name: '헬륨, 질소', elements: ['He','N'], color: '#ffd93d', size: 85, info: '수소 핵융합으로 헬륨이 형성됩니다. CNO 순환에 의해 질소도 생성됩니다.' },
+      { name: '탄소, 산소', elements: ['C','O'], color: '#2ecc71', size: 68, info: '헬륨 핵융합(약 1억 K)으로 탄소와 산소가 형성됩니다.' },
+      { name: '네온, 마그네슘', elements: ['Ne','Mg'], color: '#3498db', size: 52, info: '탄소 핵융합으로 네온과 마그네슘이 형성됩니다.' },
+      { name: '규소, 황', elements: ['Si','S'], color: '#9b59b6', size: 36, info: '산소 핵융합으로 규소와 황이 형성됩니다.' },
+      { name: '철', elements: ['Fe'], color: '#95a5a6', size: 20, info: '규소 핵융합으로 철이 형성됩니다. 철은 핵융합으로 에너지를 방출하지 않으므로, 여기서 핵융합이 멈춥니다.' }
+    ]
+  }
+};
+
+let selectedMass = null;
+
+function selectStarMass(type) {
+  selectedMass = type;
+  document.getElementById('optSolar').classList.toggle('active', type === 'solar');
+  document.getElementById('optMassive').classList.toggle('active', type === 'massive');
+  document.getElementById('onionCard').style.display = 'block';
+
+  const data = layerData[type];
+  document.getElementById('onionTitle').textContent = data.title;
+
+  const container = document.getElementById('onionContainer');
+  container.innerHTML = '';
+
+  const containerSize = 300;
+  // 안쪽 층이 위에 오도록 z-index 설정 (i가 클수록 안쪽 → z-index 높게)
+  data.layers.forEach((layer, i) => {
+    const el = document.createElement('div');
+    const pct = layer.size;
+    const px = containerSize * pct / 100;
+    el.className = 'onion-layer';
+    el.style.cssText = `
+      width:${px}px;height:${px}px;
+      background:${layer.color};
+      left:${(containerSize - px) / 2}px;top:${(containerSize - px) / 2}px;
+      z-index:${i + 1};
+      border:2px solid rgba(255,255,255,0.25);
+    `;
+    // 가장 안쪽 층에만 텍스트, 나머지는 테두리 영역에 라벨 표시
+    el.onclick = function() { showLayerInfo(type, i); };
+    container.appendChild(el);
+  });
+
+  // 각 층 라벨을 오른쪽에 범례로 표시
+  const legend = document.createElement('div');
+  legend.style.cssText = 'position:absolute;right:-10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:50;';
+  data.layers.forEach((layer, i) => {
+    const item = document.createElement('div');
+    item.style.cssText = `display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 8px;border-radius:8px;transition:background .2s;font-size:.8rem;`;
+    item.innerHTML = `<span style="width:16px;height:16px;border-radius:4px;background:${layer.color};display:inline-block;border:1px solid rgba(255,255,255,.3);flex-shrink:0;"></span><span style="color:var(--text);font-weight:600;white-space:nowrap;">${layer.name}</span>`;
+    item.onmouseenter = function() { item.style.background = 'rgba(255,255,255,.08)'; };
+    item.onmouseleave = function() { item.style.background = 'transparent'; };
+    item.onclick = function() { showLayerInfo(type, i); };
+    legend.appendChild(item);
+  });
+  container.appendChild(legend);
+
+  // 중심 라벨
+  const centerLayer = data.layers[data.layers.length - 1];
+  const centerLabel = document.createElement('div');
+  const centerPx = containerSize * centerLayer.size / 100;
+  centerLabel.style.cssText = `position:absolute;z-index:${data.layers.length + 1};pointer-events:none;
+    width:${centerPx}px;height:${centerPx}px;
+    left:${(containerSize - centerPx) / 2}px;top:${(containerSize - centerPx) / 2}px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.75rem;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8);`;
+  centerLabel.textContent = centerLayer.name;
+  container.appendChild(centerLabel);
+
+  document.getElementById('layerDetail').innerHTML = '<div class="info-panel">각 층 또는 오른쪽 범례를 클릭하여 어떤 핵융합이 일어나고 어떤 원소가 생성되는지 확인하세요.</div>';
+  addScore('star_mass_' + type, 5);
+}
+
+function showLayerInfo(type, idx) {
+  const data = layerData[type];
+  const layer = data.layers[idx];
+
+  // Highlight selected layer
+  document.querySelectorAll('.onion-layer').forEach((el, i) => el.classList.toggle('selected', i === idx));
+
+  const badges = layer.elements.map(e => {
+    const colors = { H: '#ff6b6b', He: '#ffd93d', C: '#2ecc71', O: '#3498db', N: '#e67e22',
+      Ne: '#1abc9c', Mg: '#16a085', Si: '#9b59b6', S: '#8e44ad', Fe: '#95a5a6' };
+    return `<span class="element-badge" style="background:${colors[e] || '#666'};color:#fff;">${e}</span>`;
+  }).join('');
+
+  document.getElementById('layerDetail').innerHTML = `
+    <div class="layer-info">
+      <div class="sub-title" style="color:${layer.color};">${layer.name} 층</div>
+      <div style="margin:8px 0;">${badges}</div>
+      <p style="font-size:.9rem;">${layer.info}</p>
+    </div>
+  `;
+  addScore('layer_' + type + '_' + idx, 2);
+}
+
+// ====== STAGE 4: SUPERNOVA ======
+let snExploded = false;
+const heavyElements = [
+  { symbol: 'Au', name: '금', color: '#f1c40f' },
+  { symbol: 'Pb', name: '납', color: '#636e72' },
+  { symbol: 'U', name: '우라늄', color: '#00b894' },
+  { symbol: 'Ag', name: '은', color: '#dfe6e9' },
+  { symbol: 'Cu', name: '구리', color: '#e17055' },
+  { symbol: 'Pt', name: '백금', color: '#b2bec3' }
+];
+let collectedElements = new Set();
+
+function triggerSupernova() {
+  if (snExploded) return;
+  snExploded = true;
+
+  const btn = document.getElementById('explodeBtn');
+  btn.disabled = true;
+  btn.style.opacity = '.5';
+  btn.textContent = '폭발 중...';
+
+  const star = document.getElementById('snStar');
+  star.textContent = '';
+  star.classList.remove('iron');
+  star.classList.add('exploding');
+
+  document.getElementById('snInfo').innerHTML = '<strong>초신성 폭발!</strong> 엄청난 에너지가 방출되며 철보다 무거운 원소(금, 납, 우라늄 등)가 만들어집니다.';
+  addScore('supernova', 10);
+
+  // Spawn heavy element particles
+  setTimeout(() => {
+    star.classList.remove('exploding');
+    star.classList.add('remnant');
+    star.textContent = '';
+
+    const shower = document.getElementById('elementShower');
+    shower.innerHTML = '';
+
+    for (let i = 0; i < 18; i++) {
+      const el = heavyElements[i % heavyElements.length];
+      const p = document.createElement('div');
+      p.className = 'shower-particle';
+      p.style.cssText = `
+        width:32px;height:32px;background:${el.color};
+        left:${10 + Math.random() * 80}%;top:${10 + Math.random() * 80}%;
+        box-shadow:0 0 8px ${el.color};
+      `;
+      p.textContent = el.symbol;
+      p.dataset.symbol = el.symbol;
+      p.dataset.name = el.name;
+      p.dataset.color = el.color;
+      p.onclick = function() { collectElement(this); };
+      shower.appendChild(p);
+    }
+
+    document.getElementById('collectCard').style.display = 'block';
+    document.getElementById('collectProgress').textContent = `수집: 0 / ${heavyElements.length}종`;
+  }, 1500);
+}
+
+function collectElement(el) {
+  if (el.classList.contains('collected')) return;
+  el.classList.add('collected');
+
+  const symbol = el.dataset.symbol;
+  const name = el.dataset.name;
+  const color = el.dataset.color;
+
+  if (!collectedElements.has(symbol)) {
+    collectedElements.add(symbol);
+    const box = document.getElementById('collectionBox');
+    if (collectedElements.size === 1) box.innerHTML = '';
+
+    const badge = document.createElement('span');
+    badge.className = 'collected-element';
+    badge.style.cssText = `background:${color};color:#000;`;
+    badge.textContent = `${symbol} (${name})`;
+    box.appendChild(badge);
+
+    addScore('collect_' + symbol, 2);
+    document.getElementById('collectProgress').textContent = `수집: ${collectedElements.size} / ${heavyElements.length}종`;
+
+    if (collectedElements.size >= 3 && !earned['charts']) {
+      document.getElementById('cycleCard').style.display = 'block';
+      document.getElementById('finalQuizCard').style.display = 'block';
+      drawCharts();
+    }
+    if (collectedElements.size >= heavyElements.length) {
+      document.getElementById('collectProgress').innerHTML =
+        '<div class="feedback-msg success">모든 무거운 원소를 수집했습니다! 이 원소들은 성간 물질이 되어 새로운 별과 행성의 재료가 됩니다.</div>';
+    }
+  }
+}
+
+// Charts
+function drawCharts() {
+  const earth = [
+    { label: '철', pct: 35, color: '#95a5a6' },
+    { label: '산소', pct: 30, color: '#3498db' },
+    { label: '규소', pct: 15, color: '#9b59b6' },
+    { label: '마그네슘', pct: 13, color: '#16a085' },
+    { label: '니켈', pct: 2.4, color: '#636e72' },
+    { label: '기타', pct: 4.6, color: '#2d3436' }
+  ];
+  const human = [
+    { label: '산소', pct: 65, color: '#3498db' },
+    { label: '탄소', pct: 18.5, color: '#2ecc71' },
+    { label: '수소', pct: 9.5, color: '#ff6b6b' },
+    { label: '질소', pct: 3.3, color: '#e67e22' },
+    { label: '기타', pct: 3.7, color: '#636e72' }
+  ];
+
+  drawPie('chartEarth', earth);
+  drawPie('chartHuman', human);
+  addScore('charts', 5);
+}
+
+function drawPie(canvasId, data) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const cx = w / 2, cy = h / 2, r = Math.min(cx, cy) - 10;
+  let progress = 0;
+
+  function draw() {
+    progress += 0.02;
+    if (progress > 1) progress = 1;
+    ctx.clearRect(0, 0, w, h);
+
+    let startAngle = -Math.PI / 2;
+    data.forEach(d => {
+      const angle = 2 * Math.PI * (d.pct / 100) * progress;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, startAngle, startAngle + angle);
+      ctx.fillStyle = d.color;
+      ctx.fill();
+
+      // Label
+      if (progress >= 1 && d.pct >= 5) {
+        const mid = startAngle + angle / 2;
+        const lr = d.pct >= 12 ? r * 0.6 : r * 0.78;
+        const lx = cx + Math.cos(mid) * lr;
+        const ly = cy + Math.sin(mid) * lr;
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 11px "Noto Sans KR", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(d.label, lx, ly - 6);
+        ctx.font = '10px sans-serif';
+        ctx.fillText(d.pct + '%', lx, ly + 8);
+      }
+
+      startAngle += angle;
+    });
+
+    // Center hole (donut)
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.32, 0, 2 * Math.PI);
+    ctx.fillStyle = '#111535';
+    ctx.fill();
+
+    if (progress < 1) requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// Final Quiz
+let finalAnswer = null;
+function selectFinalQuiz(el, ans) {
+  document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  finalAnswer = ans;
+}
+
+function checkFinalQuiz() {
+  if (!finalAnswer) { alert('답을 선택하세요!'); return; }
+  document.querySelectorAll('.quiz-option').forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o.textContent.startsWith('B')) o.classList.add('correct');
+    else if (o.classList.contains('selected') && finalAnswer !== 'B') o.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('finalQuizFeedback');
+  if (finalAnswer === 'B') {
+    fb.innerHTML = '<div class="feedback-msg success">정답! 지구에서 가장 큰 질량비(35%)를 차지하는 원소는 <strong>철(Fe)</strong>이며, 질량이 태양보다 매우 큰 별의 내부에서 핵융합 반응으로 만들어졌습니다.</div>';
+    addScore('final_quiz', 8);
+  } else {
+    fb.innerHTML = '<div class="feedback-msg error">아쉽습니다. 정답은 <strong>B. 철 — 대질량 별의 내부 핵융합으로 형성</strong>입니다. 지구 질량의 35%를 철이 차지합니다.</div>';
+    addScore('final_quiz_try', 3);
+  }
+}
+</script>
+</body>
+</html>

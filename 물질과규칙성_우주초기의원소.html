@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>빅뱅 시나리오 - 원소 탄생의 비밀</title>
+<style>
+:root {
+  --primary: #1e3a5f;
+  --accent: #6c5ce7;
+  --bg: #0a0e27;
+  --card: #141832;
+  --card-light: #1c2147;
+  --text: #e2e8f0;
+  --sub: #94a3b8;
+  --line: #2d3561;
+  --glow: rgba(108,92,231,0.3);
+  --shadow: 0 10px 30px rgba(0,0,0,0.4);
+  --radius: 16px;
+  --hydrogen: #ff6b6b;
+  --helium: #ffd93d;
+  --success: #2ecc71;
+  --danger: #e74c3c;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body {
+  font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height:100vh;
+  line-height:1.6;
+}
+
+/* Header */
+header {
+  background: linear-gradient(135deg, #0d1b3e 0%, #1a0a3e 50%, #0d1b3e 100%);
+  color:white;
+  padding:36px 20px 32px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+
+header::before {
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(108,92,231,0.15) 0%, transparent 70%),
+              radial-gradient(ellipse at 70% 30%, rgba(255,107,107,0.1) 0%, transparent 60%);
+}
+
+header .back{
+  position:relative;z-index:1;
+  display:inline-block;color:#94a3b8;text-decoration:none;font-size:.9rem;margin-bottom:10px;
+}
+header .back:hover{color:white;}
+header h1{position:relative;z-index:1;font-size:2rem;font-weight:800;margin-bottom:6px;}
+header p{position:relative;z-index:1;color:#94a3b8;font-size:.95rem;}
+
+/* Stars */
+.stars{position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;z-index:0;pointer-events:none;}
+.star{position:absolute;background:white;border-radius:50%;animation:twinkle 2s infinite alternate;}
+@keyframes twinkle{0%{opacity:.2;}100%{opacity:1;}}
+
+/* Nav */
+.stage-nav{
+  display:flex;gap:6px;justify-content:center;flex-wrap:wrap;
+  padding:14px 10px;
+  background:rgba(10,14,39,0.95);
+  position:sticky;top:0;z-index:100;
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(10px);
+}
+.stage-nav button{
+  padding:8px 16px;border-radius:999px;border:1px solid var(--line);
+  background:transparent;color:var(--sub);font-size:.85rem;font-weight:600;
+  cursor:pointer;transition:all .2s;font-family:inherit;
+}
+.stage-nav button:hover{border-color:var(--accent);color:var(--accent);}
+.stage-nav button.active{background:var(--accent);border-color:var(--accent);color:white;}
+
+/* Score */
+.score-bar{
+  max-width:860px;margin:20px auto 0;padding:0 18px;
+  display:flex;align-items:center;gap:12px;
+}
+.score-bar label{font-size:.85rem;color:var(--sub);font-weight:600;white-space:nowrap;}
+.score-track{flex:1;height:10px;background:var(--card-light);border-radius:99px;overflow:hidden;}
+.score-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#a29bfe);border-radius:99px;transition:width .5s;}
+.score-val{font-size:.85rem;color:var(--accent);font-weight:700;min-width:40px;text-align:right;}
+
+/* Wrap */
+.wrap{max-width:860px;margin:0 auto;padding:24px 18px 60px;}
+
+/* Stage */
+.stage{display:none;}
+.stage.active{display:block;animation:fadeUp .4s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+/* Cards */
+.card{
+  background:var(--card);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:24px;margin-bottom:20px;
+  border:1px solid var(--line);
+}
+
+.lead-box{
+  background:linear-gradient(135deg, rgba(108,92,231,0.1), rgba(162,155,254,0.05));
+  border:1px solid rgba(108,92,231,0.3);
+  border-radius:var(--radius);padding:18px 22px;margin-bottom:20px;
+  font-size:.95rem;color:#c4b5fd;
+}
+
+.section-title{font-size:1.3rem;font-weight:800;margin-bottom:14px;color:white;}
+.sub-title{font-size:1.05rem;font-weight:700;margin-bottom:10px;color:#a29bfe;}
+
+/* Buttons */
+.btn{
+  padding:10px 20px;border-radius:12px;border:none;
+  font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;
+}
+.btn-primary{background:var(--accent);color:white;}
+.btn-primary:hover{background:#5b4bd5;transform:translateY(-1px);}
+.btn-outline{background:transparent;border:2px solid var(--accent);color:var(--accent);}
+.btn-outline:hover{background:var(--accent);color:white;}
+.btn-glow{
+  background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:white;
+  box-shadow:0 4px 15px rgba(108,92,231,0.4);
+}
+.btn-glow:hover{box-shadow:0 6px 20px rgba(108,92,231,0.6);transform:translateY(-2px);}
+
+/* Stage 1 - Spectrometer */
+.light-sources{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:16px 0;}
+.light-src{
+  width:120px;height:120px;border-radius:16px;
+  background:var(--card-light);border:2px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  cursor:pointer;transition:all .3s;font-size:.85rem;color:var(--sub);font-weight:600;
+}
+.light-src:hover{border-color:var(--accent);background:rgba(108,92,231,0.1);}
+.light-src.selected{border-color:var(--accent);background:rgba(108,92,231,0.15);color:white;box-shadow:0 0 20px var(--glow);}
+.light-src .icon{font-size:2.4rem;}
+
+.spectrum-viewer{
+  background:#000;border-radius:12px;padding:20px;margin:16px 0;
+  min-height:120px;position:relative;overflow:hidden;
+}
+.spectrum-label{
+  font-size:.8rem;color:var(--sub);text-align:center;margin-bottom:8px;
+}
+.spectrum-bar{
+  height:50px;border-radius:6px;position:relative;overflow:hidden;
+  margin-bottom:6px;
+}
+.spectrum-continuous{
+  background:linear-gradient(90deg,
+    #8b00ff 0%,#4b0082 8%,#0000ff 17%,#00bfff 25%,#00ff00 40%,
+    #ffff00 55%,#ff8c00 70%,#ff0000 85%,#8b0000 100%);
+}
+.spectrum-dark{background:#111;position:relative;}
+.spectrum-line{
+  position:absolute;top:0;height:100%;width:3px;
+}
+
+.wavelength-axis{
+  display:flex;justify-content:space-between;
+  font-size:.7rem;color:#666;padding:0 2px;
+}
+
+/* Spectrometer drag */
+.spectrometer-area{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  margin:14px 0;flex-wrap:wrap;
+}
+.spectrometer-icon{
+  width:80px;height:80px;border-radius:50%;
+  background:linear-gradient(135deg,#2d3561,#3d4580);
+  border:2px dashed var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;cursor:grab;transition:all .3s;
+  user-select:none;
+}
+.spectrometer-icon:hover{transform:scale(1.1);box-shadow:0 0 20px var(--glow);}
+.spectrometer-icon.analyzing{animation:pulse .8s infinite;border-style:solid;}
+@keyframes pulse{0%,100%{box-shadow:0 0 10px var(--glow);}50%{box-shadow:0 0 30px var(--glow);}}
+
+.info-panel{
+  background:var(--card-light);border-radius:12px;padding:16px;
+  border-left:3px solid var(--accent);font-size:.9rem;margin:12px 0;
+}
+
+/* Matching game */
+.match-game{display:flex;gap:16px;flex-wrap:wrap;margin:16px 0;justify-content:center;}
+.element-card{
+  background:var(--card-light);border-radius:12px;padding:12px 18px;
+  border:2px solid var(--line);cursor:pointer;transition:all .3s;
+  text-align:center;font-weight:600;
+}
+.element-card:hover{border-color:var(--accent);}
+.element-card.active{border-color:var(--accent);box-shadow:0 0 15px var(--glow);}
+.element-card.correct{border-color:var(--success);background:rgba(46,204,113,0.1);}
+.element-card.wrong{border-color:var(--danger);background:rgba(231,76,60,0.1);animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}50%{transform:translateX(-3px);}}
+
+.mystery-spectrum{
+  background:#000;border-radius:8px;padding:14px;margin:10px 0;
+  border:2px dashed rgba(255,255,255,0.2);
+}
+
+.overlay-toggle{
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0;
+}
+
+/* Stage 2 - Space */
+.space-scene{
+  background:radial-gradient(ellipse at center, #0d1b3e 0%, #000 100%);
+  border-radius:16px;padding:30px;position:relative;min-height:320px;
+  overflow:hidden;margin:14px 0;
+}
+.celestial{
+  position:absolute;cursor:pointer;transition:all .3s;
+}
+.celestial:hover{transform:scale(1.15);filter:brightness(1.3);}
+.celestial.selected{filter:brightness(1.5) drop-shadow(0 0 15px rgba(255,255,255,0.5));}
+
+.star-a{
+  width:70px;height:70px;border-radius:50%;
+  background:radial-gradient(circle, #fff8e1 0%, #ffd54f 40%, #ff8f00 70%, transparent 100%);
+  top:60px;left:25%;
+  box-shadow:0 0 30px rgba(255,213,79,0.6), 0 0 60px rgba(255,143,0,0.3);
+}
+.nebula-b{
+  width:120px;height:90px;border-radius:50%;
+  background:radial-gradient(ellipse, rgba(156,39,176,0.6) 0%, rgba(63,81,181,0.4) 40%, transparent 70%);
+  top:120px;right:20%;
+  box-shadow:0 0 40px rgba(156,39,176,0.3);
+}
+.celestial-label{
+  position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);
+  font-size:.8rem;color:var(--sub);white-space:nowrap;font-weight:600;
+}
+
+.popup-spectrum{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:18px;margin:14px 0;animation:fadeUp .3s;
+}
+
+.h-reference{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);
+  border-radius:10px;padding:10px 14px;margin:10px 0;
+  cursor:grab;font-size:.9rem;color:var(--hydrogen);font-weight:600;
+}
+
+.pie-container{
+  display:flex;justify-content:center;align-items:center;gap:30px;
+  margin:20px 0;flex-wrap:wrap;
+}
+.pie-chart{width:180px;height:180px;position:relative;}
+.pie-chart canvas{width:100%;height:100%;}
+.pie-legend{font-size:.9rem;color:var(--sub);}
+.pie-legend div{margin:6px 0;display:flex;align-items:center;gap:8px;}
+.pie-legend .dot{width:14px;height:14px;border-radius:50%;display:inline-block;}
+
+/* Stage 3 - Timeline */
+.timeline-container{position:relative;margin:20px 0;}
+.timeline-slider-wrap{
+  padding:10px 0 30px;
+}
+.timeline-slider{
+  -webkit-appearance:none;appearance:none;width:100%;height:12px;
+  background:linear-gradient(90deg,#ff6b6b 0%,#ffd93d 33%,#6c5ce7 66%,#2ecc71 100%);
+  border-radius:99px;outline:none;cursor:pointer;
+  position:relative;z-index:10;
+  margin:10px 0;
+}
+.timeline-slider::-webkit-slider-runnable-track{
+  height:12px;border-radius:99px;
+}
+.timeline-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:32px;height:32px;border-radius:50%;
+  background:white;border:3px solid var(--accent);cursor:grab;
+  box-shadow:0 2px 10px rgba(0,0,0,0.3);
+  margin-top:-10px;
+  position:relative;z-index:11;
+}
+.timeline-slider::-moz-range-track{
+  height:12px;border-radius:99px;
+  background:linear-gradient(90deg,#ff6b6b 0%,#ffd93d 33%,#6c5ce7 66%,#2ecc71 100%);
+}
+.timeline-slider::-moz-range-thumb{
+  width:32px;height:32px;border-radius:50%;
+  background:white;border:3px solid var(--accent);cursor:grab;
+  box-shadow:0 2px 10px rgba(0,0,0,0.3);
+}
+
+.timeline-labels{
+  display:flex;justify-content:space-between;font-size:.75rem;color:var(--sub);
+  padding:0 4px;
+}
+
+.timeline-display{
+  border-radius:16px;padding:24px;margin:16px 0;
+  min-height:300px;position:relative;overflow:hidden;
+  transition:background .5s;
+}
+
+.temp-density{
+  display:flex;gap:16px;margin:12px 0;flex-wrap:wrap;
+}
+.stat-box{
+  flex:1;min-width:140px;background:rgba(0,0,0,0.3);border-radius:10px;
+  padding:12px;text-align:center;
+}
+.stat-box .label{font-size:.75rem;color:var(--sub);}
+.stat-box .value{font-size:1.3rem;font-weight:800;color:white;margin-top:4px;}
+
+.particle-canvas{
+  width:100%;height:220px;border-radius:12px;
+  background:rgba(0,0,0,0.3);margin:12px 0;
+  position:relative;overflow:hidden;
+}
+
+/* Particle drag area */
+.particle-workshop{
+  display:flex;gap:20px;flex-wrap:wrap;justify-content:center;
+  margin:16px 0;align-items:flex-start;
+}
+.particle-source{
+  display:flex;flex-direction:column;gap:8px;align-items:center;
+}
+.particle-source .label{font-size:.8rem;color:var(--sub);font-weight:600;}
+.draggable-particle{
+  width:44px;height:44px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;font-weight:800;color:white;cursor:grab;
+  transition:all .2s;user-select:none;
+}
+.draggable-particle:hover{transform:scale(1.15);}
+.draggable-particle.quark-u{background:linear-gradient(135deg,#ff6b6b,#ee5a24);}
+.draggable-particle.quark-d{background:linear-gradient(135deg,#74b9ff,#0984e3);}
+
+.drop-zone{
+  width:120px;height:120px;border-radius:50%;
+  border:3px dashed var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;font-size:.8rem;color:var(--sub);transition:all .3s;
+  background:rgba(255,255,255,0.03);
+}
+.drop-zone.over{border-color:var(--accent);background:rgba(108,92,231,0.1);transform:scale(1.05);}
+.drop-zone.complete{
+  border-style:solid;border-color:var(--success);
+  background:rgba(46,204,113,0.1);
+}
+
+.nucleon-zone{
+  width:150px;height:150px;border-radius:50%;
+  border:3px dashed var(--line);
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:4px;font-size:.8rem;color:var(--sub);transition:all .3s;
+  background:rgba(255,255,255,0.03);
+  padding:10px;
+}
+.nucleon-zone.over{border-color:var(--accent);background:rgba(108,92,231,0.1);}
+.nucleon-zone.complete{
+  border-style:solid;border-color:var(--success);
+  background:rgba(46,204,113,0.15);
+}
+
+.mini-particle{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-weight:700;color:white;
+}
+.mini-particle.proton{background:linear-gradient(135deg,#e74c3c,#c0392b);}
+.mini-particle.neutron{background:linear-gradient(135deg,#3498db,#2980b9);}
+
+/* Stage 4 */
+.particle-field{
+  display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
+  padding:20px;min-height:120px;margin:14px 0;
+}
+.field-particle{
+  width:50px;height:50px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:800;color:white;
+  transition:all .5s;position:relative;
+}
+.field-particle.proton{background:linear-gradient(135deg,#e74c3c,#c0392b);box-shadow:0 3px 10px rgba(231,76,60,0.4);}
+.field-particle.neutron{background:linear-gradient(135deg,#3498db,#2980b9);box-shadow:0 3px 10px rgba(52,152,219,0.4);}
+
+.result-container{
+  display:flex;gap:20px;justify-content:center;align-items:center;
+  flex-wrap:wrap;margin:20px 0;
+}
+.nucleus-group{
+  text-align:center;padding:16px;border-radius:14px;
+  background:var(--card-light);border:1px solid var(--line);
+  min-width:160px;
+}
+.nucleus-visual{
+  display:flex;flex-wrap:wrap;gap:4px;justify-content:center;
+  padding:10px;margin:8px 0;
+}
+.sm-particle{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.55rem;font-weight:700;color:white;
+}
+.sm-particle.p{background:var(--hydrogen);}
+.sm-particle.n{background:#3498db;}
+
+.equation-box{
+  background:rgba(108,92,231,0.1);border:1px solid rgba(108,92,231,0.3);
+  border-radius:12px;padding:18px;margin:14px 0;text-align:center;
+  font-size:1.1rem;font-weight:600;
+}
+.equation-box .highlight{color:var(--accent);font-weight:800;}
+
+.quiz-section{margin:20px 0;}
+.quiz-option{
+  display:block;width:100%;text-align:left;
+  padding:14px 18px;margin:8px 0;border-radius:12px;
+  background:var(--card-light);border:2px solid var(--line);
+  color:var(--text);font-size:.95rem;cursor:pointer;transition:all .2s;font-family:inherit;
+}
+.quiz-option:hover{border-color:var(--accent);background:rgba(108,92,231,0.08);}
+.quiz-option.selected{border-color:var(--accent);background:rgba(108,92,231,0.15);}
+.quiz-option.correct{border-color:var(--success);background:rgba(46,204,113,0.15);}
+.quiz-option.wrong{border-color:var(--danger);background:rgba(231,76,60,0.1);}
+
+.feedback-msg{
+  padding:14px;border-radius:10px;margin:12px 0;font-weight:600;
+  text-align:center;animation:fadeUp .3s;
+}
+.feedback-msg.success{background:rgba(46,204,113,0.15);color:#2ecc71;border:1px solid rgba(46,204,113,0.3);}
+.feedback-msg.error{background:rgba(231,76,60,0.15);color:#e74c3c;border:1px solid rgba(231,76,60,0.3);}
+
+/* Footer */
+footer{
+  text-align:center;padding:24px;color:var(--sub);font-size:.85rem;
+  border-top:1px solid var(--line);background:var(--card);
+}
+footer a{color:var(--accent);text-decoration:none;}
+
+/* Responsive */
+@media(max-width:600px){
+  header h1{font-size:1.5rem;}
+  .light-src{width:90px;height:90px;}
+  .light-src .icon{font-size:1.8rem;}
+  .space-scene{min-height:260px;padding:20px;}
+  .star-a{width:50px;height:50px;left:15%;}
+  .nebula-b{width:80px;height:60px;right:10%;}
+  .stage-nav button{padding:6px 12px;font-size:.78rem;}
+  .field-particle{width:38px;height:38px;font-size:.6rem;}
+}
+
+/* Utility */
+.text-center{text-align:center;}
+.mt-10{margin-top:10px;}
+.mt-16{margin-top:16px;}
+.mb-10{margin-bottom:10px;}
+.flex-center{display:flex;align-items:center;justify-content:center;}
+.gap-10{gap:10px;}
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<!-- Stars background -->
+<div class="stars" id="starsContainer"></div>
+
+<header>
+  <a class="back" href="index.html">← 목록으로</a>
+  <h1>빅뱅 시나리오 - 원소 탄생의 비밀</h1>
+  <p>우주 초기에 형성된 원소의 기원을 탐구합니다</p>
+</header>
+
+<nav class="stage-nav">
+  <button class="active" onclick="showStage(0)">1. 가상 분광기 실험실</button>
+  <button onclick="showStage(1)">2. 우주 구성 원소</button>
+  <button onclick="showStage(2)">3. 빅뱅 타임라인</button>
+  <button onclick="showStage(3)">4. 질량비 챌린지</button>
+</nav>
+
+<div class="score-bar">
+  <label>학습 진행도</label>
+  <div class="score-track"><div class="score-fill" id="scoreFill"></div></div>
+  <span class="score-val" id="scoreVal">0/100</span>
+</div>
+
+<main class="wrap">
+
+<!-- ============ STAGE 1: 가상 분광기 실험실 ============ -->
+<section class="stage active" id="stage0">
+  <div class="lead-box">
+    <strong>학습 목표:</strong> 천체에서 방출되는 빛의 스펙트럼을 분석하고, 원소마다 선의 위치가 다름을 이해한다.
+  </div>
+
+  <div class="card">
+    <div class="section-title">광원 선택</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:12px;">분석할 광원을 클릭하세요. 분광기 아이콘을 클릭하면 스펙트럼이 생성됩니다.</p>
+
+    <div class="light-sources" id="lightSources">
+      <div class="light-src" data-source="incandescent" onclick="selectSource(this)">
+        <span class="icon">💡</span>
+        백열등
+      </div>
+      <div class="light-src" data-source="hydrogen" onclick="selectSource(this)">
+        <span class="icon">🔬</span>
+        수소 방전관
+      </div>
+      <div class="light-src" data-source="sun" onclick="selectSource(this)">
+        <span class="icon">☀️</span>
+        태양
+      </div>
+    </div>
+
+    <div class="spectrometer-area">
+      <div class="spectrometer-icon" id="spectrometerBtn" onclick="analyzeSpectrum()" title="클릭하여 분석!">🔭</div>
+      <span style="font-size:.85rem;color:var(--sub);">← 클릭하여 분석!</span>
+    </div>
+
+    <div class="spectrum-viewer" id="spectrumViewer" style="display:none;">
+      <div class="spectrum-label" id="spectrumTitle"></div>
+      <div class="spectrum-bar" id="spectrumBar"></div>
+      <div class="wavelength-axis">
+        <span>380nm</span><span>450</span><span>500</span><span>550</span><span>600</span><span>650</span><span>700nm</span>
+      </div>
+    </div>
+
+    <div class="info-panel" id="spectrumInfo" style="display:none;"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">원소 지문 매칭 게임</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:14px;">
+      미지의 스펙트럼에 원소의 방출선을 겹쳐보며 일치하는 원소를 찾아보세요!
+    </p>
+
+    <div class="mystery-spectrum" id="mysterySpectrum">
+      <div class="spectrum-label">미지의 스펙트럼</div>
+      <div class="spectrum-bar spectrum-dark" id="mysteryBar" style="height:40px;"></div>
+      <div class="wavelength-axis">
+        <span>380nm</span><span>450</span><span>500</span><span>550</span><span>600</span><span>650</span><span>700nm</span>
+      </div>
+    </div>
+
+    <div class="overlay-toggle">
+      <button class="btn btn-outline" onclick="toggleOverlay('hydrogen')" id="overlayH">수소(H) 겹치기</button>
+      <button class="btn btn-outline" onclick="toggleOverlay('helium')" id="overlayHe">헬륨(He) 겹치기</button>
+      <button class="btn btn-outline" onclick="toggleOverlay('carbon')" id="overlayC">탄소(C) 겹치기</button>
+    </div>
+
+    <div id="matchResult" style="margin-top:12px;"></div>
+
+    <div class="text-center mt-16">
+      <button class="btn btn-glow" onclick="checkMatch()">정답 확인</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STAGE 2: 우주 구성 원소 조사 ============ -->
+<section class="stage" id="stage1">
+  <div class="lead-box">
+    <strong>학습 목표:</strong> 스펙트럼 분석을 통해 우주에 존재하는 특정 원소와 그 질량비를 추론한다.
+  </div>
+
+  <div class="card">
+    <div class="section-title">천체 관측</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:10px;">별 A 또는 성운 B를 클릭하여 스펙트럼을 확인하세요.</p>
+
+    <div class="space-scene" id="spaceScene">
+      <div class="celestial star-a" onclick="selectCelestial('starA')" id="starA">
+        <span class="celestial-label">별 A</span>
+      </div>
+      <div class="celestial nebula-b" onclick="selectCelestial('nebulaB')" id="nebulaB">
+        <span class="celestial-label">성운 B</span>
+      </div>
+    </div>
+
+    <div id="celestialSpectrum" style="display:none;"></div>
+  </div>
+
+  <div class="card" id="hydrogenCheckCard" style="display:none;">
+    <div class="section-title">수소 존재 확인</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:14px;">
+      아래 수소 기준선 카드를 활성화하고, 천체 스펙트럼과 비교하여 수소의 존재 여부를 확인하세요.
+    </p>
+
+    <div class="h-reference" id="hRefCard" onclick="toggleHRef()">
+      <span style="font-size:1.4rem;">⚛️</span>
+      수소(H) 방출선 기준 — 클릭하여 겹치기
+    </div>
+
+    <div id="comparisonResult"></div>
+
+    <div class="text-center mt-16">
+      <button class="btn btn-glow" onclick="confirmHydrogen()">수소 존재 확인!</button>
+    </div>
+  </div>
+
+  <div class="card" id="ratioCard" style="display:none;">
+    <div class="section-title">우주의 수소와 헬륨 질량비</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:14px;">
+      스펙트럼 선의 세기 분석 결과, 우주에서 수소와 헬륨의 질량비는 약 3:1입니다.
+    </p>
+
+    <div class="pie-container">
+      <div class="pie-chart">
+        <canvas id="pieCanvas" width="360" height="360"></canvas>
+      </div>
+      <div class="pie-legend">
+        <div><span class="dot" style="background:var(--hydrogen);"></span> 수소 (H) — 약 73.9%</div>
+        <div><span class="dot" style="background:var(--helium);"></span> 헬륨 (He) — 약 24.0%</div>
+        <div><span class="dot" style="background:#636e72;"></span> 기타 원소 — 약 2.1%</div>
+        <div style="margin-top:10px;font-weight:700;color:white;">질량비 ≈ 3 : 1</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STAGE 3: 빅뱅 타임라인 ============ -->
+<section class="stage" id="stage2">
+  <div class="lead-box">
+    <strong>학습 목표:</strong> 우주 탄생 직후부터 원자핵이 형성되는 과정을 시간 순서대로 파악한다.
+  </div>
+
+  <div class="card">
+    <div class="section-title">빅뱅 타임라인</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:14px;">
+      슬라이더를 움직여 우주 탄생 직후의 시간 변화를 살펴보세요.
+    </p>
+
+    <div class="timeline-slider-wrap">
+      <input type="range" class="timeline-slider" id="timelineSlider" min="0" max="3" step="1" value="0"/>
+      <div class="timeline-labels">
+        <span>빅뱅</span>
+        <span>기본 입자</span>
+        <span>양성자·중성자</span>
+        <span>헬륨 원자핵</span>
+      </div>
+    </div>
+
+    <div class="timeline-display" id="timelineDisplay">
+      <div class="sub-title" id="tlTitle">우주의 탄생 — 빅뱅</div>
+      <div class="temp-density">
+        <div class="stat-box">
+          <div class="label">온도</div>
+          <div class="value" id="tlTemp">∞</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">밀도</div>
+          <div class="value" id="tlDensity">∞</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">시간</div>
+          <div class="value" id="tlTime">0초</div>
+        </div>
+      </div>
+      <div class="particle-canvas" id="particleCanvas"></div>
+      <div class="info-panel" id="tlInfo">
+        약 138억 년 전, 극도로 높은 온도와 밀도의 한 점에서 대폭발(빅뱅)이 일어나 우주가 시작되었습니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">원자핵 합성 미션</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:14px;">
+      양성자와 중성자를 결합하여 수소와 헬륨 원자핵을 만들어 보세요!
+    </p>
+
+    <div class="sub-title">미션 1: 수소 원자핵 만들기</div>
+    <p style="color:var(--sub);font-size:.85rem;margin-bottom:10px;">양성자 1개 = 수소 원자핵(¹H). 양성자를 수소 영역에 드래그하세요.</p>
+    <div class="particle-workshop">
+      <div class="particle-source">
+        <div class="label">양성자 (p⁺)</div>
+        <div class="draggable-particle" draggable="true" data-type="p" ondragstart="dragParticle(event,'p')"
+             style="background:linear-gradient(135deg,#e74c3c,#c0392b);">p⁺</div>
+      </div>
+      <div class="drop-zone" id="hydrogenZone"
+           ondragover="allowDrop(event)" ondrop="dropToHydrogen(event)"
+           ondragenter="enterZone(event)" ondragleave="leaveZone(event)">
+        수소(¹H)<br/>영역
+      </div>
+    </div>
+    <div id="hydrogenResult" class="mt-10"></div>
+
+    <div class="sub-title mt-16">미션 2: 헬륨 원자핵 만들기</div>
+    <p style="color:var(--sub);font-size:.85rem;margin-bottom:10px;">양성자 2개 + 중성자 2개 = 헬륨 원자핵(⁴He). 입자를 헬륨 영역에 드래그하세요.</p>
+    <div class="particle-workshop">
+      <div class="particle-source">
+        <div class="label">양성자 (p⁺)</div>
+        <div class="draggable-particle" draggable="true" data-type="p" ondragstart="dragParticle(event,'p')"
+             style="background:linear-gradient(135deg,#e74c3c,#c0392b);">p⁺</div>
+        <div class="draggable-particle" draggable="true" data-type="p" ondragstart="dragParticle(event,'p')"
+             style="background:linear-gradient(135deg,#e74c3c,#c0392b);">p⁺</div>
+      </div>
+      <div class="particle-source">
+        <div class="label">중성자 (n)</div>
+        <div class="draggable-particle" draggable="true" data-type="n" ondragstart="dragParticle(event,'n')"
+             style="background:linear-gradient(135deg,#3498db,#2980b9);">n</div>
+        <div class="draggable-particle" draggable="true" data-type="n" ondragstart="dragParticle(event,'n')"
+             style="background:linear-gradient(135deg,#3498db,#2980b9);">n</div>
+      </div>
+      <div class="nucleon-zone" id="heliumZone"
+           ondragover="allowDrop(event)" ondrop="dropNucleon(event)"
+           ondragenter="enterZone(event)" ondragleave="leaveZone(event)">
+        헬륨(⁴He)<br/>합성 영역
+      </div>
+    </div>
+    <div id="heliumResult" class="mt-10"></div>
+  </div>
+</section>
+
+<!-- ============ STAGE 4: 질량비 계산 챌린지 ============ -->
+<section class="stage" id="stage3">
+  <div class="lead-box">
+    <strong>학습 목표:</strong> 양성자와 중성자의 개수비 변화를 통해 수소와 헬륨의 질량비(3:1)를 도출한다.
+  </div>
+
+  <div class="card">
+    <div class="section-title">초기 입자 배치: 양성자 14개 + 중성자 2개 (개수비 7:1)</div>
+    <p style="color:var(--sub);font-size:.9rem;margin-bottom:10px;">
+      빅뱅 후 약 3분이 지났을 때, 양성자와 중성자의 개수비는 약 7:1이었습니다.
+    </p>
+
+    <div class="particle-field" id="particleField"></div>
+
+    <div class="text-center">
+      <button class="btn btn-glow" id="formNucleiBtn" onclick="formNuclei()">원자핵 형성 시작!</button>
+    </div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none;">
+    <div class="section-title">원자핵 형성 결과</div>
+
+    <div class="result-container" id="nucleiResult"></div>
+
+    <div class="equation-box" id="equationBox" style="display:none;">
+      <div style="margin-bottom:8px;font-size:.9rem;color:var(--sub);">양성자와 중성자의 질량은 거의 같으므로</div>
+      <div>수소 질량 = 양성자 <span class="highlight">12</span>개 = <span class="highlight">12</span></div>
+      <div>헬륨 질량 = (양성자 2 + 중성자 2) = <span class="highlight">4</span></div>
+      <div style="margin-top:10px;font-size:1.3rem;">
+        수소 : 헬륨 = 12 : 4 = <span class="highlight" style="font-size:1.5rem;">3 : 1</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="quizCard" style="display:none;">
+    <div class="section-title">확인 퀴즈</div>
+    <p style="font-size:.95rem;margin-bottom:14px;">
+      빅뱅 후 약 38만 년이 지났을 때, 전자가 원자핵과 결합하여 형성된 <strong>두 종류의 원자</strong>는 무엇일까요?
+    </p>
+
+    <div class="quiz-section" id="quizSection">
+      <button class="quiz-option" onclick="selectQuiz(this, 'A')">A. 수소와 리튬</button>
+      <button class="quiz-option" onclick="selectQuiz(this, 'B')">B. 수소와 헬륨</button>
+      <button class="quiz-option" onclick="selectQuiz(this, 'C')">C. 헬륨과 탄소</button>
+      <button class="quiz-option" onclick="selectQuiz(this, 'D')">D. 산소와 질소</button>
+    </div>
+
+    <div class="text-center mt-10">
+      <button class="btn btn-glow" onclick="checkQuiz()">정답 확인</button>
+    </div>
+    <div id="quizFeedback"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  날아라 물리 통합과학 학습자료 | &copy; 동북고등학교 강현식
+</footer>
+
+<script>
+// ====== GLOBAL STATE ======
+let score = 0;
+const maxScore = 100;
+const earned = {};
+
+function addScore(key, pts) {
+  if (earned[key]) return;
+  earned[key] = true;
+  score = Math.min(score + pts, maxScore);
+  document.getElementById('scoreFill').style.width = (score / maxScore * 100) + '%';
+  document.getElementById('scoreVal').textContent = score + '/' + maxScore;
+}
+
+// ====== STAGE NAVIGATION ======
+function showStage(idx) {
+  document.querySelectorAll('.stage').forEach((s, i) => {
+    s.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.stage-nav button').forEach((b, i) => {
+    b.classList.toggle('active', i === idx);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ====== STARS ======
+(function createStars() {
+  const c = document.getElementById('starsContainer');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 3 + 1;
+    s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*2}s;animation-duration:${1.5+Math.random()*2}s;`;
+    c.appendChild(s);
+  }
+})();
+
+// ====== STAGE 1: SPECTROMETER ======
+let selectedSource = null;
+
+// Spectrum data (wavelength positions as % of 380-700nm range)
+const spectrumData = {
+  hydrogen: {
+    type: 'emission',
+    name: '수소 방출 스펙트럼',
+    lines: [
+      { nm: 410, color: '#7b00ff', label: 'Hδ 410nm' },
+      { nm: 434, color: '#5500ff', label: 'Hγ 434nm' },
+      { nm: 486, color: '#00bfff', label: 'Hβ 486nm' },
+      { nm: 656, color: '#ff0000', label: 'Hα 656nm' }
+    ],
+    info: '<strong>방출 스펙트럼:</strong> 고온의 수소 기체가 특정 파장의 빛을 방출하여 어두운 배경에 유색 선이 나타납니다. 각 원소는 고유한 선 위치를 가집니다.'
+  },
+  helium: {
+    type: 'emission',
+    name: '헬륨 방출 스펙트럼',
+    lines: [
+      { nm: 388, color: '#8800ff', label: '388nm' },
+      { nm: 447, color: '#3300ff', label: '447nm' },
+      { nm: 471, color: '#0066ff', label: '471nm' },
+      { nm: 501, color: '#00cc66', label: '501nm' },
+      { nm: 587, color: '#ffdd00', label: 'D3 587nm' },
+      { nm: 668, color: '#dd0000', label: '668nm' }
+    ],
+    info: '<strong>헬륨 스펙트럼:</strong> 헬륨은 수소와 완전히 다른 위치에 선이 나타납니다. 이 "원소 지문"으로 천체의 구성 원소를 알 수 있습니다.'
+  },
+  carbon: {
+    type: 'emission',
+    name: '탄소 방출 스펙트럼',
+    lines: [
+      { nm: 427, color: '#4400ff', label: '427nm' },
+      { nm: 515, color: '#22cc44', label: '515nm' },
+      { nm: 538, color: '#88cc00', label: '538nm' },
+      { nm: 601, color: '#ff6600', label: '601nm' }
+    ],
+    info: '<strong>탄소 스펙트럼:</strong> 탄소 역시 고유한 선 스펙트럼을 가지며, 수소·헬륨과는 다른 위치에 선이 나타납니다.'
+  },
+  incandescent: {
+    type: 'continuous',
+    name: '연속 스펙트럼 (백열등)',
+    lines: [],
+    info: '<strong>연속 스펙트럼:</strong> 고온의 고체(필라멘트)에서 방출된 빛은 모든 파장이 연속적으로 나타납니다. 무지개와 같은 연속 띠를 형성합니다.'
+  },
+  sun: {
+    type: 'absorption',
+    name: '흡수 스펙트럼 (태양)',
+    lines: [
+      { nm: 393, color: '#000', label: 'Ca K' },
+      { nm: 397, color: '#000', label: 'Ca H' },
+      { nm: 410, color: '#000', label: 'Hδ' },
+      { nm: 434, color: '#000', label: 'Hγ' },
+      { nm: 486, color: '#000', label: 'Hβ' },
+      { nm: 517, color: '#000', label: 'Mg' },
+      { nm: 527, color: '#000', label: 'Fe' },
+      { nm: 589, color: '#000', label: 'Na D' },
+      { nm: 656, color: '#000', label: 'Hα' }
+    ],
+    info: '<strong>흡수 스펙트럼:</strong> 태양 내부에서 나온 연속 스펙트럼이 태양 대기의 저온 기체를 지나면서, 특정 파장의 빛이 흡수되어 검은색 선(프라운호퍼 선)이 나타납니다.'
+  }
+};
+
+function nmToPercent(nm) {
+  return ((nm - 380) / (700 - 380)) * 100;
+}
+
+function selectSource(el) {
+  document.querySelectorAll('.light-src').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedSource = el.dataset.source;
+  document.getElementById('spectrumViewer').style.display = 'none';
+  document.getElementById('spectrumInfo').style.display = 'none';
+}
+
+function analyzeSpectrum() {
+  if (!selectedSource) {
+    alert('먼저 광원을 선택하세요!');
+    return;
+  }
+
+  const btn = document.getElementById('spectrometerBtn');
+  btn.classList.add('analyzing');
+  setTimeout(() => btn.classList.remove('analyzing'), 1500);
+
+  const data = spectrumData[selectedSource];
+  const viewer = document.getElementById('spectrumViewer');
+  const bar = document.getElementById('spectrumBar');
+  const title = document.getElementById('spectrumTitle');
+  const info = document.getElementById('spectrumInfo');
+
+  title.textContent = data.name;
+
+  if (data.type === 'continuous') {
+    bar.className = 'spectrum-bar spectrum-continuous';
+    bar.innerHTML = '';
+  } else if (data.type === 'emission') {
+    bar.className = 'spectrum-bar spectrum-dark';
+    bar.innerHTML = data.lines.map(l =>
+      `<div class="spectrum-line" style="left:${nmToPercent(l.nm)}%;background:${l.color};" title="${l.label}"></div>`
+    ).join('');
+  } else {
+    bar.className = 'spectrum-bar spectrum-continuous';
+    bar.innerHTML = data.lines.map(l =>
+      `<div class="spectrum-line" style="left:${nmToPercent(l.nm)}%;background:#000;width:2px;" title="${l.label}"></div>`
+    ).join('');
+  }
+
+  viewer.style.display = 'block';
+  info.style.display = 'block';
+  info.innerHTML = data.info;
+
+  addScore('spectrum_' + selectedSource, 5);
+}
+
+// Matching game
+const mysteryElement = 'helium'; // The mystery spectrum is helium
+let overlayActive = {};
+
+function toggleOverlay(element) {
+  overlayActive[element] = !overlayActive[element];
+  const btnMap = { hydrogen: 'overlayH', helium: 'overlayHe', carbon: 'overlayC' };
+  const btn = document.getElementById(btnMap[element]);
+  if (overlayActive[element]) {
+    btn.classList.remove('btn-outline');
+    btn.classList.add('btn-primary');
+  } else {
+    btn.classList.add('btn-outline');
+    btn.classList.remove('btn-primary');
+  }
+  renderMystery();
+  addScore('overlay_try', 3);
+}
+
+function renderMystery() {
+  const bar = document.getElementById('mysteryBar');
+  // Mystery is helium
+  let html = spectrumData.helium.lines.map(l =>
+    `<div class="spectrum-line" style="left:${nmToPercent(l.nm)}%;background:${l.color};opacity:0.8;width:3px;z-index:1;"></div>`
+  ).join('');
+
+  // Overlays
+  if (overlayActive.hydrogen) {
+    html += spectrumData.hydrogen.lines.map(l =>
+      `<div class="spectrum-line" style="left:${nmToPercent(l.nm)}%;background:rgba(255,107,107,0.5);width:8px;z-index:2;border:1px dashed #ff6b6b;" title="H: ${l.label}"></div>`
+    ).join('');
+  }
+  if (overlayActive.helium) {
+    html += spectrumData.helium.lines.map(l =>
+      `<div class="spectrum-line" style="left:${nmToPercent(l.nm)}%;background:rgba(255,217,61,0.5);width:8px;z-index:2;border:1px dashed #ffd93d;" title="He: ${l.label}"></div>`
+    ).join('');
+  }
+  if (overlayActive.carbon) {
+    html += spectrumData.carbon.lines.map(l =>
+      `<div class="spectrum-line" style="left:${nmToPercent(l.nm)}%;background:rgba(46,204,113,0.5);width:8px;z-index:2;border:1px dashed #2ecc71;" title="C: ${l.label}"></div>`
+    ).join('');
+  }
+
+  bar.innerHTML = html;
+}
+
+function checkMatch() {
+  const result = document.getElementById('matchResult');
+  if (overlayActive.helium && !overlayActive.hydrogen && !overlayActive.carbon) {
+    result.innerHTML = '<div class="feedback-msg success">정답! 미지의 스펙트럼은 <strong>헬륨(He)</strong>입니다. 선의 위치가 정확히 일치합니다!</div>';
+    addScore('match_correct', 10);
+  } else if (overlayActive.helium) {
+    result.innerHTML = '<div class="feedback-msg success">헬륨이 일치합니다! 다른 원소는 일치하지 않는 것을 확인해 보세요.</div>';
+    addScore('match_partial', 5);
+  } else {
+    result.innerHTML = '<div class="feedback-msg error">선의 위치가 일치하지 않습니다. 다른 원소를 겹쳐보세요!</div>';
+  }
+}
+
+// Init mystery
+renderMystery();
+
+// ====== STAGE 2: CELESTIAL OBSERVATION ======
+let selectedCelestial = null;
+let hRefActive = false;
+let celestialChecked = {};
+
+const celestialData = {
+  starA: {
+    name: '별 A',
+    lines: [
+      ...spectrumData.hydrogen.lines,
+      { nm: 587, color: '#ffdd00', label: 'He 587nm' },
+      { nm: 501, color: '#00cc66', label: 'He 501nm' }
+    ]
+  },
+  nebulaB: {
+    name: '성운 B',
+    lines: [
+      ...spectrumData.hydrogen.lines,
+      { nm: 447, color: '#3300ff', label: 'He 447nm' },
+      { nm: 471, color: '#0066ff', label: 'He 471nm' },
+      { nm: 587, color: '#ffdd00', label: 'He 587nm' },
+      { nm: 501, color: '#00cc66', label: 'He 501nm' }
+    ]
+  }
+};
+
+// Add small background stars to space scene
+(function addSpaceStars() {
+  const scene = document.getElementById('spaceScene');
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement('div');
+    const size = Math.random() * 2 + 1;
+    s.style.cssText = `position:absolute;width:${size}px;height:${size}px;background:white;border-radius:50%;top:${Math.random()*100}%;left:${Math.random()*100}%;opacity:${Math.random()*0.6+0.2};`;
+    scene.appendChild(s);
+  }
+})();
+
+function selectCelestial(id) {
+  selectedCelestial = id;
+  document.querySelectorAll('.celestial').forEach(c => c.classList.remove('selected'));
+  document.getElementById(id).classList.add('selected');
+
+  const data = celestialData[id];
+  const container = document.getElementById('celestialSpectrum');
+  container.style.display = 'block';
+  container.innerHTML = `
+    <div class="popup-spectrum">
+      <div class="sub-title">${data.name}의 스펙트럼</div>
+      <div class="spectrum-bar spectrum-dark" id="celestialBar_${id}" style="height:44px;">
+        ${data.lines.map(l =>
+          `<div class="spectrum-line" style="left:${nmToPercent(l.nm)}%;background:${l.color};" title="${l.label}"></div>`
+        ).join('')}
+      </div>
+      <div class="wavelength-axis">
+        <span>380nm</span><span>450</span><span>500</span><span>550</span><span>600</span><span>650</span><span>700nm</span>
+      </div>
+      <div id="hOverlay_${id}"></div>
+    </div>
+  `;
+
+  document.getElementById('hydrogenCheckCard').style.display = 'block';
+
+  if (!celestialChecked[id]) {
+    celestialChecked[id] = true;
+    addScore('celestial_' + id, 5);
+  }
+
+  if (hRefActive) applyHRef();
+}
+
+function toggleHRef() {
+  hRefActive = !hRefActive;
+  const card = document.getElementById('hRefCard');
+  card.style.background = hRefActive ? 'rgba(255,107,107,0.2)' : 'rgba(255,107,107,0.1)';
+  card.style.borderColor = hRefActive ? 'rgba(255,107,107,0.6)' : 'rgba(255,107,107,0.3)';
+  if (hRefActive && selectedCelestial) applyHRef();
+}
+
+function applyHRef() {
+  if (!selectedCelestial) return;
+  const overlay = document.getElementById('hOverlay_' + selectedCelestial);
+  if (!overlay) return;
+  if (hRefActive) {
+    overlay.innerHTML = `
+      <div style="margin-top:8px;font-size:.85rem;color:var(--hydrogen);">
+        ▼ 수소 기준선 (빨간 점선)이 천체 스펙트럼 위에 표시됩니다.
+      </div>
+      <div class="spectrum-bar spectrum-dark" style="height:30px;margin-top:6px;position:relative;">
+        ${celestialData[selectedCelestial].lines.map(l =>
+          `<div class="spectrum-line" style="left:${nmToPercent(l.nm)}%;background:${l.color};width:3px;"></div>`
+        ).join('')}
+        ${spectrumData.hydrogen.lines.map(l =>
+          `<div class="spectrum-line" style="left:${nmToPercent(l.nm)}%;width:10px;border:2px dashed var(--hydrogen);background:transparent;z-index:5;" title="H 기준: ${l.label}"></div>`
+        ).join('')}
+      </div>
+      <div style="font-size:.8rem;color:var(--sub);margin-top:4px;">빨간 점선 = 수소 기준선, 실선 = 천체 스펙트럼</div>
+    `;
+    addScore('h_overlay', 5);
+  } else {
+    overlay.innerHTML = '';
+  }
+}
+
+function confirmHydrogen() {
+  const comp = document.getElementById('comparisonResult');
+  comp.innerHTML = `
+    <div class="feedback-msg success">
+      수소의 방출선 위치(Hα 656nm, Hβ 486nm 등)가 별 A와 성운 B 모두에서 일치합니다!<br/>
+      → 우주의 천체에는 <strong>수소(H)</strong>가 풍부하게 존재합니다.
+    </div>
+  `;
+
+  document.getElementById('ratioCard').style.display = 'block';
+  addScore('confirm_h', 10);
+
+  // Animate pie chart
+  setTimeout(animatePie, 300);
+}
+
+function animatePie() {
+  const canvas = document.getElementById('pieCanvas');
+  const ctx = canvas.getContext('2d');
+  const cx = 180, cy = 180, r = 150;
+  let progress = 0;
+
+  function draw() {
+    progress += 0.02;
+    if (progress > 1) progress = 1;
+    ctx.clearRect(0, 0, 360, 360);
+
+    const hydrogenAngle = 2 * Math.PI * 0.739 * progress;
+    const heliumAngle = 2 * Math.PI * 0.24 * progress;
+    const otherAngle = 2 * Math.PI * 0.021 * progress;
+    let startAngle = -Math.PI / 2;
+
+    // Hydrogen
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, startAngle, startAngle + hydrogenAngle);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fill();
+    startAngle += hydrogenAngle;
+
+    // Helium
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, startAngle, startAngle + heliumAngle);
+    ctx.fillStyle = '#ffd93d';
+    ctx.fill();
+    startAngle += heliumAngle;
+
+    // Other
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, startAngle, startAngle + otherAngle);
+    ctx.fillStyle = '#636e72';
+    ctx.fill();
+
+    // Center hole
+    ctx.beginPath();
+    ctx.arc(cx, cy, 60, 0, 2 * Math.PI);
+    ctx.fillStyle = '#141832';
+    ctx.fill();
+
+    // Center text
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 18px Noto Sans KR, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('3 : 1', cx, cy);
+
+    if (progress < 1) requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ====== STAGE 3: BIG BANG TIMELINE ======
+const timelineStages = [
+  {
+    title: '우주의 탄생 — 빅뱅',
+    temp: '∞', density: '∞', time: '0초',
+    bg: 'radial-gradient(circle, #ff6b6b 0%, #c0392b 30%, #2c0a0a 100%)',
+    info: '약 138억 년 전, 극도로 높은 온도와 밀도의 한 점에서 대폭발(빅뱅)이 일어나 우주가 시작되었습니다.',
+    particles: 'energy'
+  },
+  {
+    title: '기본 입자 형성',
+    temp: '10¹² K', density: '매우 높음', time: '10⁻⁶ 초',
+    bg: 'radial-gradient(circle, #e67e22 0%, #8e3500 40%, #1a0a00 100%)',
+    info: '우주가 팽창하며 온도가 낮아지자, 에너지가 물질로 전환되어 양성자, 중성자, 전자 등 기본 입자가 형성되었습니다.',
+    particles: 'basicParticles'
+  },
+  {
+    title: '양성자와 중성자 (개수비 7:1)',
+    temp: '10¹⁰ K', density: '높음', time: '약 3분 후',
+    bg: 'radial-gradient(circle, #f39c12 0%, #6d4c00 40%, #0d0d00 100%)',
+    info: '온도가 더 낮아지면서 양성자와 중성자가 안정적으로 존재하게 되었습니다. 이때 양성자와 중성자의 개수비는 약 7:1입니다.',
+    particles: 'nucleons'
+  },
+  {
+    title: '헬륨 원자핵 형성',
+    temp: '10⁹ K', density: '낮아짐', time: '약 3분 후',
+    bg: 'radial-gradient(circle, #2ecc71 0%, #0d5c2e 40%, #001a0d 100%)',
+    info: '양성자 2개와 중성자 2개가 결합하여 헬륨 원자핵(⁴He)이 형성되었습니다. 이를 빅뱅 핵합성이라 합니다. 남은 양성자는 수소 원자핵이 됩니다.',
+    particles: 'nuclei'
+  }
+];
+
+function updateTimeline(val) {
+  const stage = timelineStages[val];
+  document.getElementById('tlTitle').textContent = stage.title;
+  document.getElementById('tlTemp').textContent = stage.temp;
+  document.getElementById('tlDensity').textContent = stage.density;
+  document.getElementById('tlTime').textContent = stage.time;
+  document.getElementById('timelineDisplay').style.background = stage.bg;
+  document.getElementById('tlInfo').textContent = stage.info;
+
+  renderTimelineParticles(stage.particles);
+  addScore('timeline_' + val, 3);
+}
+
+function renderTimelineParticles(type) {
+  const canvas = document.getElementById('particleCanvas');
+  canvas.innerHTML = '';
+
+  if (type === 'energy') {
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      const size = Math.random() * 8 + 4;
+      const colors = ['#ff6b6b', '#ff9f43', '#feca57', '#ff6348', '#fff'];
+      p.style.cssText = `
+        position:absolute;width:${size}px;height:${size}px;border-radius:50%;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        top:${Math.random()*85}%;left:${Math.random()*95}%;
+        animation:twinkle ${0.3+Math.random()*0.5}s infinite alternate;
+        box-shadow:0 0 ${size*2}px ${colors[Math.floor(Math.random()*colors.length)]};
+      `;
+      canvas.appendChild(p);
+    }
+  } else if (type === 'basicParticles') {
+    const particles = [
+      { label: 'p⁺', color: '#e74c3c' }, { label: 'n', color: '#3498db' },
+      { label: 'p⁺', color: '#e74c3c' }, { label: 'e⁻', color: '#f1c40f' },
+      { label: 'p⁺', color: '#e74c3c' }, { label: 'e⁻', color: '#f1c40f' },
+      { label: 'p⁺', color: '#e74c3c' }, { label: 'n', color: '#3498db' },
+      { label: 'p⁺', color: '#e74c3c' }, { label: 'e⁻', color: '#f1c40f' },
+    ];
+    particles.forEach((q, i) => {
+      const p = document.createElement('div');
+      p.style.cssText = `
+        position:absolute;width:34px;height:34px;border-radius:50%;
+        background:${q.color};display:flex;align-items:center;justify-content:center;
+        font-size:11px;font-weight:800;color:white;
+        top:${15+Math.random()*60}%;left:${5+i*9+Math.random()*3}%;
+        animation:twinkle ${1+Math.random()}s infinite alternate;
+        box-shadow:0 0 10px ${q.color}66;
+      `;
+      p.textContent = q.label;
+      canvas.appendChild(p);
+    });
+  } else if (type === 'nucleons') {
+    const nucleons = [
+      { label: 'p', color: '#e74c3c', count: 7 },
+      { label: 'n', color: '#3498db', count: 1 }
+    ];
+    let idx = 0;
+    nucleons.forEach(n => {
+      for (let i = 0; i < n.count; i++) {
+        const p = document.createElement('div');
+        p.style.cssText = `
+          position:absolute;width:36px;height:36px;border-radius:50%;
+          background:${n.color};display:flex;align-items:center;justify-content:center;
+          font-size:13px;font-weight:800;color:white;
+          top:${20+Math.random()*55}%;left:${5+idx*11+Math.random()*3}%;
+          box-shadow:0 0 10px ${n.color}44;
+        `;
+        p.textContent = n.label;
+        canvas.appendChild(p);
+        idx++;
+      }
+    });
+  } else if (type === 'nuclei') {
+    // He nucleus
+    const he = document.createElement('div');
+    he.style.cssText = `
+      position:absolute;width:80px;height:80px;border-radius:50%;
+      background:radial-gradient(circle,#ffd93d,#e67e22);
+      display:flex;align-items:center;justify-content:center;
+      font-size:14px;font-weight:800;color:#1a0a00;
+      top:30%;left:20%;
+      box-shadow:0 0 25px rgba(255,217,61,0.5);
+    `;
+    he.innerHTML = '⁴He';
+    canvas.appendChild(he);
+
+    // H nuclei (protons)
+    for (let i = 0; i < 6; i++) {
+      const h = document.createElement('div');
+      h.style.cssText = `
+        position:absolute;width:30px;height:30px;border-radius:50%;
+        background:#e74c3c;display:flex;align-items:center;justify-content:center;
+        font-size:10px;font-weight:800;color:white;
+        top:${15+Math.random()*60}%;left:${45+i*8+Math.random()*3}%;
+        box-shadow:0 0 8px rgba(231,76,60,0.4);
+      `;
+      h.textContent = 'H';
+      canvas.appendChild(h);
+    }
+  }
+}
+
+// Init timeline
+renderTimelineParticles('energy');
+
+// Slider event listeners (multiple for compatibility)
+(function initSlider() {
+  const slider = document.getElementById('timelineSlider');
+  slider.addEventListener('input', function() { updateTimeline(this.value); });
+  slider.addEventListener('change', function() { updateTimeline(this.value); });
+})();
+
+// ====== DRAG & DROP: NUCLEUS SYNTHESIS ======
+let hydrogenCount = 0;
+let heliumNucleons = { p: 0, n: 0 };
+
+function dragParticle(e, type) {
+  e.dataTransfer.setData('type', type);
+}
+
+function allowDrop(e) { e.preventDefault(); }
+function enterZone(e) { e.preventDefault(); e.currentTarget.classList.add('over'); }
+function leaveZone(e) { e.currentTarget.classList.remove('over'); }
+
+// Mission 1: 수소 원자핵
+function dropToHydrogen(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+  const type = e.dataTransfer.getData('type');
+  if (type !== 'p') return;
+
+  hydrogenCount++;
+  const zone = document.getElementById('hydrogenZone');
+
+  if (hydrogenCount === 1) {
+    zone.innerHTML = '<div class="mini-particle proton" style="width:40px;height:40px;font-size:.8rem;">p⁺</div><div style="font-size:.7rem;color:var(--sub);width:100%;text-align:center;">¹H 완성!</div>';
+    zone.classList.add('complete');
+    addScore('hydrogen_synth', 8);
+    document.getElementById('hydrogenResult').innerHTML =
+      '<div class="feedback-msg success">수소 원자핵(¹H) 완성! 양성자 1개가 곧 수소 원자핵입니다.</div>';
+  } else {
+    zone.style.borderColor = 'var(--danger)';
+    setTimeout(() => {
+      hydrogenCount = 0;
+      zone.innerHTML = '수소(¹H)<br/>영역';
+      zone.classList.remove('complete');
+      zone.style.borderColor = '';
+    }, 800);
+  }
+}
+
+// Mission 2: 헬륨 원자핵
+function dropNucleon(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+  const type = e.dataTransfer.getData('type');
+
+  if (type !== 'p' && type !== 'n') return;
+  heliumNucleons[type]++;
+
+  const zone = document.getElementById('heliumZone');
+  let html = '';
+  for (let i = 0; i < heliumNucleons.p; i++) html += '<div class="mini-particle proton">p⁺</div>';
+  for (let i = 0; i < heliumNucleons.n; i++) html += '<div class="mini-particle neutron">n</div>';
+  html += '<div style="font-size:.7rem;color:var(--sub);width:100%;text-align:center;">⁴He 합성</div>';
+  zone.innerHTML = html;
+
+  if (heliumNucleons.p === 2 && heliumNucleons.n === 2) {
+    zone.classList.add('complete');
+    addScore('helium_synth', 10);
+    document.getElementById('heliumResult').innerHTML =
+      '<div class="feedback-msg success">헬륨 원자핵(⁴He) 합성 성공! 양성자 2개 + 중성자 2개 = 질량수 4인 헬륨 원자핵이 탄생했습니다.</div>';
+  } else if (heliumNucleons.p > 2 || heliumNucleons.n > 2) {
+    zone.style.borderColor = 'var(--danger)';
+    setTimeout(() => {
+      heliumNucleons = { p: 0, n: 0 };
+      zone.innerHTML = '헬륨(⁴He)<br/>합성 영역';
+      zone.classList.remove('complete');
+      zone.style.borderColor = '';
+    }, 800);
+  }
+}
+
+// ====== STAGE 4: MASS RATIO CHALLENGE ======
+let nucleiFormed = false;
+
+// Init particle field
+(function initParticleField() {
+  const field = document.getElementById('particleField');
+  const particles = [];
+  for (let i = 0; i < 14; i++) particles.push({ type: 'proton', label: 'p⁺' });
+  for (let i = 0; i < 2; i++) particles.push({ type: 'neutron', label: 'n' });
+
+  // Shuffle
+  for (let i = particles.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [particles[i], particles[j]] = [particles[j], particles[i]];
+  }
+
+  particles.forEach((p, idx) => {
+    const el = document.createElement('div');
+    el.className = `field-particle ${p.type}`;
+    el.textContent = p.label;
+    el.id = `fp_${idx}`;
+    el.style.animationDelay = `${idx * 0.05}s`;
+    field.appendChild(el);
+  });
+})();
+
+function formNuclei() {
+  if (nucleiFormed) return;
+  nucleiFormed = true;
+
+  const btn = document.getElementById('formNucleiBtn');
+  btn.disabled = true;
+  btn.textContent = '형성 중...';
+  btn.style.opacity = '0.6';
+
+  const field = document.getElementById('particleField');
+  const particles = field.querySelectorAll('.field-particle');
+
+  // Find neutrons and 2 protons to form He
+  const neutrons = [];
+  const protonsForHe = [];
+  const remainingProtons = [];
+
+  particles.forEach(p => {
+    if (p.classList.contains('neutron')) neutrons.push(p);
+    else if (protonsForHe.length < 2) protonsForHe.push(p);
+    else remainingProtons.push(p);
+  });
+
+  // Animate: move He constituents together
+  setTimeout(() => {
+    [...neutrons, ...protonsForHe].forEach(p => {
+      p.style.transform = 'scale(0.5)';
+      p.style.opacity = '0.3';
+    });
+  }, 500);
+
+  setTimeout(() => {
+    // Clear field, show result
+    field.innerHTML = '';
+
+    // He nucleus
+    const heGroup = document.createElement('div');
+    heGroup.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;';
+    const heNucleus = document.createElement('div');
+    heNucleus.style.cssText = `
+      width:70px;height:70px;border-radius:50%;
+      background:radial-gradient(circle,#ffd93d,#e67e22);
+      display:flex;align-items:center;justify-content:center;
+      font-size:1rem;font-weight:800;color:#1a0a00;
+      box-shadow:0 0 25px rgba(255,217,61,0.5);
+      animation:pulse 1.5s infinite;
+    `;
+    heNucleus.textContent = '⁴He';
+    heGroup.appendChild(heNucleus);
+    const heLabel = document.createElement('div');
+    heLabel.style.cssText = 'font-size:.75rem;color:var(--helium);font-weight:600;';
+    heLabel.textContent = '헬륨 원자핵 ×1';
+    heGroup.appendChild(heLabel);
+    field.appendChild(heGroup);
+
+    // Separator
+    const sep = document.createElement('div');
+    sep.style.cssText = 'font-size:1.5rem;color:var(--sub);';
+    sep.textContent = '+';
+    field.appendChild(sep);
+
+    // 12 protons = 12 hydrogen nuclei
+    const hGroup = document.createElement('div');
+    hGroup.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:280px;';
+    for (let i = 0; i < 12; i++) {
+      const h = document.createElement('div');
+      h.className = 'field-particle proton';
+      h.style.cssText = 'width:38px;height:38px;font-size:.6rem;';
+      h.textContent = 'H';
+      hGroup.appendChild(h);
+    }
+    const hLabel = document.createElement('div');
+    hLabel.style.cssText = 'width:100%;text-align:center;font-size:.75rem;color:var(--hydrogen);font-weight:600;margin-top:4px;';
+    hLabel.textContent = '수소 원자핵 ×12';
+    hGroup.appendChild(hLabel);
+    field.appendChild(hGroup);
+
+    // Show result card
+    document.getElementById('resultCard').style.display = 'block';
+    showNucleiResult();
+    addScore('nuclei_form', 10);
+  }, 1500);
+}
+
+function showNucleiResult() {
+  const container = document.getElementById('nucleiResult');
+  container.innerHTML = `
+    <div class="nucleus-group">
+      <div class="sub-title" style="color:var(--hydrogen);">수소 원자핵</div>
+      <div class="nucleus-visual">
+        ${Array(12).fill('<div class="sm-particle p">p</div>').join('')}
+      </div>
+      <div style="font-size:.85rem;color:var(--sub);">양성자 12개</div>
+      <div style="font-size:1.2rem;font-weight:800;color:var(--hydrogen);margin-top:6px;">질량 = 12</div>
+    </div>
+    <div style="font-size:2rem;color:var(--sub);">:</div>
+    <div class="nucleus-group">
+      <div class="sub-title" style="color:var(--helium);">헬륨 원자핵</div>
+      <div class="nucleus-visual">
+        <div class="sm-particle p">p</div>
+        <div class="sm-particle p">p</div>
+        <div class="sm-particle n">n</div>
+        <div class="sm-particle n">n</div>
+      </div>
+      <div style="font-size:.85rem;color:var(--sub);">양성자 2 + 중성자 2</div>
+      <div style="font-size:1.2rem;font-weight:800;color:var(--helium);margin-top:6px;">질량 = 4</div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    document.getElementById('equationBox').style.display = 'block';
+    addScore('equation', 5);
+  }, 800);
+
+  setTimeout(() => {
+    document.getElementById('quizCard').style.display = 'block';
+  }, 1500);
+}
+
+// ====== QUIZ ======
+let selectedAnswer = null;
+
+function selectQuiz(el, answer) {
+  document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedAnswer = answer;
+}
+
+function checkQuiz() {
+  if (!selectedAnswer) { alert('답을 선택하세요!'); return; }
+  const options = document.querySelectorAll('.quiz-option');
+  options.forEach(o => {
+    o.disabled = true;
+    if (o.textContent.startsWith('B')) o.classList.add('correct');
+    else if (o.classList.contains('selected') && selectedAnswer !== 'B') o.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('quizFeedback');
+  if (selectedAnswer === 'B') {
+    fb.innerHTML = '<div class="feedback-msg success">정답! 빅뱅 후 약 38만 년이 지나 우주의 온도가 충분히 낮아지면, 전자가 수소와 헬륨 원자핵에 결합하여 최초의 원자가 형성됩니다.</div>';
+    addScore('quiz_correct', 13);
+  } else {
+    fb.innerHTML = '<div class="feedback-msg error">아쉽습니다. 정답은 <strong>B. 수소와 헬륨</strong>입니다. 빅뱅 핵합성으로 만들어진 수소와 헬륨 원자핵에 전자가 결합하여 최초의 원자가 됩니다.</div>';
+    addScore('quiz_wrong', 3);
+  }
+}
+
+// Touch support for drag and drop
+let touchDragType = null;
+
+document.addEventListener('touchstart', function(e) {
+  const target = e.target.closest('.draggable-particle');
+  if (target) {
+    touchDragType = target.dataset.type;
+    target.style.opacity = '0.5';
+  }
+}, { passive: true });
+
+document.addEventListener('touchend', function(e) {
+  if (!touchDragType) return;
+
+  document.querySelectorAll('.draggable-particle').forEach(p => p.style.opacity = '1');
+
+  const touch = e.changedTouches[0];
+  const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+
+  if (dropTarget) {
+    const zone = dropTarget.closest('.drop-zone');
+    const nZone = dropTarget.closest('.nucleon-zone');
+
+    if (zone && zone.id === 'hydrogenZone') {
+      if (touchDragType === 'p') {
+        hydrogenCount++;
+        if (hydrogenCount === 1) {
+          zone.innerHTML = '<div class="mini-particle proton" style="width:40px;height:40px;font-size:.8rem;">p⁺</div><div style="font-size:.7rem;color:var(--sub);width:100%;text-align:center;">¹H 완성!</div>';
+          zone.classList.add('complete');
+          addScore('hydrogen_synth', 8);
+          document.getElementById('hydrogenResult').innerHTML =
+            '<div class="feedback-msg success">수소 원자핵(¹H) 완성! 양성자 1개가 곧 수소 원자핵입니다.</div>';
+        } else {
+          setTimeout(() => { hydrogenCount = 0; zone.innerHTML = '수소(¹H)<br/>영역'; zone.classList.remove('complete'); }, 800);
+        }
+      }
+    } else if (nZone && nZone.id === 'heliumZone') {
+      if (touchDragType === 'p' || touchDragType === 'n') {
+        heliumNucleons[touchDragType]++;
+        const hz = document.getElementById('heliumZone');
+        let html = '';
+        for (let i = 0; i < heliumNucleons.p; i++) html += '<div class="mini-particle proton">p⁺</div>';
+        for (let i = 0; i < heliumNucleons.n; i++) html += '<div class="mini-particle neutron">n</div>';
+        html += '<div style="font-size:.7rem;color:var(--sub);width:100%;text-align:center;">⁴He 합성</div>';
+        hz.innerHTML = html;
+
+        if (heliumNucleons.p === 2 && heliumNucleons.n === 2) {
+          hz.classList.add('complete');
+          addScore('helium_synth', 10);
+          document.getElementById('heliumResult').innerHTML =
+            '<div class="feedback-msg success">헬륨 원자핵(⁴He) 합성 성공!</div>';
+        } else if (heliumNucleons.p > 2 || heliumNucleons.n > 2) {
+          setTimeout(() => {
+            heliumNucleons = { p: 0, n: 0 };
+            hz.innerHTML = '헬륨(⁴He)<br/>합성 영역';
+            hz.classList.remove('complete');
+          }, 800);
+        }
+      }
+    }
+  }
+
+  touchDragType = null;
+}, { passive: true });
+</script>
+
+</body>
+</html>
