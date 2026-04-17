@@ -814,7 +814,7 @@ const ptData = [
   [72,'Hf',6,4,'metal'],[73,'Ta',6,5,'metal'],[74,'W',6,6,'metal'],[75,'Re',6,7,'metal'],
   [76,'Os',6,8,'metal'],[77,'Ir',6,9,'metal'],[78,'Pt',6,10,'metal'],[79,'Au',6,11,'metal'],
   [80,'Hg',6,12,'metal'],[81,'Tl',6,13,'metal'],[82,'Pb',6,14,'metal'],[83,'Bi',6,15,'metal'],
-  [84,'Po',6,16,'metalloid'],[85,'At',6,17,'metalloid'],[86,'Rn',6,18,'noble'],
+  [84,'Po',6,16,'metalloid'],[85,'At',6,17,'halogen'],[86,'Rn',6,18,'noble'],
   [87,'Fr',7,1,'alkali'],[88,'Ra',7,2,'metal'],
 ];
 
@@ -885,12 +885,16 @@ function ptFilter(type, btn) {
     if (cell.classList.contains('empty')) return;
     if (type === 'all') return;
     // 금속 필터: 알칼리 금속도 포함 / 비금속 필터: 할로젠·비활성 기체도 포함
+    // At(아스타틴)는 할로젠이지만 준금속 성질도 강해서 준금속 필터에서도 강조
     const cellType = cell.dataset.type;
+    const sym = cell.dataset.symbol;
     let matches;
     if (type === 'metal') {
       matches = (cellType === 'metal' || cellType === 'alkali');
     } else if (type === 'nonmetal') {
       matches = (cellType === 'nonmetal' || cellType === 'halogen' || cellType === 'noble');
+    } else if (type === 'metalloid') {
+      matches = (cellType === 'metalloid' || sym === 'At');
     } else {
       matches = (cellType === type);
     }
