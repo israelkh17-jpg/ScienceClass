@@ -884,7 +884,12 @@ function ptFilter(type, btn) {
     cell.classList.remove('highlight', 'dim');
     if (cell.classList.contains('empty')) return;
     if (type === 'all') return;
-    if (cell.dataset.type === type) {
+    // 금속 필터는 알칼리 금속(Li, Na, K, Rb, Cs, Fr)도 포함
+    const cellType = cell.dataset.type;
+    const matches = (type === 'metal')
+      ? (cellType === 'metal' || cellType === 'alkali')
+      : (cellType === type);
+    if (matches) {
       cell.classList.add('highlight');
     } else {
       cell.classList.add('dim');
