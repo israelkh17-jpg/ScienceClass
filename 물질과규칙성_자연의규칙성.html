@@ -892,7 +892,8 @@ function ptFilter(type, btn) {
     if (type === 'metal') {
       matches = (cellType === 'metal' || cellType === 'alkali');
     } else if (type === 'nonmetal') {
-      matches = (cellType === 'nonmetal' || cellType === 'halogen' || cellType === 'noble');
+      // At는 준금속 성질을 가지므로 비금속에서 제외
+      matches = (cellType === 'nonmetal' || cellType === 'halogen' || cellType === 'noble') && sym !== 'At';
     } else if (type === 'metalloid') {
       matches = (cellType === 'metalloid' || sym === 'At');
     } else {
