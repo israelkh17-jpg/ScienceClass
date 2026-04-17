@@ -884,11 +884,16 @@ function ptFilter(type, btn) {
     cell.classList.remove('highlight', 'dim');
     if (cell.classList.contains('empty')) return;
     if (type === 'all') return;
-    // 금속 필터는 알칼리 금속(Li, Na, K, Rb, Cs, Fr)도 포함
+    // 금속 필터: 알칼리 금속도 포함 / 비금속 필터: 할로젠·비활성 기체도 포함
     const cellType = cell.dataset.type;
-    const matches = (type === 'metal')
-      ? (cellType === 'metal' || cellType === 'alkali')
-      : (cellType === type);
+    let matches;
+    if (type === 'metal') {
+      matches = (cellType === 'metal' || cellType === 'alkali');
+    } else if (type === 'nonmetal') {
+      matches = (cellType === 'nonmetal' || cellType === 'halogen' || cellType === 'noble');
+    } else {
+      matches = (cellType === type);
+    }
     if (matches) {
       cell.classList.add('highlight');
     } else {
