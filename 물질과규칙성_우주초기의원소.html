@@ -635,12 +635,13 @@ footer a{color:var(--accent);text-decoration:none;}
     </p>
 
     <div class="timeline-slider-wrap">
-      <input type="range" class="timeline-slider" id="timelineSlider" min="0" max="3" step="1" value="0"/>
+      <input type="range" class="timeline-slider" id="timelineSlider" min="0" max="4" step="1" value="0"/>
       <div class="timeline-labels">
         <span>빅뱅</span>
         <span>기본 입자</span>
         <span>양성자·중성자</span>
-        <span>헬륨 원자핵</span>
+        <span>원자핵</span>
+        <span>원자</span>
       </div>
     </div>
 
@@ -1178,24 +1179,31 @@ const timelineStages = [
   },
   {
     title: '기본 입자 형성',
-    temp: '10¹² K', density: '매우 높음', time: '10⁻⁶ 초',
+    temp: '10³² K', density: '매우 높음', time: '10⁻⁴³ 초',
     bg: 'radial-gradient(circle, #e67e22 0%, #8e3500 40%, #1a0a00 100%)',
-    info: '우주가 팽창하며 온도가 낮아지자, 에너지가 물질로 전환되어 양성자, 중성자, 전자 등 기본 입자가 형성되었습니다.',
+    info: '우주가 팽창하며 온도가 낮아지자, 에너지가 물질로 전환되어 쿼크, 전자 등 기본 입자가 형성되었습니다.',
     particles: 'basicParticles'
   },
   {
-    title: '양성자와 중성자 (개수비 7:1)',
-    temp: '10¹⁰ K', density: '높음', time: '약 3분 후',
+    title: '양성자와 중성자 형성 (개수비 7:1)',
+    temp: '10¹² K', density: '높음', time: '10⁻⁶ 초',
     bg: 'radial-gradient(circle, #f39c12 0%, #6d4c00 40%, #0d0d00 100%)',
-    info: '온도가 더 낮아지면서 양성자와 중성자가 안정적으로 존재하게 되었습니다. 이때 양성자와 중성자의 개수비는 약 7:1입니다.',
+    info: '온도가 더 낮아지면서 기본 입자들이 결합하여 양성자와 중성자가 형성되었습니다. 이때 양성자와 중성자의 개수비는 약 7:1입니다.',
     particles: 'nucleons'
   },
   {
-    title: '헬륨 원자핵 형성',
-    temp: '10⁹ K', density: '낮아짐', time: '약 3분 후',
+    title: '원자핵 형성 (수소·헬륨 원자핵)',
+    temp: '10⁸ K', density: '낮아짐', time: '약 3분 후',
     bg: 'radial-gradient(circle, #2ecc71 0%, #0d5c2e 40%, #001a0d 100%)',
-    info: '양성자 2개와 중성자 2개가 결합하여 헬륨 원자핵(⁴He)이 형성되었습니다. 이를 빅뱅 핵합성이라 합니다. 남은 양성자는 수소 원자핵이 됩니다.',
+    info: '양성자 2개와 중성자 2개가 결합하여 헬륨 원자핵(⁴He)이 형성되었고, 남은 양성자는 수소 원자핵(¹H)이 됩니다. 이를 빅뱅 핵합성이라 합니다.',
     particles: 'nuclei'
+  },
+  {
+    title: '원자 형성 (수소·헬륨 원자)',
+    temp: '3×10³ K', density: '낮음', time: '약 38만 년 후',
+    bg: 'radial-gradient(circle, #6c5ce7 0%, #2d1e5f 40%, #0a0420 100%)',
+    info: '우주의 온도가 충분히 낮아지자, 전자가 수소·헬륨 원자핵과 결합하여 최초의 원자가 형성되었습니다. 이때 우주가 투명해지며 빛이 자유롭게 퍼져 나갔습니다.',
+    particles: 'atoms'
   }
 ];
 
@@ -1298,6 +1306,66 @@ function renderTimelineParticles(type) {
       `;
       h.textContent = 'H';
       canvas.appendChild(h);
+    }
+  } else if (type === 'atoms') {
+    // He atom (nucleus + 2 electrons orbit)
+    const heAtom = document.createElement('div');
+    heAtom.style.cssText = `
+      position:absolute;width:90px;height:90px;border-radius:50%;
+      border:2px dashed rgba(108,92,231,0.6);
+      display:flex;align-items:center;justify-content:center;
+      top:25%;left:15%;
+    `;
+    const heNuc = document.createElement('div');
+    heNuc.style.cssText = `
+      width:44px;height:44px;border-radius:50%;
+      background:radial-gradient(circle,#ffd93d,#e67e22);
+      display:flex;align-items:center;justify-content:center;
+      font-size:12px;font-weight:800;color:#1a0a00;
+      box-shadow:0 0 20px rgba(255,217,61,0.6);
+    `;
+    heNuc.textContent = 'He';
+    heAtom.appendChild(heNuc);
+    // electrons
+    for (let k = 0; k < 2; k++) {
+      const e = document.createElement('div');
+      e.style.cssText = `
+        position:absolute;width:10px;height:10px;border-radius:50%;
+        background:#6c5ce7;box-shadow:0 0 8px #a29bfe;
+        top:${k===0?'-5':'89'}%;left:45%;
+      `;
+      heAtom.appendChild(e);
+    }
+    canvas.appendChild(heAtom);
+
+    // H atoms (nucleus + 1 electron)
+    for (let i = 0; i < 5; i++) {
+      const hAtom = document.createElement('div');
+      const topPos = 15 + Math.random() * 55;
+      const leftPos = 45 + i * 9 + Math.random() * 3;
+      hAtom.style.cssText = `
+        position:absolute;width:54px;height:54px;border-radius:50%;
+        border:2px dashed rgba(108,92,231,0.5);
+        display:flex;align-items:center;justify-content:center;
+        top:${topPos}%;left:${leftPos}%;
+      `;
+      const hNuc = document.createElement('div');
+      hNuc.style.cssText = `
+        width:24px;height:24px;border-radius:50%;
+        background:#e74c3c;display:flex;align-items:center;justify-content:center;
+        font-size:9px;font-weight:800;color:white;
+        box-shadow:0 0 8px rgba(231,76,60,0.5);
+      `;
+      hNuc.textContent = 'H';
+      hAtom.appendChild(hNuc);
+      const e = document.createElement('div');
+      e.style.cssText = `
+        position:absolute;width:8px;height:8px;border-radius:50%;
+        background:#6c5ce7;box-shadow:0 0 6px #a29bfe;
+        top:${Math.random()>0.5?'-4':'92'}%;left:45%;
+      `;
+      hAtom.appendChild(e);
+      canvas.appendChild(hAtom);
     }
   }
 }
