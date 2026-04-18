@@ -179,9 +179,80 @@
       background: var(--card);
     }
 
+    /* AI 튜터 챗봇 버튼 (헤더 내부) */
+    .chatbot-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 22px;
+      padding: 13px 26px;
+      background: rgba(255, 255, 255, 0.98);
+      color: #1d4ed8;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .chatbot-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+    }
+    .chatbot-cta .cta-icon { font-size: 1.25rem; }
+    .chatbot-cta .cta-arrow { transition: transform 0.2s; }
+    .chatbot-cta:hover .cta-arrow { transform: translateX(4px); }
+
+    /* 플로팅 챗봇 버튼 (스크롤해도 항상 보임) */
+    .chatbot-fab {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #0f766e);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 10px 28px rgba(37, 99, 235, 0.45);
+      text-decoration: none;
+      z-index: 100;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .chatbot-fab:hover {
+      transform: scale(1.08);
+      box-shadow: 0 14px 34px rgba(37, 99, 235, 0.55);
+    }
+    .chatbot-fab::after {
+      content: "AI 튜터";
+      position: absolute;
+      right: 72px;
+      background: rgba(31, 41, 55, 0.9);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateX(10px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+    }
+    .chatbot-fab:hover::after {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
     @media (max-width: 600px) {
       header h1 { font-size: 1.6rem; }
       .lesson-grid { grid-template-columns: 1fr; }
+      .chatbot-cta { font-size: 0.95rem; padding: 12px 22px; }
+      .chatbot-fab { width: 54px; height: 54px; font-size: 1.4rem; right: 16px; bottom: 16px; }
+      .chatbot-fab::after { display: none; }
     }
   </style>
 </head>
@@ -191,6 +262,11 @@
   <div class="badge">날아라 물리</div>
   <h1>2022 개정 통합과학</h1>
   <p>단원을 선택하면 수업자료 페이지로 이동합니다.</p>
+  <a class="chatbot-cta" href="https://science-chatbot-ivory.vercel.app/" target="_blank" rel="noopener">
+    <span class="cta-icon">🤖</span>
+    <span>AI 튜터와 대화하기</span>
+    <span class="cta-arrow">→</span>
+  </a>
 </header>
 
 <main class="wrap">
@@ -310,6 +386,11 @@
 
 
 </main>
+
+<!-- 플로팅 챗봇 버튼 -->
+<a class="chatbot-fab" href="https://science-chatbot-ivory.vercel.app/" target="_blank" rel="noopener" title="AI 튜터와 대화하기">
+  🤖
+</a>
 
 <footer>
   날아라 물리 통합과학 학습자료 | © 동북고등학교 강현식
